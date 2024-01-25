@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Interactables 5
+  m_Name: Interactables 7
   m_Shader: {fileID: -6465566751694194690, guid: 8ccee1dee7490414ea7e8ad2b953c3e1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -131,7 +131,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _BaseColor: {r: 0.47000003, g: 0.735, b: 1, a: 1}
+    - _BaseColor: {r: 0.23566844, g: 0.20198469, b: 0.4811321, a: 1}
     - _Color: {r: 0.46999997, g: 0.735, b: 1, a: 1}
     - _EdgeHighlightColor: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
