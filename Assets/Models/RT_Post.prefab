@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 4746953412704199546}
   - component: {fileID: 8048572023076068063}
   m_Layer: 0
-  m_Name: RingToss_Post
-  m_TagString: Untagged
+  m_Name: RT_Post
+  m_TagString: RingPost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.189393, y: 0.003, z: -4.757}
-  m_LocalScale: {x: 0.154038, y: 0.385095, z: 0.154038}
+  m_LocalScale: {x: 0.13089225, y: 0.32723063, z: 0.13089225}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
