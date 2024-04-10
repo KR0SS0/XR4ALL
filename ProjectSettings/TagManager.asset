@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Anchor
   - RingPost
+  - HS_Hammer
   layers:
   - Default
   - TransparentFX
