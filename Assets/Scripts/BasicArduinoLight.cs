@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BasicArduinoLight : MonoBehaviour
 {
+
     private static readonly string COM_PORT = "COM4";
     private static readonly int BAUD_RATE = 9600;
 
