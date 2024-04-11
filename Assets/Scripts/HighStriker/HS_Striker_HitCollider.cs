@@ -26,7 +26,7 @@ public class HS_Striker_HitCollider : MonoBehaviour
         if (other.CompareTag(hammerTag))
         {
             float inVelocity = other.gameObject.GetComponent<HS_Hammer>().CurrentVelocity;
-            Debug.Log("Hammer in with: " + inVelocity);
+            //Debug.Log("Hammer in with: " + inVelocity);
             scoreBushing.StartBounce(inVelocity);
         }
     }

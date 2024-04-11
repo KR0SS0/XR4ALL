@@ -3614,7 +3614,7 @@ Transform:
   m_GameObject: {fileID: 368175387}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -2.825, y: 1.788, z: -1.038}
+  m_LocalPosition: {x: -2.825, y: 1.033, z: -1.066}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -14096,7 +14096,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 122
   m_CollisionDetection: 0
 --- !u!114 &1268014897
 MonoBehaviour:
@@ -14111,6 +14111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   striker_Bell: {fileID: 1294929544}
+  scoreScreen: {fileID: 1033589459}
 --- !u!1 &1277723415 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 9a13b94cace2a4d78ac94a0ed0a88843, type: 3}
@@ -19037,7 +19038,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 1.744873e-39, y: -9.1835e-41, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 5.8774825e-37, z: 1.428042e-38, w: 1e-45}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -21791,7 +21792,6 @@ GameObject:
   - component: {fileID: 2051060780}
   - component: {fileID: 2051060779}
   - component: {fileID: 2051060778}
-  - component: {fileID: 2051060776}
   m_Layer: 0
   m_Name: HighStriker_Striker
   m_TagString: Untagged
@@ -21799,22 +21799,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2051060776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2051060775}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16d859afa82b5594abd018946a5e9a90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitCollider: {fileID: 1107634377}
-  scoreScreen: {fileID: 1033589457}
-  bell: {fileID: 1294929542}
-  scoreBushing: {fileID: 1268014891}
 --- !u!64 &2051060778
 MeshCollider:
   m_ObjectHideFlags: 0
