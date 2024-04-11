@@ -17,4 +17,10 @@ public class HS_Striker_ScoreScreen : MonoBehaviour
 
     }
 
+    public void SetScore(float score)
+    {
+        int newScore = Mathf.RoundToInt(score * 100f);
+        Debug.Log("New score: " + newScore);
+    }
+
 }

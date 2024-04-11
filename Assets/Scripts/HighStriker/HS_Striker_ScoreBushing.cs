@@ -1,7 +1,8 @@
+
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class HS_Striker_ScoreBushing : MonoBehaviour
 {
@@ -10,8 +11,11 @@ public class HS_Striker_ScoreBushing : MonoBehaviour
     //[SerializeField] private float upperForce;
     private bool loop = true;
     private float upperBound = 3.415f;
+    private bool setNewScore = true;
 
     [SerializeField] private HS_Striker_Bell striker_Bell;
+    [SerializeField] private HS_Striker_ScoreScreen scoreScreen;
+    private float forceModifier = 3.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -25,23 +29,27 @@ public class HS_Striker_ScoreBushing : MonoBehaviour
     {
         CheckLowerBound();
         CheckUpperBound();
+        MaxHeightReached();
 
-        /*
+        
         if (loop)
         {
-            StartCoroutine(Test());
+            //StartCoroutine(Test());
         }
-        */
+        
     }
 
+   
+    
     IEnumerator Test()
     {
         loop = false;
-        StartBounce(300f);
+        StartBounce(Random.Range(1.5f, 7f));
         yield return new WaitForSeconds(2f);
         loop = true;
     
     }
+    
 
     private void CheckUpperBound()
     {
@@ -55,18 +63,34 @@ public class HS_Striker_ScoreBushing : MonoBehaviour
 
     private void CheckLowerBound()
     {
-        if(gameObject.transform.localPosition.y <= 0.1f)
+        if(gameObject.transform.localPosition.y < 0f)
         {
             rb.useGravity = false;
             rb.velocity = Vector3.zero;
+            gameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
         }
     }
 
     public void StartBounce(float incomingVelocity)
     {
-        float upperForce = incomingVelocity * 75f;
-        //float rand = Random.Range(0.5f, 1.2f);
+        setNewScore = true;
+
+        float interpolation = Mathf.InverseLerp(1f, 7f, incomingVelocity);
+        float upperForce = Mathf.Lerp(3f, 8f, interpolation);
         rb.useGravity = true;
-        rb.AddForce(new Vector3(0.0f, upperForce, 0.0f));
+        rb.AddForce(new Vector3(0.0f, upperForce, 0.0f), ForceMode.Impulse);
+        //Debug.Log("Applied force: " + upperForce);
+
+    }
+
+    private void MaxHeightReached()
+    {
+        if(rb.velocity.y < 0f && setNewScore)
+        {
+            float score = Mathf.InverseLerp(0f, upperBound, transform.localPosition.y);
+            setNewScore = false;
+            scoreScreen.SetScore(score);
+            //Debug.Log("return at: " + score);
+        }
     }
 }
