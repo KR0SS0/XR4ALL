@@ -6,18 +6,25 @@ public class SD_Shotgun : MonoBehaviour
 {
 
     private const string duckTag = "SD_Duck";
+    [SerializeField] private Transform bulletSpawnLocation;
+    [SerializeField] private GameObject bullet;
+    private bool loop = true;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
     // Update is called once per frame
     void FixedUpdate()
     {
-        ShootRaycast();
+        //ShootRaycast();
+        if (loop)
+        {
+            StartCoroutine(Timer());
+        }
     }
 
     private void ShootRaycast()
@@ -32,6 +39,8 @@ public class SD_Shotgun : MonoBehaviour
                 // Duck found
                 Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green);
                 Debug.Log("Hit a duck!");
+
+                ShootBullet(ray.direction);
             }
 
             else
@@ -49,4 +58,19 @@ public class SD_Shotgun : MonoBehaviour
             Debug.Log("No duck");
         }
     }
+
+    IEnumerator Timer()
+    {
+        loop = false;
+        yield return new WaitForSeconds(2f);
+        ShootRaycast();
+        loop = true;
+        yield return null;
+    }
+
+    private void ShootBullet(Vector3 direction)
+    {
+        Instantiate(bullet, bulletSpawnLocation.position, bulletSpawnLocation.rotation);
+    }
+
 }
