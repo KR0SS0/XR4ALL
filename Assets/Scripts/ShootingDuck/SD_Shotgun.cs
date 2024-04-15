@@ -20,11 +20,13 @@ public class SD_Shotgun : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //ShootRaycast();
+        ShootRaycast();
+        /*
         if (loop)
         {
             StartCoroutine(Timer());
         }
+        */
     }
 
     private void ShootRaycast()
