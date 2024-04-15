@@ -10,9 +10,15 @@ public class RT_ScoreManager : MonoBehaviour
     private static int scoreGainDefault = 10;
 
     [Header("Prototype UI")]
-    [SerializeField] private TMP_Text text;
+    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text highscoreText;
 
-    public static void IncrementScore(int scoreGain)
+    private void Start()
+    {
+        UpdateScoreUI();
+    }
+
+    public void IncrementScore(int scoreGain)
     {
         if(scoreGain <= 0)
         {
@@ -21,12 +27,23 @@ public class RT_ScoreManager : MonoBehaviour
         {
             score += scoreGain;
         }
-        Instance.UpdateScoreUI();
+        UpdateScoreUI();
     }
 
     private void UpdateScoreUI()
     {
-        text.text = "Score: " + score;
+        scoreText.text = "Score: " + score;
+        if(score >= PlayerPrefs.GetInt("Highscore"))
+        {
+            PlayerPrefs.SetInt("Highscore", score);
+            highscoreText.text = "Highscore: " + PlayerPrefs.GetInt("Highscore");
+        }
+    }
+
+    public void ResetScore()
+    {
+        score = 0;
+        UpdateScoreUI();
     }
 
     private static RT_ScoreManager instance;
