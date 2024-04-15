@@ -8,6 +8,7 @@ TagManager:
   - RingPost
   - HS_Hammer
   - SD_Duck
+  - RT_Ring
   layers:
   - Default
   - TransparentFX

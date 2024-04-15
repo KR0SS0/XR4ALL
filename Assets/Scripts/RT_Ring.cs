@@ -36,7 +36,6 @@ public class RT_Ring : MonoBehaviour
         if(other.CompareTag("RingPost"))
         {
             visualizer.solidColor = Color.blue;
-
         }
     }
 
@@ -49,13 +48,11 @@ public class RT_Ring : MonoBehaviour
                 visualizer.solidColor = Color.green;
                 if(!hasScored)
                 {
-                    RT_ScoreManager.IncrementScore(scoreGain);
+                    RT_ScoreManager.Instance.IncrementScore(scoreGain);
                     hasScored = true;
                 }
-
             }
         }
-
     }
 
     private void OnTriggerExit(Collider other)
