@@ -4,80 +4,148 @@ using UnityEngine;
 
 public class SD_Duck : MonoBehaviour
 {
-    private Vector3 originalRotation = Vector3.zero;
+    private Vector3 originalRotation;
     private Vector3 deadRotation = Vector3.forward * 90f;
-    private bool killDuck = false;
-    private bool respawnDuck = false;
-    [SerializeField] private float rotationSpeed = 45f;
-     
+    [SerializeField] private float rotationTime = 0.35f;
+    [SerializeField] private float respawnLowBoundTime = 1.2f;
+    [SerializeField] private float respawnHighBoundTime = 2.4f;
+
+    private float rotationSpeed;
+    private float elapsedTime = 0f;
+
+    private enum DuckState { Idle, Killed, Dead, Respawning }
+    private DuckState currentState = DuckState.Idle;
+
+    [SerializeField] private float verticalFrequency = 1f;
+    [SerializeField] private float verticalAmplitude = 1f;
+    [SerializeField] private float horizontalFrequency = 0.2f;
+    [SerializeField] private float horizontalAmplitude = 10f;
+    private Vector3 startPosition;
+    private float horizontalPhase;
+
+    public float HorizontalPhase { get => horizontalPhase; set => horizontalPhase = value; }
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        originalRotation = transform.rotation.eulerAngles;
+        startPosition = transform.localPosition;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (killDuck)
+        MoveInSinusoidalPattern();
+        switch (currentState)
         {
-            FlipDuck();
-            Debug.Log("Rotation z: " + gameObject.transform.rotation.eulerAngles.z);
-            if (gameObject.transform.rotation.eulerAngles.z >= 90f)
-            {
-                Debug.Log("Max rotation reached");
-                StartCoroutine(DeadTimer());
-            }
-        }
-
-        if (respawnDuck)
-        {
-            ResetDuck();
-            if(gameObject.transform.rotation.eulerAngles.z <= 0f)
-            {
-                respawnDuck = false;
-            }
+            case DuckState.Idle:
+                Idle();
+                break;
+            case DuckState.Killed:
+                RotateToDeadPosition();
+                break;
+            case DuckState.Dead:
+                Dead();
+                break;
+            case DuckState.Respawning:
+                RotateToOriginalPosition();
+                break;
         }
     }
 
-    private void FlipDuck()
+    private void Dead()
     {
+
+    }
+
+    private void Idle()
+    {
+
+    }
+
+    private float CalculateRotationSpeed()
+    {
+        if (elapsedTime < rotationTime / 3)
+        {
+            return Mathf.Log10(10f * elapsedTime + 1f) / rotationTime * 90f;
+        }
+        else
+        {
+            return 1 / rotationTime * 90f;
+        }
+    }
+
+    private void RotateToDeadPosition()
+    {
+        elapsedTime += Time.fixedDeltaTime;
+        rotationSpeed = CalculateRotationSpeed();
 
         Quaternion targetRotation = Quaternion.Euler(deadRotation);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
 
-        Quaternion newRotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
-
-        gameObject.transform.rotation = newRotation;
+        if (Quaternion.Angle(transform.rotation, targetRotation) < 0.1f)
+        {
+            GetComponentInParent<SD_Circuit>().StartDeadTimer(gameObject, RespawnTime());
+        }
     }
 
-    IEnumerator DeadTimer()
+    public void Respawn()
     {
-        killDuck = false;
-        yield return new WaitForSeconds(3f);
-        respawnDuck = true;
-        
-
+        verticalFrequency = SetNewFrequency(verticalFrequency);
+        horizontalFrequency = SetNewFrequency(horizontalFrequency);
+        currentState = DuckState.Respawning;
     }
 
-    IEnumerator DeadTimer(float time)
-    {
-        yield return new WaitForSeconds(time);
-    }
-
-    private void ResetDuck()
+    private void RotateToOriginalPosition()
     {
         Quaternion targetRotation = Quaternion.Euler(originalRotation);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
 
-        Quaternion newRotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+        if (Quaternion.Angle(transform.rotation, targetRotation) < 0.1f)
+        {
+            elapsedTime = 0f;
+            currentState = DuckState.Idle;
+        }
+    }
 
-        gameObject.transform.rotation = newRotation;
+    IEnumerator RespawnTimer()
+    {
+        yield return new WaitForSeconds(RespawnTime());
+        verticalFrequency = SetNewFrequency(verticalFrequency);
+        horizontalFrequency = SetNewFrequency(horizontalFrequency);
+        currentState = DuckState.Respawning;
     }
 
     public void KillDuck()
     {
-        killDuck = true;
+        if (currentState == DuckState.Idle)
+        {
+              currentState = DuckState.Killed;
+        }
     }
 
+    private float RespawnTime()
+    {
+        return Random.Range(respawnLowBoundTime, respawnHighBoundTime);
+    }
 
+    private void MoveInSinusoidalPattern()
+    {
+        // vertical sine function
+        float verticalOffset = Mathf.Sin(Time.time * verticalFrequency) * verticalAmplitude;
+
+        // horizontal sine function
+        float horizontalOffset = Mathf.Sin(Time.time * horizontalFrequency + horizontalPhase) * horizontalAmplitude;
+
+        // Calculate the new position of the duck
+        Vector3 newPosition = new Vector3(0f, verticalOffset, horizontalOffset);
+
+        transform.localPosition = startPosition + newPosition;
+    }
+
+    private float SetNewFrequency(float newFrequency)
+    {
+        return Random.Range(newFrequency * 0.8f, newFrequency * 1.5f);
+    }
 }
