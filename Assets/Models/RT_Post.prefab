@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8934485070377203474}
   - component: {fileID: 4746953412704199546}
   - component: {fileID: 8048572023076068063}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: RT_Post
   m_TagString: RingPost
   m_Icon: {fileID: 0}

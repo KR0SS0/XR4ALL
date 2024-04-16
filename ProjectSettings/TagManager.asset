@@ -9,6 +9,7 @@ TagManager:
   - HS_Hammer
   - SD_Duck
   - RT_Ring
+  - Grab
   layers:
   - Default
   - TransparentFX
@@ -16,10 +17,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - RingPost
+  - GrabPosition
+  - Interactable
+  - Hands
   - 
   - 
   - 

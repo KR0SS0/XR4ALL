@@ -466,9 +466,9 @@ GameObject:
   - component: {fileID: 6602576465603543371}
   - component: {fileID: 2059300533188451521}
   - component: {fileID: 5586993300341866797}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos (8)
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -534,9 +534,9 @@ GameObject:
   - component: {fileID: 129465937095251118}
   - component: {fileID: 7265198774560239821}
   - component: {fileID: 3095412809369815640}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos (7)
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -602,9 +602,9 @@ GameObject:
   - component: {fileID: 7871496186093990059}
   - component: {fileID: 8017618026598169077}
   - component: {fileID: 3494519356305327194}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos (4)
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -709,9 +709,9 @@ GameObject:
   - component: {fileID: 3899014851505677298}
   - component: {fileID: 1438832189148911234}
   - component: {fileID: 7169215713768680539}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos (5)
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -777,9 +777,9 @@ GameObject:
   - component: {fileID: 8775291068684586397}
   - component: {fileID: 5576239587034555611}
   - component: {fileID: 1053472142886174142}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos (3)
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -845,9 +845,9 @@ GameObject:
   - component: {fileID: 5226567242054223212}
   - component: {fileID: 8227518665993101296}
   - component: {fileID: 2742899624717153190}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos (2)
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -913,9 +913,9 @@ GameObject:
   - component: {fileID: 6539950705460467074}
   - component: {fileID: 3633383393062363841}
   - component: {fileID: 4778820024654213107}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos (6)
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -981,9 +981,9 @@ GameObject:
   - component: {fileID: 2904432239040774971}
   - component: {fileID: 4317925108810630745}
   - component: {fileID: 691911719984832024}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pos
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

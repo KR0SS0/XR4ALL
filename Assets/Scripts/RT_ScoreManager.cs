@@ -13,9 +13,14 @@ public class RT_ScoreManager : MonoBehaviour
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highscoreText;
 
+    private AudioSource source;
+    [SerializeField] private AudioClip scoreClip;
+
     private void Start()
     {
         UpdateScoreUI();
+        source = GetComponent<AudioSource>();
+        source.clip = scoreClip;
     }
 
     public void IncrementScore(int scoreGain)
@@ -28,6 +33,8 @@ public class RT_ScoreManager : MonoBehaviour
             score += scoreGain;
         }
         UpdateScoreUI();
+
+        source.PlayOneShot(source.clip);
     }
 
     private void UpdateScoreUI()
