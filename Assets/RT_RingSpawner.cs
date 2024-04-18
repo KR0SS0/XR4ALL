@@ -7,6 +7,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class RT_RingSpawner : MonoBehaviour
 {
     public int ringCount = 10;
+    private int originalRingCount;
     public float timeToSpawn = 2f;
     private float timer = 0f;
     private bool isReadyToSpawn;
@@ -17,13 +18,14 @@ public class RT_RingSpawner : MonoBehaviour
 
     private XRGrabInteractable grabInteractable;
 
-    public
-        TMP_Text ringText;
+    public TMP_Text ringText;
+    public RT_GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
         ringText.text = "Rings remaining: " + ringCount;
+        originalRingCount = ringCount;
         SpawnNewRing();
     }
 
@@ -62,6 +64,9 @@ public class RT_RingSpawner : MonoBehaviour
 
             ringCount--;
             ringText.text = "Rings remaining: " + ringCount;
+        } else
+        {
+            gameManager.ResetGame();
         }
     }
 
@@ -83,6 +88,13 @@ public class RT_RingSpawner : MonoBehaviour
     bool IsGrabbed()
     {
         return grabInteractable.isSelected;
+    }
+
+    public void Reset()
+    {
+        ringCount = originalRingCount;
+        ringText.text = "Rings remaining: " + ringCount;
+        isReadyToSpawn = true;
     }
 
     private void OnTriggerStay(Collider other)
