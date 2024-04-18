@@ -16,6 +16,8 @@ public class RT_ScoreManager : MonoBehaviour
     private AudioSource source;
     [SerializeField] private AudioClip scoreClip;
 
+    private bool gotHighscore = false;
+
     private void Start()
     {
         UpdateScoreUI();
@@ -39,18 +41,25 @@ public class RT_ScoreManager : MonoBehaviour
 
     private void UpdateScoreUI()
     {
-        scoreText.text = "Score: " + score;
         if(score >= PlayerPrefs.GetInt("Highscore"))
         {
             PlayerPrefs.SetInt("Highscore", score);
-            highscoreText.text = "Highscore: " + PlayerPrefs.GetInt("Highscore");
+            gotHighscore = true;
         }
+        scoreText.text = "Score: " + score;
+        highscoreText.text = "Highscore: " + PlayerPrefs.GetInt("Highscore");
     }
 
     public void ResetScore()
     {
+        gotHighscore = false;
         score = 0;
         UpdateScoreUI();
+    }
+
+    public bool GotHighscore()
+    {
+        return gotHighscore;
     }
 
     private static RT_ScoreManager instance;
