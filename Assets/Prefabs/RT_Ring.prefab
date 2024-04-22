@@ -72,7 +72,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: b1e7c0843f4e4974b93dccc7c4e11b98, type: 3}
+  - {fileID: 2100000, guid: 3c33a72e1daed2e489499a44c684db3a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -109,7 +109,6 @@ MonoBehaviour:
   visualizer: {fileID: 2768844618159185063}
   rb: {fileID: 1627217311294930365}
   maxVelocityAllowedToScore: 0.01
-  scoreGain: 0
   hasScored: 0
   velocity: 0
 --- !u!114 &4159834954448629297
