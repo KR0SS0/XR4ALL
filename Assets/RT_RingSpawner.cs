@@ -26,7 +26,6 @@ public class RT_RingSpawner : MonoBehaviour
     {
         ringText.text = "Rings remaining: " + ringCount;
         originalRingCount = ringCount;
-        SpawnNewRing();
     }
 
     private void Update()
@@ -109,7 +108,15 @@ public class RT_RingSpawner : MonoBehaviour
     {
         if (other.CompareTag("RT_Ring"))
         {
-            isSpawnBlocked = false;
+            if(isReadyToSpawn)
+            {
+                isSpawnBlocked = false;
+            } else
+            {
+                currentRing.transform.position = gameObject.transform.position;
+                currentRing.transform.rotation = new Quaternion(0,0,0,0);
+            }
         }
+
     }
 }

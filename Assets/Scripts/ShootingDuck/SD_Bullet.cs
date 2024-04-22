@@ -9,9 +9,12 @@ public class SD_Bullet : MonoBehaviour
     private const string duckTag = "SD_Duck";
     private Vector3 direction;
 
+     private SD_GameAndScoreManager game;
+
     // Start is called before the first frame update
     void Start()
     {
+        game = FindObjectOfType<SD_GameAndScoreManager>();
         rb = GetComponent<Rigidbody>();
         StartMovement();
         StartCoroutine(DelayGravity()); 
@@ -29,6 +32,7 @@ public class SD_Bullet : MonoBehaviour
         if (collision.collider.CompareTag(duckTag))
         {
             Debug.Log("Duck bullet hit");
+            game.IncrementScore();
             collision.gameObject.GetComponent<SD_Duck>().KillDuck();
             rb.velocity = -direction * velocity * 0.4f;
             rb.useGravity = true;
