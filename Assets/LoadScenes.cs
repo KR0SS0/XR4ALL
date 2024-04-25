@@ -6,13 +6,22 @@ using UnityEngine.SceneManagement;
 
 public class LoadScenes : MonoBehaviour
 {
+
+    public static LoadScenes Instance { get; private set; }
+
     public int[] ScenesToLoadBuildIndex;
 
-    private void Start()
+    private void Awake()
     {
-        foreach(int i in ScenesToLoadBuildIndex)
+        Instance = this;
+    }
+
+    public void StartLoadScenes(GameObject destroy)
+    {
+        foreach (int i in ScenesToLoadBuildIndex)
         {
             SceneManager.LoadScene(i, LoadSceneMode.Additive);
         }
+        Destroy(destroy);
     }
 }
