@@ -6,10 +6,11 @@ using UnityEngine.Events;
 public class ButtonVR : MonoBehaviour
 {
     public GameObject button;
+    private AudioSource source;
     public UnityEvent onPress;
     public UnityEvent onRelease;
-    private AudioSource source;
     private bool isPressed = false;
+    private bool isHover = false;
 
     public float pressDistance = 0.01f;
 
@@ -18,6 +19,46 @@ public class ButtonVR : MonoBehaviour
     {
         source = GetComponent<AudioSource>();
     }
+
+    public void OnHoverOn()
+    {
+        isHover = true;
+    }
+
+    public void OnHoverOff()
+    {
+        isHover = false;
+    }
+
+    public void PressButton()
+    {
+        if(isHover)
+        {
+            if(!isPressed)
+            {
+                Debug.Log("Button pressed");
+                button.transform.position = new Vector3(button.transform.position.x, button.transform.position.y - pressDistance, button.transform.position.z);
+                onPress.Invoke();
+                source.PlayOneShot(source.clip);
+                isPressed = true;
+                StartCoroutine(Unpress());
+            }
+        }
+    }
+
+    private IEnumerator Unpress()
+    {
+        yield return new WaitForSeconds(1f);
+
+        Debug.Log("Button released");
+        button.transform.position = new Vector3(button.transform.position.x, button.transform.position.y + pressDistance, button.transform.position.z);
+        onRelease.Invoke();
+        isPressed = false;
+
+    }
+
+
+    /*
 
     private void OnTriggerEnter(Collider other)
     {
@@ -42,5 +83,7 @@ public class ButtonVR : MonoBehaviour
         isPressed = false;
         
     }
+
+    */
 
 }

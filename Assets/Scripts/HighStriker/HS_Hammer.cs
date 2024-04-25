@@ -26,8 +26,7 @@ public class HS_Hammer : MonoBehaviour
     public void OnRelease()
     {
         Debug.Log("Release");
-        Rigidbody rb = gameObject.GetComponent<Rigidbody>();
-        rb.isKinematic = true;
+        Rigidbody rb = gameObject.GetComponent<Rigidbody>();      
         transform.position = startTransform.position;
         transform.rotation = startTransform.rotation;
         //rb.isKinematic = false;

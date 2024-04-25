@@ -14,18 +14,23 @@ public class SD_Shotgun : MonoBehaviour
     [SerializeField] private AudioClip bulletClip;
     [SerializeField] private AudioClip reloadClip;
     [SerializeField] private AudioSource source;
-
-    [SerializeField] private InputActionReference[] shootActions;
     
     [SerializeField] private float timeToReload = 2f;
     private float reloadTimer = 0;
     private bool hasReloaded;
+
+    private Transform startTransform;
 
     private bool isGrabbing;
 
     private bool loop = true;
 
     [SerializeField] private SD_GameAndScoreManager game;
+
+    private void Start()
+    {
+        startTransform = transform;
+    }
 
     // Start is called before the first frame update
 
@@ -48,23 +53,8 @@ public class SD_Shotgun : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        for (int i = 0; i < shootActions.Length; i++)
-        {
-            shootActions[i].action.performed += OnShootActionStarted;
-        }
-    }
 
-    private void OnDisable()
-    {
-        for (int i = 0; i < shootActions.Length; i++)
-        {
-            shootActions[i].action.performed -= OnShootActionStarted;
-        }
-    }
-
-    private void OnShootActionStarted(InputAction.CallbackContext context)
+    public void ShootBullet()
     {
         Debug.Log("Shoot action triggered!");
         if(hasReloaded) {
@@ -137,5 +127,6 @@ public class SD_Shotgun : MonoBehaviour
     public void OnStopGrabbing()
     {
         isGrabbing = false;
+        transform.SetPositionAndRotation(startTransform.position, startTransform.rotation);
     }
 }
