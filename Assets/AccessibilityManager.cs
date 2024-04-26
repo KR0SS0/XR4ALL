@@ -35,7 +35,7 @@ public class AccessibilityManager : MonoBehaviour
             playerAccessibility.SetActive(true);
         } else
         {
-            playerAccessibility.SetActive(true);
+            playerNoAssist.SetActive(true);
         }
 
     }
