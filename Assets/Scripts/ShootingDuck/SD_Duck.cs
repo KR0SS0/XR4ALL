@@ -6,6 +6,7 @@ public class SD_Duck : MonoBehaviour
 {
     private Vector3 originalRotation;
     private Vector3 deadRotation = Vector3.forward * 90f;
+    private Vector3 turningRotation;
     [SerializeField] private float rotationTime = 0.35f;
     [SerializeField] private float respawnLowBoundTime = 1.2f;
     [SerializeField] private float respawnHighBoundTime = 2.4f;
@@ -13,7 +14,7 @@ public class SD_Duck : MonoBehaviour
     private float rotationSpeed;
     private float elapsedTime = 0f;
 
-    private enum DuckState { Idle, Killed, Dead, Respawning }
+    private enum DuckState { Idle, Spin, Killed, Dead, Respawning }
     private DuckState currentState = DuckState.Idle;
 
     [SerializeField] private float verticalFrequency = 1f;
@@ -25,22 +26,31 @@ public class SD_Duck : MonoBehaviour
 
     public float HorizontalPhase { get => horizontalPhase; set => horizontalPhase = value; }
 
+    [SerializeField]
+    private bool debug = false;
+    private bool isTurning = false;
 
     // Start is called before the first frame update
     void Start()
     {
         originalRotation = transform.rotation.eulerAngles;
         startPosition = transform.localPosition;
+        turningRotation = new Vector3(originalRotation.x, originalRotation.y + 180f, originalRotation.z);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+
         MoveInSinusoidalPattern();
+
         switch (currentState)
         {
             case DuckState.Idle:
                 Idle();
+                break;
+            case DuckState.Spin:
+                Spin();
                 break;
             case DuckState.Killed:
                 RotateToDeadPosition();
@@ -61,7 +71,42 @@ public class SD_Duck : MonoBehaviour
 
     private void Idle()
     {
+        if (IsAtLeftOrRightBound())
+        {
+            // If at the left or right bound, start turning
+            currentState = DuckState.Spin;
+            isTurning = true;
+        }
+    }
 
+    private void Spin()
+    {
+        if (isTurning)
+        {
+
+            Quaternion targetRotation = Quaternion.Euler(turningRotation);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 90f * Time.fixedDeltaTime);
+            
+            if (Quaternion.Angle(transform.rotation, targetRotation) < 0.1f)
+            {
+                isTurning = false;
+                float y = turningRotation.y + 180f;
+                y = Mathf.Repeat(y, 360f);
+                if(debug) Debug.Log("new y: " + y);
+                turningRotation =  new Vector3(turningRotation.x, y, turningRotation.z);
+                currentState = DuckState.Idle; // Transition back to Idle state
+            }
+            
+        }
+    }
+
+    private bool IsAtLeftOrRightBound()
+    {
+        float horizontalOffset = Mathf.Sin(Time.time * horizontalFrequency + horizontalPhase) * horizontalAmplitude;
+        float leftBound = startPosition.z - horizontalAmplitude;
+        float rightBound = startPosition.z + horizontalAmplitude;
+
+        return horizontalOffset - 0.01f <= leftBound || horizontalOffset + 0.01f >= rightBound;
     }
 
     private float CalculateRotationSpeed()
