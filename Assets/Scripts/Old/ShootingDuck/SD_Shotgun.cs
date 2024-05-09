@@ -21,10 +21,6 @@ public class SD_Shotgun : MonoBehaviour
 
     private Transform startTransform;
 
-    private bool isGrabbing;
-
-    private bool loop = true;
-
     [SerializeField] private SD_GameAndScoreManager game;
 
     private void Start()
@@ -100,10 +96,8 @@ public class SD_Shotgun : MonoBehaviour
 
     IEnumerator Timer()
     {
-        loop = false;
         yield return new WaitForSeconds(2f);
         ShootRaycast();
-        loop = true;
         yield return null;
     }
 
@@ -121,12 +115,10 @@ public class SD_Shotgun : MonoBehaviour
 
     public void OnStartGrabbing()
     {
-        isGrabbing = true;
     }
 
     public void OnStopGrabbing()
     {
-        isGrabbing = false;
         transform.SetPositionAndRotation(startTransform.position, startTransform.rotation);
     }
 }

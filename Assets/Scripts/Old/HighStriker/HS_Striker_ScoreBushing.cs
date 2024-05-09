@@ -15,7 +15,7 @@ public class HS_Striker_ScoreBushing : MonoBehaviour
 
     [SerializeField] private HS_Striker_Bell striker_Bell;
     [SerializeField] private HS_Striker_ScoreScreen scoreScreen;
-    private float forceModifier = 3.5f;
+    //private float forceModifier = 3.5f;
 
     // Start is called before the first frame update
     void Start()

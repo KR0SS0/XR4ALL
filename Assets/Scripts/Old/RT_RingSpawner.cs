@@ -49,8 +49,10 @@ public class RT_RingSpawner : MonoBehaviour
         {
             if(grabInteractable != null)
             {
+                /*
                 grabInteractable.onSelectEntered.RemoveAllListeners();
                 grabInteractable.onSelectExited.RemoveAllListeners();
+                */
             } 
 
             currentRing = Instantiate(ringPrefab, gameObject.transform.position, Quaternion.identity);
@@ -58,9 +60,10 @@ public class RT_RingSpawner : MonoBehaviour
             ringRigidbody = currentRing.GetComponent<Rigidbody>();
 
             grabInteractable = currentRing.GetComponent<XRGrabInteractable>();
+            /*
             grabInteractable.onSelectEntered.AddListener(OnGrab);
             grabInteractable.onSelectExited.AddListener(OnRelease);
-
+            */
             ringCount--;
             ringText.text = "Rings remaining: " + ringCount;
         } else

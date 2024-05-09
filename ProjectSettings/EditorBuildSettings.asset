@@ -6,13 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/StartScene.unity
+    path: Assets/Scenes/old/StartScene.unity
     guid: b86dad71d18a70d4588422a43aeeb107
   - enabled: 1
-    path: Assets/Scenes/ArduinoTest.unity
+    path: Assets/Scenes/old/ArduinoTest.unity
     guid: 1689642998574f84bbdcc4546cae5d5d
   - enabled: 1
-    path: Assets/Scenes/RingToss.unity
+    path: Assets/Scenes/old/RingToss.unity
     guid: 80dc1ddfd31fade469a241aa5e4907d9
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}
