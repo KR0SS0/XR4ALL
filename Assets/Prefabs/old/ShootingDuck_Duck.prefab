@@ -101,9 +101,10 @@ MonoBehaviour:
   respawnLowBoundTime: 1.2
   respawnHighBoundTime: 2.4
   verticalFrequency: 1.2
-  verticalAmplitude: 0.2
+  verticalAmplitude: 0.1
   horizontalFrequency: 0.15
   horizontalAmplitude: 2
+  debug: 0
 --- !u!64 &750978116699774926
 MeshCollider:
   m_ObjectHideFlags: 0

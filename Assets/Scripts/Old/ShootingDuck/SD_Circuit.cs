@@ -12,6 +12,7 @@ public class SD_Circuit : MonoBehaviour
     [SerializeField] private int duckAmount;
     [SerializeField] private float stageHeight;
     [SerializeField] private float stageWidth;
+    [SerializeField] private float gapLength = 0.1f;
     private int points;
 
     // Start is called before the first frame update
@@ -43,12 +44,13 @@ public class SD_Circuit : MonoBehaviour
                 transform.rotation, gameObject.transform);
 
             Vector3 localPosition = newDuck.transform.localPosition;
-            newDuck.transform.localPosition = new Vector3(0.1f * i, localPosition.y, localPosition.z);
+            newDuck.transform.localPosition = new Vector3(gapLength * i, localPosition.y, localPosition.z);
 
             newDuck.GetComponent<SD_Duck>().HorizontalPhase = RandomPhase();
+
         }
 
-
+        
         for (int i = -1; i < secondRow - 1; i++)
         {
             float yTargetPosition = transform.localPosition.y + stageHeight / 3;
@@ -58,10 +60,11 @@ public class SD_Circuit : MonoBehaviour
                 transform.rotation, gameObject.transform);
 
             Vector3 localPosition = newDuck.transform.localPosition;
-             newDuck.transform.localPosition = new Vector3(0.1f * i - 0.2f, localPosition.y, localPosition.z);
+             newDuck.transform.localPosition = new Vector3(gapLength * i - gapLength * 5, localPosition.y, localPosition.z);
 
             newDuck.GetComponent<SD_Duck>().HorizontalPhase = RandomPhase();
         }
+        
 
     }
 
