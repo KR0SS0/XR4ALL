@@ -6,12 +6,13 @@ public class TwoHitDrone : BaseDroneController
 {
 
     [SerializeField] private AudioClip destroyClipOverride;
+    private int baseHP = 2;
 
     // Start is called before the first frame update
     void Start()
     {
         OnStart();
-        hp = 2;
+        hp = baseHP;
         DestroyClip = destroyClipOverride;
     }
 

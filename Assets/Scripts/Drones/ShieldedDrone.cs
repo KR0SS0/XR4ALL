@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShieldedDrone : MonoBehaviour
+public class ShieldedDrone : BaseDroneController
 {
+    [SerializeField] private AudioClip destroyClipOverride;
+
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        OnStart();
     }
 
     // Update is called once per frame
@@ -15,4 +18,10 @@ public class ShieldedDrone : MonoBehaviour
     {
         
     }
+
+    protected override void HandleHit()
+    {
+        throw new System.NotImplementedException();
+    }
+
 }

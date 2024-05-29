@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
@@ -8,7 +9,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private float requiredSpeed = 1.0f;
     protected AudioClip destroyClip;
     protected AudioSource source;
-    protected int hp;
+    protected int hp = 1;
 
     protected void OnStart()
     {
@@ -61,7 +62,7 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         Debug.Log("Destroy drone");
         source.PlayOneShot(destroyClip);
-        // Destroy(gameObject);
+        PlayDestroyAnimation(1f);
     }
 
     protected abstract void HandleHit();
@@ -70,5 +71,16 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         get { return destroyClip; }
         set { destroyClip = value; }
+    }
+
+    protected void PlayDestroyAnimation(float animationTime)
+    {
+        StartCoroutine(DestroyAnimationTimer(animationTime));
+    }
+
+    IEnumerator DestroyAnimationTimer(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        Destroy(gameObject);
     }
 }

@@ -6,15 +6,12 @@ public class OneHitDrone : BaseDroneController
 {
     [SerializeField] private AudioClip destroyClipOverride;
 
-    public RequiredSwingDirection direction;
 
     // Start is called before the first frame update
     void Start()
     {
         OnStart();
-        hp = 1;
         DestroyClip = destroyClipOverride;
-        requiredDirection = direction;
     }
 
     // Update is called once per frame
