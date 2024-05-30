@@ -7,8 +7,8 @@ public abstract class BaseDroneController : MonoBehaviour
 {
     protected enum StateMachine { Spawn, Idle, Moving, Attacking, Destroy}
 
-    private StateMachine state;
-    protected StateMachine newState;
+    protected StateMachine state;
+    private StateMachine newState;
     protected RequiredSwingDirection requiredDirection;
     private float requiredSpeed = 1.0f;
     protected AudioClip destroyClip;
@@ -32,7 +32,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out LightsaberController lightsaber))
+        if (other.TryGetComponent(out LightsaberController lightsaber) && state != StateMachine.Destroy)  
         {
             Debug.Log("Drone found saber in trigger");
             Vector3 swingDirection = lightsaber.GetSwingDirection();
@@ -76,6 +76,9 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         if (state == newState) return;
 
+        state = newState;
+
+        Debug.Log("New State updated to: " +  state);
 
         switch(state)
         {
@@ -128,7 +131,8 @@ public abstract class BaseDroneController : MonoBehaviour
 
     protected void DestroyDrone() 
     {
-        Debug.Log("Destroy drone");
+        StopAllCoroutines();
+
         source.PlayOneShot(destroyClip);
 
         if (!vfx_Manager.IsParticleSystemDone)
@@ -138,7 +142,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
         vfx_Manager.PlayVFX(VFX_Type.Destroy);
 
-        SwitchState(0.1f, StateMachine.Destroy);
+        SwitchState(0f, StateMachine.Destroy);
 
         PlayDestroyAnimation(deathAnimationTime);
     }

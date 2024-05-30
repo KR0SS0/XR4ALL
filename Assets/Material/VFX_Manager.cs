@@ -17,6 +17,8 @@ public class VFX_Manager : MonoBehaviour
     private bool isPlayingVFX;
     private VFX_Type currentType = VFX_Type.Idle;
 
+    [SerializeField] private List<Material> deathMaterials;
+
     void Start()
     {
         shaderProperty = Shader.PropertyToID("_Cutoff");
@@ -67,6 +69,9 @@ public class VFX_Manager : MonoBehaviour
         timer = 0;
         isPlayingVFX = true;
         GetParticleSystem((int) type);
+
+        if (type == VFX_Type.Destroy) ChangeMaterials();
+
         currentType = type;
     }
 
@@ -88,6 +93,11 @@ public class VFX_Manager : MonoBehaviour
         {
             material.SetFloat(shaderProperty, value);
         }
+    }
+
+    private void ChangeMaterials()
+    {
+        _renderer.SetMaterials(deathMaterials);
     }
 
     public void InterruptParticleSystems()
