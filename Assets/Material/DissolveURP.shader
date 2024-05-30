@@ -1,12 +1,18 @@
+
 Shader "Custom/DissolveURP"
 {
     Properties
     {
         _Color("Color", Color) = (1,1,1,1)
         _MainTex("Albedo", 2D) = "white" {}
+        _Metallic("Metallic", Range(0,1)) = 0.0
         _NoiseTex("Noise", 2D) = "white" {}
         _Cutoff("Cutoff", Range(0,1)) = 0.0
+        [Toggle(_EMISSIVE)] _UseEmissive("Use Emissive", Float) = 0.0
+        _EmissiveColor("Emissive Color", Color) = (1,1,1,1)
+        _EmissiveIntensity("Emissive Intensity", Range(0,5)) = 1.0
     }
+
     SubShader
     {
         Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
@@ -18,6 +24,7 @@ Shader "Custom/DissolveURP"
             #pragma vertex vert
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #pragma shader_feature _EMISSIVE
 
             struct Attributes
             {
@@ -36,6 +43,9 @@ Shader "Custom/DissolveURP"
             sampler2D _NoiseTex;
             float4 _Color;
             float _Cutoff;
+            float _Metallic;
+            float4 _EmissiveColor;
+            float _EmissiveIntensity;
 
             Varyings vert(Attributes input)
             {
@@ -54,7 +64,16 @@ Shader "Custom/DissolveURP"
                 if (noise < _Cutoff)
                     discard;
 
-                return albedo;
+                half4 color = albedo;
+
+                // Apply metallic effect
+                color.rgb = lerp(color.rgb, float3(0.04, 0.04, 0.04), _Metallic);
+
+                #ifdef _EMISSIVE
+                color.rgb += _EmissiveColor.rgb * _EmissiveIntensity;
+                #endif
+
+                return color;
             }
             ENDHLSL
         }

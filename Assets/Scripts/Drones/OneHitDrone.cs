@@ -6,7 +6,6 @@ public class OneHitDrone : BaseDroneController
 {
     [SerializeField] private AudioClip destroyClipOverride;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +16,7 @@ public class OneHitDrone : BaseDroneController
     // Update is called once per frame
     void Update()
     {
-        
+        HandleState();
     }
 
     protected override void HandleHit()
