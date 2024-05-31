@@ -8,6 +8,8 @@ public class DroneController : MonoBehaviour
 
     [SerializeField] private AudioSource source;
     [SerializeField] private AudioClip destroyClip;
+    [SerializeField] private AudioSource sourceLightsaber;
+    [SerializeField] private AudioClip lightsaberHitClip;
 
     private void OnTriggerEnter(Collider other)
     {
