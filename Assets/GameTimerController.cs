@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameTimerController : MonoBehaviour
@@ -10,37 +9,83 @@ public class GameTimerController : MonoBehaviour
     private string initialTimerText;
     private float timer;
 
+    private static GameTimerController instance;
+    public static GameTimerController Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<GameTimerController>();
+                if (instance == null)
+                {
+                    GameObject singleton = new GameObject(typeof(GameTimerController).ToString());
+                    instance = singleton.AddComponent<GameTimerController>();
+                    DontDestroyOnLoad(singleton);
+
+                    // This ensures that the timerText is not null if we create the singleton at runtime.
+                    instance.timerText = singleton.AddComponent<TMP_Text>();
+                    instance.timerText.enabled = false;  // Ensure the timerText is initially hidden.
+                }
+            }
+            return instance;
+        }
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        } else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
-        initialTimerText = timerText.text;
+        initialTimerText = timerText != null ? timerText.text : "";
     }
 
     private void Update()
     {
-        if(GameManager.Instance == null)
+        if (GameManager.Instance == null)
         {
             return;
         }
 
-        if(GameManager.Instance.CurrentState == GameManager.GameState.WaitingToStart ) 
+        if (GameManager.Instance.CurrentState == GameManager.GameState.WaitingToStart)
         {
             timer = 0;
-            timerText.enabled = false;
-        } 
-        else if (GameManager.Instance.CurrentState == GameManager.GameState.Active) 
+            if (timerText != null)
+            {
+                timerText.enabled = false;
+            }
+        } else if (GameManager.Instance.CurrentState == GameManager.GameState.Active)
         {
             timer += Time.deltaTime;
-            timerText.enabled = true;
-        } 
-        else if (GameManager.Instance.CurrentState == GameManager.GameState.GameOver)
+            if (timerText != null)
+            {
+                timerText.enabled = true;
+            }
+        } else if (GameManager.Instance.CurrentState == GameManager.GameState.GameOver)
         {
-            //
+            // Handle GameOver state if necessary
         }
 
         UpdateTimerDisplay();
     }
 
     private void UpdateTimerDisplay()
+    {
+        if (timerText == null) return;
+
+        timerText.text = initialTimerText + GetTimerFormatText();
+    }
+
+    public string GetTimerFormatText()
     {
         int hours = Mathf.FloorToInt(timer / 3600);
         int minutes = Mathf.FloorToInt((timer % 3600) / 60);
@@ -49,16 +94,20 @@ public class GameTimerController : MonoBehaviour
 
         if (hours > 0)
         {
-            timerText.text = initialTimerText + string.Format("{0}h {1}m {2}.{3}s", hours, minutes, seconds, tenths);
+            return string.Format("{0}h {1}m {2}.{3}s", hours, minutes, seconds, tenths);
         } 
         else if (minutes > 0)
         {
-            timerText.text = initialTimerText + string.Format("{0}m {1}.{2}s", minutes, seconds, tenths);
+            return string.Format("{0}m {1}.{2}s", minutes, seconds, tenths);
         } 
         else
         {
-            timerText.text = initialTimerText + string.Format("{0}.{1}s", seconds, tenths);
+            return string.Format("{0}.{1}s", seconds, tenths);
         }
     }
-}
 
+    public float GetTimer()
+    {
+        return timer;
+    }
+}
