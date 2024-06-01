@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-
     public TMP_Text waitingToStartText;
 
     // Enum for the game states
@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     }
 
     private InputAction anyInputAction;
+    private InputAction debugCycleStateAction;
 
     void Start()
     {
@@ -53,8 +54,15 @@ public class GameManager : MonoBehaviour
         anyInputAction.AddBinding("<Mouse>/press");
         anyInputAction.AddBinding("<Gamepad>/buttonSouth");
         anyInputAction.AddBinding("<XRController>/triggerPressed");
+        anyInputAction.AddBinding("<XRController>/gripPressed");
+        anyInputAction.AddBinding("<XRController>/primaryButton");
+        anyInputAction.AddBinding("<XRController>/secondaryButton");
         anyInputAction.performed += ctx => OnAnyInput();
         anyInputAction.Enable();
+
+        debugCycleStateAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/d");
+        debugCycleStateAction.performed += ctx => CycleGameState();
+        debugCycleStateAction.Enable();
     }
 
     public void SetGameState(GameState newState)
@@ -74,6 +82,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void CycleGameState()
+    {
+        switch (currentState)
+        {
+            case GameState.WaitingToStart:
+            StartGame();
+            break;
+            case GameState.Active:
+            EndGame();
+            break;
+            case GameState.GameOver:
+            SetGameState(GameState.WaitingToStart);
+            break;
+        }
+    }
+
     public void WaitToStartGame()
     {
         waitingToStartText.enabled = true;
@@ -84,12 +108,14 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.Active);
         waitingToStartText.enabled = false;
+        GameOverController.Instance.HideGameOverScreen();
     }
 
     // Method to end the game
     public void EndGame()
     {
         SetGameState(GameState.GameOver);
+        GameOverController.Instance.ShowGameOverScreen();
     }
 
     private void OnAnyInput()
