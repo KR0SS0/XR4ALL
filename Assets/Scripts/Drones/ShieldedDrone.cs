@@ -11,12 +11,8 @@ public class ShieldedDrone : BaseDroneController
     void Start()
     {
         OnStart();
-    }
+        DestroyClip = destroyClipOverride;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     protected override void HandleHit()

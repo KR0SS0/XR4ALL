@@ -12,12 +12,8 @@ public class DirectionalHitDrone : BaseDroneController
     {
         OnStart();
         requiredDirection = direction;
-    }
+        DestroyClip = destroyClipOverride;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     protected override void HandleHit()

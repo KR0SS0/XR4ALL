@@ -5824,6 +5824,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sword: {fileID: 1031471818}
   shield: {fileID: 1135171349}
+--- !u!4 &452463686 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4134505312059479865, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+  m_PrefabInstance: {fileID: 452463679}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &477799623
 GameObject:
   m_ObjectHideFlags: 0
@@ -16591,6 +16596,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyClipOverride: {fileID: 8300000, guid: eb11d497a98111b46baf21568dce6a89, type: 3}
+  player: {fileID: 452463686}
 --- !u!4 &1386427179
 Transform:
   m_ObjectHideFlags: 0
@@ -16600,7 +16606,7 @@ Transform:
   m_GameObject: {fileID: 1386427176}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.005, y: 1.265, z: 1.296}
+  m_LocalPosition: {x: 10.04, y: 1.265, z: 4.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
