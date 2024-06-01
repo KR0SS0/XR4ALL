@@ -19,8 +19,13 @@ public abstract class BaseDroneController : MonoBehaviour
     protected int hp = 1;
     protected VFX_Manager vfx_Manager;
     private Rigidbody rb;
+    private MeshCollider meshCollider;
 
-    protected Transform playerTransform;
+    private Transform playerTransform;
+    private Transform bulletSpawnLocation;
+    protected GameObject bullet;
+
+    private Vector3 startDirectionOffset;
     private float movementSpeed = 3.5f;
     private float maxAmplitude = 25f;
     private float minAmplitude = 5f;
@@ -36,6 +41,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private Quaternion targetRotation;
     private Quaternion initialRotation;
 
+
     protected void OnStart()
     {
         state = StateMachine.Spawn;
@@ -43,10 +49,13 @@ public abstract class BaseDroneController : MonoBehaviour
         SwitchState(spawnAnimationTime, StateMachine.Idle);
 
         rb = GetComponent<Rigidbody>();
+        meshCollider = GetComponentInChildren<MeshCollider>();
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
         source = GetComponent<AudioSource>();
         vfx_Manager = GetComponentInChildren<VFX_Manager>();
         vfx_Manager.PlayVFX(VFX_Type.Spawn);
+        bulletSpawnLocation = vfx_Manager.GetBulletSpawnLocation();
     }
 
     private void Update()
@@ -69,7 +78,7 @@ public abstract class BaseDroneController : MonoBehaviour
         }
     }
 
-    protected bool IsValidSwing(Vector3 direction, float speed)
+    private bool IsValidSwing(Vector3 direction, float speed)
     {
         Debug.Log("Speed: " + speed);
 
@@ -96,7 +105,7 @@ public abstract class BaseDroneController : MonoBehaviour
         }
     }
 
-    protected void HandleState()
+    private void HandleState()
     {
         if (state != newState)
         {
@@ -154,7 +163,6 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnEnterIdle()
     {
-        Debug.Log("rotation updated");
         initialRotation = transform.rotation;
         float y = Quaternion.LookRotation(playerTransform.position - transform.position).eulerAngles.y;
         targetRotation = Quaternion.Euler(0f, y, 0f);
@@ -183,16 +191,21 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnEnterMoving()
     {
+        // Set a random start direction offset (example: random direction in the XZ plane)
+        float randomAngle = Random.Range(-30f, 30f);
+        startDirectionOffset = new Vector3(Mathf.Cos(randomAngle), 0f, Mathf.Sin(randomAngle));
 
+        // Optionally scale the offset if needed
+        //startDirectionOffset *= initialOffsetMagnitude;
     }
 
     private void MovingUpdate()
     {
         if (playerTransform == null) { Debug.LogWarning("Player null"); return; }
 
-        Debug.Log("Moving towards player");
+        //Debug.Log("Moving towards player");
 
-        Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
+        Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized + startDirectionOffset;
         directionToPlayer.y = 0;
         distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
         float currentAmplitude = Mathf.Lerp(maxAmplitude, minAmplitude, 1f - (distanceToPlayer / 100f));
@@ -219,7 +232,6 @@ public abstract class BaseDroneController : MonoBehaviour
     private void OnEnterAttack()
     {
         attackState = AttackState.Braking;
-
     }
 
     private void AttackingUpdate()
@@ -258,16 +270,20 @@ public abstract class BaseDroneController : MonoBehaviour
     private IEnumerator ChargeAttack()
     {
         Debug.Log("Start charging attack!");
+        vfx_Manager.PlayVFX(VFX_Type.ChargeAttack);
         yield return new WaitForSeconds(2f);
+        Instantiate(bullet, bulletSpawnLocation.position, bulletSpawnLocation.rotation);
+        attackState = AttackState.Attacking;
         Debug.Log("Pew pew!");
         isChargingAttack = false;
-        attackState = AttackState.Attacking;
+        yield return null;
     }
 
-    protected void OnEnterDestroy() 
+    private void OnEnterDestroy() 
     {
         StopAllCoroutines();
 
+        meshCollider.enabled = false;
         source.PlayOneShot(destroyClip);
 
         if (!vfx_Manager.IsParticleSystemDone)
@@ -283,8 +299,12 @@ public abstract class BaseDroneController : MonoBehaviour
     }
 
     private void DestroyUpdate() 
-    { 
-
+    {
+        rb.velocity *= 0.98f;
+        if (rb.velocity.magnitude < 0.1f)
+        {
+            rb.velocity = Vector3.zero;
+        }
     }
 
     protected abstract void HandleHit();
@@ -295,7 +315,7 @@ public abstract class BaseDroneController : MonoBehaviour
         set { destroyClip = value; }
     }
 
-    protected void PlayDestroyAnimation(float animationTime)
+    private void PlayDestroyAnimation(float animationTime)
     {
         StartCoroutine(DestroyAnimationTimer(animationTime));
     }
@@ -306,7 +326,7 @@ public abstract class BaseDroneController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void SwitchState(float time, StateMachine newState)
+    protected void SwitchState(float time, StateMachine newState)
     {
         StartCoroutine(SwitchStateTimer(time, newState));
     }

@@ -22,7 +22,7 @@ public class TwoHitDrone : BaseDroneController
 
         if(hp <= 0)
         {
-            //base.DestroyDrone();
+            SwitchState(0f, StateMachine.Destroy);
         }
 
         else
