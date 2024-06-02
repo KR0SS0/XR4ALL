@@ -16,19 +16,13 @@ public class TwoHitDrone : BaseDroneController
         DestroyClip = destroyClipOverride;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     protected override void HandleHit()
     {
         hp--;
 
         if(hp <= 0)
         {
-            base.DestroyDrone();
+            SwitchState(0f, StateMachine.Destroy);
         }
 
         else
