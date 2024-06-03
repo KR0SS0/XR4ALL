@@ -2,14 +2,15 @@ using System.Collections;
 using UnityEngine;
 
 public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
+public enum DroneType { OneHit, TwoHits, Armored, Directional}
 
 public abstract class BaseDroneController : MonoBehaviour
 {
-    protected enum StateMachine { Spawn, Idle, Moving, Attacking, Destroy}
+    protected enum StateMachine { Spawn, Idle, Moving, Attacking, Destroy, Stunned}
     private enum AttackState { Braking, Charging, Attacking }
     private AttackState attackState = AttackState.Braking;
     private bool isChargingAttack = false;
-
+    protected DroneType droneType;
     protected StateMachine state;
     private StateMachine newState;
     protected RequiredSwingDirection requiredDirection;
@@ -17,7 +18,7 @@ public abstract class BaseDroneController : MonoBehaviour
     protected AudioClip destroyClip;
     protected AudioSource source;
     protected int hp = 1;
-    protected VFX_Manager vfx_Manager;
+    private VFX_Manager vfx_Manager;
     private Rigidbody rb;
     private MeshCollider meshCollider;
 
@@ -35,6 +36,8 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private float spawnAnimationTime = 4.2f;
     private float deathAnimationTime = 5.2f;
+    private float stunnedAnimationTime = 0.5f;
+    private float stunnedTimer = 0f;
 
     private float rotationTime = 2f;
     private float rotationElapsedTime = 0.0f;
@@ -54,6 +57,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
         source = GetComponent<AudioSource>();
         vfx_Manager = GetComponentInChildren<VFX_Manager>();
+        vfx_Manager.DroneType = droneType;
         vfx_Manager.PlayVFX(VFX_Type.Spawn);
         bulletSpawnLocation = vfx_Manager.GetBulletSpawnLocation();
     }
@@ -129,6 +133,10 @@ public abstract class BaseDroneController : MonoBehaviour
                 case StateMachine.Destroy:
                     OnEnterDestroy();
                     break;
+
+                case StateMachine.Stunned:
+                    OnEnterStunned();
+                    break;
             }
         }
 
@@ -153,8 +161,12 @@ public abstract class BaseDroneController : MonoBehaviour
             case StateMachine.Destroy:
                 DestroyUpdate();
                 break;
+            case StateMachine.Stunned:
+                StunnedUpdate();
+                break;
         }
     }
+
 
     private void SpawnUpdate()
     {
@@ -295,16 +307,33 @@ public abstract class BaseDroneController : MonoBehaviour
 
         SwitchState(0f, StateMachine.Destroy);
 
-        PlayDestroyAnimation(deathAnimationTime);
+        StartDestroyTimer(deathAnimationTime);
     }
 
-    private void DestroyUpdate() 
+    private void DestroyUpdate()
+    {
+        Decerlerate();
+    }
+
+    private void Decerlerate()
     {
         rb.velocity *= 0.98f;
         if (rb.velocity.magnitude < 0.1f)
         {
             rb.velocity = Vector3.zero;
         }
+    }
+
+    private void OnEnterStunned()
+    {
+        GetComponentInChildren<AnimatorManager>().PlayStunnedAnimation();
+        vfx_Manager.PlayVFX(VFX_Type.Stunned);
+        SwitchState(stunnedAnimationTime, StateMachine.Idle);
+    }
+
+    private void StunnedUpdate()
+    {
+        Decerlerate();
     }
 
     protected abstract void HandleHit();
@@ -315,12 +344,17 @@ public abstract class BaseDroneController : MonoBehaviour
         set { destroyClip = value; }
     }
 
-    private void PlayDestroyAnimation(float animationTime)
+    public float Velocity
     {
-        StartCoroutine(DestroyAnimationTimer(animationTime));
+        get { return rb.velocity.magnitude; }
     }
 
-    IEnumerator DestroyAnimationTimer(float waitTime)
+    private void StartDestroyTimer(float animationTime)
+    {
+        StartCoroutine(DestroyTimer(animationTime));
+    }
+
+    IEnumerator DestroyTimer(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         Destroy(gameObject);

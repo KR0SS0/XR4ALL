@@ -27,10 +27,11 @@ public class LightsaberController : MonoBehaviour
     {
         Vector3 currentPosition;
 
+        currentVelocity = (transform.position - previousPosition) / Time.deltaTime;
+        previousPosition = transform.position;
+
         if (controller.TryGetFeatureValue(CommonUsages.devicePosition, out currentPosition))
         {
-            currentVelocity = (currentPosition - previousPosition) / Time.deltaTime;
-            previousPosition = currentPosition;
         }
         PlaySwingSound();
     }
