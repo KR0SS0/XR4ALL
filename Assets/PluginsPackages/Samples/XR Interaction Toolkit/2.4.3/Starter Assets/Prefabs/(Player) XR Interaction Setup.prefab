@@ -189,8 +189,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4134505312059479865}
   m_Layer: 0
-  m_Name: XR Interaction Setup
-  m_TagString: Untagged
+  m_Name: (Player) XR Interaction Setup
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
