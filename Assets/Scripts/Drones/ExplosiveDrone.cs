@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OneHitDrone : BaseDroneController
+public class ExplosiveDrone : BaseDroneController
 {
+
     [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
 
     private void Awake()
     {
-        droneType = DroneType.OneHit;       
+        droneType = DroneType.Explosive;
     }
 
     // Start is called before the first frame update
@@ -20,9 +21,10 @@ public class OneHitDrone : BaseDroneController
         OnStart();
     }
 
+
+
     protected override void HandleHit()
     {
-        hp--;
-        SwitchState(0f, StateMachine.Destroy);
+        throw new System.NotImplementedException();
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
-public enum DroneType { OneHit, TwoHits, Armored, Directional}
+public enum DroneType { OneHit, TwoHits, Armored, Directional, Explosive}
 
 public abstract class BaseDroneController : MonoBehaviour
 {
