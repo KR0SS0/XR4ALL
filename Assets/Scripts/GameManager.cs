@@ -50,8 +50,7 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.WaitingToStart);
 
-        anyInputAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/anyKey");
-        anyInputAction.AddBinding("<Mouse>/press");
+        anyInputAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/enter");
         anyInputAction.AddBinding("<Gamepad>/buttonSouth");
         anyInputAction.AddBinding("<XRController>/triggerPressed");
         anyInputAction.AddBinding("<XRController>/gripPressed");
