@@ -1,52 +1,92 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
-public enum VFX_Type { Spawn, Destroy, ChargeAttack, Idle }
+public enum VFX_Type { Spawn, Destroy, ChargeAttack, Stunned, Idle }
 
 public class VFX_Manager : MonoBehaviour
 {
-    private float effectTime;
+    private float effectTime = 2f;
     public AnimationCurve fadeIn;
-
-    private Renderer _drone_renderer;
-    private Renderer _ball_renderer;
     [SerializeField] private GameObject[] VFX_objs;
     private ParticleSystem[] particleSystems;
     private float timer = 0;
-    private int shaderProperty;
+    private int droneShaderProperty;
+    private int ballShaderProperty;
+    private int sphereShaderProperty;
     private bool isPlayingVFX;
     private VFX_Type currentType = VFX_Type.Idle;
-    private const string DRONE_PATH = "SM_CYBER_Drone";
+    private DroneType droneType;
+    private Material[] droneMaterials;
+    private Material ballMaterial;
+    private Material sphereMaterial;
+    private Renderer _droneRenderer;
+    private AnimationCurve stunnedAnimation;
+    private bool isSphereDisabled = false;
 
-    [SerializeField] private List<Material> deathMaterials;
+    [SerializeField] private Material[] deathMaterials;
 
-    void Start()
+    void Awake()
     {
-        _drone_renderer = GetComponentInParent<Renderer>();
-        _ball_renderer = VFX_objs[2].GetComponentInChildren<Renderer>();
-        shaderProperty = Shader.PropertyToID("_Cutoff");
+
+        DeactivateAllVFX(false);
+        //Debug.Log(droneType.ToString());    
+
         isPlayingVFX = false;
-        effectTime = 2f;
-        DeactivateAllVFX();
+    }
+
+    private void Start()
+    {
+
+        droneShaderProperty = Shader.PropertyToID("_Cutoff");
+        ballShaderProperty = Shader.PropertyToID("Anim");
+        sphereShaderProperty = Shader.PropertyToID("_AlphaIntensity");
+
+        _droneRenderer = GetComponentInParent<Renderer>();
+        droneMaterials = _droneRenderer.materials;
+        ballMaterial = VFX_objs[2].GetComponentInChildren<Renderer>().material;
+
+        if (VFX_objs.Length > 3)
+        {
+            sphereMaterial = VFX_objs[3].GetComponent<Renderer>().material;
+            //Debug.Log(_sphere_shield_renderer.name);
+        }
+
 
     }
 
     private void GetParticleSystem(int type)
     {
-        if(type < VFX_objs.Length)
+        switch (type)
         {
-            VFX_objs[type].SetActive(true);
-            particleSystems = VFX_objs[type].GetComponentsInChildren<ParticleSystem>();
-            particleSystems[0].Play();
+            case 0:
+            case 1:
+            case 2:
+                VFX_objs[type].SetActive(true);
+
+                Debug.Log("Setting active: " + VFX_objs[type].name + " with length: " + VFX_objs.Length);
+
+                particleSystems = VFX_objs[type].GetComponentsInChildren<ParticleSystem>();
+
+                particleSystems[0].Play();
+                break;
         }
     }
 
-    private void DeactivateAllVFX()
+    private void DeactivateAllVFX(bool deactivateSphere)
     {
         foreach(GameObject obj in VFX_objs)
         {
-            obj.SetActive(false);
+            if (obj.name != "SphereShield") 
+            { 
+                obj.SetActive(false);
+            }
+        }
+
+        if (deactivateSphere)
+        {
+            VFX_objs[3].SetActive(false);
         }
     }
 
@@ -68,6 +108,10 @@ public class VFX_Manager : MonoBehaviour
                     ChargeVFX();
                     break;
 
+                case VFX_Type.Stunned:
+                    StunVFX();
+                    break;
+
                 default: break;
             }
 
@@ -75,11 +119,12 @@ public class VFX_Manager : MonoBehaviour
        
         }   
         
-        else if (timer > effectTime)
+        else if (timer > effectTime && isPlayingVFX)
         {
-            isPlayingVFX = false;
             currentType = VFX_Type.Idle;
-            DeactivateAllVFX();
+            Debug.Log("Deactivate vfx called in update");
+            DeactivateAllVFX(isSphereDisabled);
+            isPlayingVFX = false;
         }
 
         //if (currentType == VFX_Type.Idle) Debug.Log("Now Idle");
@@ -91,40 +136,70 @@ public class VFX_Manager : MonoBehaviour
         isPlayingVFX = true;
         GetParticleSystem((int) type);
 
-        if (type == VFX_Type.Destroy) ChangeMaterials();
+        switch (type)
+        {
+            case VFX_Type.Destroy:
+                effectTime = 2f;
+                ChangeMaterials();
+                break;
+
+            case VFX_Type.Stunned:
+                effectTime = 0.5f;
+                isSphereDisabled = true;
+                break;
+
+            default :
+                effectTime = 2f;
+                break;
+
+        }
 
         currentType = type;
+    }
+
+    private void StunVFX()
+    {
+        float value = stunnedAnimation.Evaluate(Mathf.InverseLerp(0, effectTime, timer));
+        Debug.Log("Stun value: " + value);
+        sphereMaterial.SetFloat(sphereShaderProperty, value);
     }
 
     private void SpawnVFX()
     {
         float value = fadeIn.Evaluate(1 - Mathf.InverseLerp(0, effectTime, timer));
-        SetFloatValueToMaterial(value);
+        SetFloatValueToDroneMaterials(value);
+
+        if(droneType == DroneType.TwoHits && sphereMaterial != null)
+        {
+            //Debug.Log(sphereMaterial.name + sphereMaterial.GetFloat(sphereShaderProperty));
+            sphereMaterial.SetFloat(sphereShaderProperty, 1 - value);
+        }
     }
 
     private void DestroyVFX()
     {  
         float value = fadeIn.Evaluate(Mathf.InverseLerp(0, effectTime, timer));
-        SetFloatValueToMaterial(value);
+        SetFloatValueToDroneMaterials(value);
     }
 
     private void ChargeVFX()
     {
         float value = fadeIn.Evaluate(1 - Mathf.InverseLerp(0, effectTime, timer));
-        _ball_renderer.material.SetFloat("Anim", value);
+        ballMaterial.SetFloat(ballShaderProperty, value);
     }
 
-    private void SetFloatValueToMaterial(float value)
+    private void SetFloatValueToDroneMaterials(float value)
     {
-        foreach (Material material in _drone_renderer.materials)
+        foreach (Material material in droneMaterials)
         {
-            material.SetFloat(shaderProperty, value);
+            material.SetFloat(droneShaderProperty, value);
         }
     }
 
     private void ChangeMaterials()
     {
-        _drone_renderer.SetMaterials(deathMaterials);
+        _droneRenderer.materials = deathMaterials;
+        droneMaterials = deathMaterials;
     }
 
     public void InterruptParticleSystems()
@@ -134,7 +209,7 @@ public class VFX_Manager : MonoBehaviour
             ps.Stop();
         }
 
-        SetFloatValueToMaterial(1f);
+        SetFloatValueToDroneMaterials(0f);
     }
 
     public bool IsParticleSystemDone
@@ -157,6 +232,9 @@ public class VFX_Manager : MonoBehaviour
             return true; 
         }
     }
+
+    public DroneType DroneType { set => droneType = value; }
+    public AnimationCurve StunnedAnimation { get => stunnedAnimation; set => stunnedAnimation = value; }
 
     public Transform GetBulletSpawnLocation()
     {

@@ -55,7 +55,7 @@ Shader "Ultimate 10+ Shaders/Force Field"
         LOD 100
         Cull Back
         Lighting Off
-        ZWrite On
+        ZWrite Off
 
         Pass
         {
