@@ -8,6 +8,9 @@ public class ExplosiveDrone : BaseDroneController
     [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
     [SerializeField] private bool forceDestroy = false;
+    [SerializeField] private float chargeExplosionDuration = 1.5f;
+
+    public float ChargeExplosionDuration { get => chargeExplosionDuration;}
 
     private void Awake()
     {
@@ -30,16 +33,21 @@ public class ExplosiveDrone : BaseDroneController
             HandleHit();
             forceDestroy = false;
         }
-
-        if(state == StateMachine.Attacking)
-        {
-            SwitchState(0f, StateMachine.Destroy);
-        }
     }
 
     protected override void HandleHit()
     {
         hp--;
         SwitchState(0f, StateMachine.Destroy);
+        Debug.Log("Explosion by being attacked");
+    }
+
+
+    protected override IEnumerator Attack()
+    {
+        yield return new WaitForSeconds(chargeExplosionDuration);
+        SwitchState(0f, StateMachine.Destroy);
+        Debug.Log("Explosion by attacking");
+        yield return null;
     }
 }

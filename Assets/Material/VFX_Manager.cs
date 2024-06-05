@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public enum VFX_Type { Spawn, Destroy, ChargeAttack, Stunned, Idle }
 
 public class VFX_Manager : MonoBehaviour
 {
-    private float effectTime = 2f;
+    private float effectTime = 2.2f;
     public AnimationCurve fadeIn;
     [SerializeField] private GameObject[] VFX_objs;
     private ParticleSystem[] particleSystems;
@@ -15,6 +14,7 @@ public class VFX_Manager : MonoBehaviour
     private int droneShaderProperty;
     private int ballShaderProperty;
     private int sphereShaderProperty;
+    private int emissiveShaderProperty;
     private bool isPlayingVFX;
     private VFX_Type currentType = VFX_Type.Idle;
     private DroneType droneType;
@@ -24,6 +24,12 @@ public class VFX_Manager : MonoBehaviour
     private Renderer _droneRenderer;
     private AnimationCurve stunnedAnimation;
     [SerializeField] private Texture2D noiseMap;
+    private float startExplosiveLightIntensity;
+    private float endExplosiveLightIntensity;
+    private float spawnTime;
+    private float deathTime;
+    private float chargeTime;
+    private float stunTime;
 
     //[SerializeField] private Material[] deathMaterials;
 
@@ -40,8 +46,9 @@ public class VFX_Manager : MonoBehaviour
     {
 
         droneShaderProperty = Shader.PropertyToID("_Cutoff");
-        ballShaderProperty = Shader.PropertyToID("Anim");
+        ballShaderProperty = Shader.PropertyToID("_Anim");
         sphereShaderProperty = Shader.PropertyToID("_AlphaIntensity");
+        emissiveShaderProperty = Shader.PropertyToID("_EmissiveIntensity");
 
         _droneRenderer = GetComponentInParent<Renderer>();
         droneMaterials = _droneRenderer.materials;
@@ -53,25 +60,26 @@ public class VFX_Manager : MonoBehaviour
             //Debug.Log(_sphere_shield_renderer.name);
         }
 
-
+        if (droneType == DroneType.Explosive)
+        {
+            startExplosiveLightIntensity = droneMaterials[2].GetFloat(emissiveShaderProperty);
+            endExplosiveLightIntensity = startExplosiveLightIntensity * 2f; 
+        }
     }
 
-    private void GetParticleSystem(int type)
+    public void SetTimers(float[] timers)
     {
-        switch (type)
-        {
-            case 0:
-            case 1:
-            case 2:
-                VFX_objs[type].SetActive(true);
+        spawnTime = timers[0];
+        deathTime = timers[1];
+        chargeTime = timers[2];
+        stunTime = timers[3];
+    }
 
-                //Debug.Log("Setting active: " + VFX_objs[type].name + " with length: " + VFX_objs.Length);
+    private void ActivateParticleSystem(int type)
+    {
 
-                particleSystems = VFX_objs[type].GetComponentsInChildren<ParticleSystem>();
-
-                particleSystems[0].Play();
-                break;
-        }
+        VFX_objs[type].SetActive(true);
+                 
     }
 
     private void DeactivateAllVFX()
@@ -80,7 +88,7 @@ public class VFX_Manager : MonoBehaviour
         {
             if (obj.name != "SphereShield" && obj.name != "BombEmbers") 
             { 
-                Debug.Log(obj.name + " setting inactive");
+                //Debug.Log(obj.name + " setting inactive");
                 obj.SetActive(false);
             }
         }
@@ -128,31 +136,51 @@ public class VFX_Manager : MonoBehaviour
 
     public void PlayVFX(VFX_Type type)
     {
+        Debug.Log(spawnTime + " " + deathTime + " " + chargeTime + " " + stunTime);
+
         timer = 0;
         isPlayingVFX = true;
-        GetParticleSystem((int) type);
 
         switch (type)
         {
+            case VFX_Type.Spawn:
+
+                effectTime = spawnTime;
+                ActivateParticleSystem((int)type);
+                break;
+
             case VFX_Type.Destroy:
-                effectTime = 2f;
+                effectTime = deathTime;
+                ActivateParticleSystem((int)type);
                 ChangeNoiseMap();
                 if(droneType == DroneType.Explosive)
                 {
-                    VFX_objs[3].SetActive(false);
+                    VFX_objs[2].SetActive(false);
+                }
+                break;
+
+            case VFX_Type.ChargeAttack:
+                if (droneType != DroneType.Explosive)
+                {
+                    effectTime = chargeTime;
+                    ActivateParticleSystem((int)type);                  
+                }
+
+                else
+                {
+                    effectTime = GetComponentInParent<ExplosiveDrone>().ChargeExplosionDuration;
+                    droneMaterials[0].SetFloat("_UseEmissive", 1f);
                 }
 
                 break;
 
             case VFX_Type.Stunned:
-                effectTime = 0.5f;
-                VFX_objs[3].SetActive(false);
+                effectTime = stunTime;
+                VFX_objs[2].SetActive(false);
                 break;
 
             default :
-                effectTime = 2f;
                 break;
-
         }
 
         currentType = type;
@@ -185,8 +213,33 @@ public class VFX_Manager : MonoBehaviour
 
     private void ChargeVFX()
     {
-        float value = RoundEvaluation(fadeIn.Evaluate(1 - Mathf.InverseLerp(0, effectTime, timer)));
+        switch (droneType)
+        {
+            case DroneType.Explosive:
+                ChargeExplosiveLightVFX();
+                break;
+
+            default:
+                //ChargeBallVFX();
+                break;
+        }
+    }
+
+    private void ChargeBallVFX()
+    {
+        float value = RoundEvaluation(fadeIn.Evaluate(Mathf.InverseLerp(0, effectTime, timer)));
         ballMaterial.SetFloat(ballShaderProperty, value);
+    }
+
+    private void ChargeExplosiveLightVFX()
+    {
+        float normalizedTime = Mathf.Clamp01(timer / effectTime);
+        float value1 = Mathf.Lerp(startExplosiveLightIntensity, endExplosiveLightIntensity, normalizedTime);
+        float value2 = RoundEvaluation(fadeIn.Evaluate(Mathf.InverseLerp(0, effectTime, timer))) * startExplosiveLightIntensity;
+
+        droneMaterials[2].SetFloat(emissiveShaderProperty, value1);
+
+        droneMaterials[0].SetFloat(emissiveShaderProperty, value2);
     }
 
     private void SetFloatValueToDroneMaterials(float value)

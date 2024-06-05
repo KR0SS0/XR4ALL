@@ -44,6 +44,8 @@ Shader "Ultimate 10+ Shaders/Force Field"
         [HDR] _Color("Color", Color) = (1,1,1,1)
         _FresnelPower("Fresnel Power", Range(0, 10)) = 3
         _ScrollDirection("Scroll Direction", float) = (0, 0, 0, 0)
+        _VisibilityBoost("Visibility Boost", Range(0, 1)) = 0.0 
+        _Saturation("Saturation", Range(0, 1)) = 0.5
         _AlphaTex("Alpha Texture", 2D) = "white" {}
         _AlphaIntensity("Alpha Intensity", Range(0, 1)) = 1.0
         [Toggle(_EMISSIVE)] _UseEmissive("Use Emissive", Float) = 0.0
@@ -102,6 +104,9 @@ Shader "Ultimate 10+ Shaders/Force Field"
             fixed4 _EmissiveColor;
             half _EmissiveIntensity;
 
+            float _VisibilityBoost; 
+            float _Saturation;
+
             // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
             // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
             // #pragma instancing_options assumeuniformscaling
@@ -118,7 +123,7 @@ Shader "Ultimate 10+ Shaders/Force Field"
                 output.uv = TRANSFORM_TEX(vert.uv, _MainTex);
 
                 viewDir = normalize(ObjSpaceViewDir(vert.vertex));
-                output.rim = 1.0 - saturate(dot(viewDir, vert.normal));
+                output.rim = 1.0 - (saturate(dot(viewDir, vert.normal)) * (1 - _VisibilityBoost));
 
                 output.uv += _ScrollDirection * _Time.y;
 
@@ -131,11 +136,13 @@ Shader "Ultimate 10+ Shaders/Force Field"
                 fixed4 mainTexColor = tex2D(_MainTex, input.uv) * _Color;
                 fixed4 alphaTexColor = tex2D(_AlphaTex, input.uv);
 
-                // Combine alpha with intensity
                 mainTexColor.a *= alphaTexColor.r * _AlphaIntensity;
 
                 pixel = mainTexColor * pow(_FresnelPower, input.rim);
                 pixel = lerp(0, pixel, input.rim);
+
+                float grayscale = dot(pixel.rgb, float3(0.299, 0.587, 0.114));
+                pixel.rgb = lerp(float3(grayscale, grayscale, grayscale), pixel.rgb, _Saturation);
 
                 if (_UseEmissive > 0.5)
                 {
