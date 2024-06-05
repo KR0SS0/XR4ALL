@@ -49,6 +49,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private Quaternion targetRotation;
     private Quaternion initialRotation;
 
+    private DroneSpawner spawner;
 
     protected void OnStart()
     {
@@ -388,6 +389,12 @@ public abstract class BaseDroneController : MonoBehaviour
     IEnumerator DestroyTimer(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
+
+        if (spawner != null)
+        {
+            spawner.OnDroneDestroyed(gameObject, droneType);
+        }
+
         Destroy(gameObject);
     }
 
@@ -400,5 +407,10 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         this.newState = newState;
+    }
+
+    public void SetSpawner (DroneSpawner spawner)
+    {
+        this.spawner = spawner;
     }
 }
