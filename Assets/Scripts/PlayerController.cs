@@ -5,13 +5,30 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private int health = 3;
+    [SerializeField] private AudioClip normalHitSound;
+    [SerializeField] private AudioSource audioSource;
+
+    private PlayerItemSwitcher playerItemSwitcher;
+
+    private void Start()
+    {
+        playerItemSwitcher = FindObjectOfType<PlayerItemSwitcher>();
+    }
 
     public void Hit()
     {
-        health--;
-        if (health < 0)
+        if (playerItemSwitcher.IsShieldActive())
         {
-            GameOver();
+            playerItemSwitcher.PlayShieldBlockSound();
+        } else
+        {
+            health--;
+            audioSource.PlayOneShot(normalHitSound);
+
+            if (health < 0)
+            {
+                GameOver();
+            }
         }
     }
 
