@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MV_DissolveURP_Black
+  m_Name: MV_Dissolve_URP_Grey
   m_Shader: {fileID: 4800000, guid: d5809e78697b45146a73e642c361f5fb, type: 3}
   m_Parent: {fileID: 2100000, guid: c9535d06210299f4dbbef6fd974d84cd, type: 2}
   m_ModifiedSerializedProperties: 0
@@ -22,14 +22,14 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 8413c07f62d51434385ab0d58fff4d77, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Cutoff: 0
-    - _EmissiveIntensity: 0
-    - _Metallic: 0
-    - _UseEmissive: 0
     m_Colors:
-    - _Color: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissiveColor: {r: 0.039215688, g: 0.039215688, b: 0.039215688, a: 1}
+    - _Color: {r: 0.23529412, g: 0.23529412, b: 0.23529412, a: 1}
   m_BuildTextureStacks: []

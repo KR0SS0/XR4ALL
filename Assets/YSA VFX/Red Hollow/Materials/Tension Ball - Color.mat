@@ -38,13 +38,13 @@ Material:
     m_Ints: []
     m_Floats:
     - Vector1_9B20FB3B: 0
-    - _Anim: 0
-    - _Exposure: 1
+    - _Anim: 1
+    - _Exposure: 1.19
     - _QueueControl: 1
     - _QueueOffset: 0
     - _Vibration: 0.03
     m_Colors:
-    - _Color1: {r: 38.075043, g: 0, b: 0, a: 0}
+    - _Color1: {r: 16.94838, g: 0, b: 0, a: 0}
     - _Color2: {r: 92.28734, g: 5.798157, b: 5.798157, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &4379578986689920673
