@@ -6,6 +6,7 @@ public class OneHitDrone : BaseDroneController
 {
     [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
+    [SerializeField] private bool forceDestroy = false;
 
     private void Awake()
     {
@@ -19,6 +20,16 @@ public class OneHitDrone : BaseDroneController
         bullet = bulletShot;
         OnStart();
     }
+
+    private void FixedUpdate()
+    {
+        if (forceDestroy)
+        {
+            HandleHit();
+            forceDestroy = false;
+        }
+    }
+
 
     protected override void HandleHit()
     {

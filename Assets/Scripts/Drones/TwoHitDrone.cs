@@ -14,6 +14,7 @@ public class TwoHitDrone : BaseDroneController
     private float timer = 0f;
     private bool timerStarted = false;
     public AnimationCurve stunnedAnimation;
+    [SerializeField] private bool forceDestroy = false;
 
     private void Awake()
     {
@@ -36,14 +37,10 @@ public class TwoHitDrone : BaseDroneController
 
     private void FixedUpdate()
     {
-        if (timerStarted)
+        if (forceDestroy)
         {
-            timer += Time.fixedDeltaTime;
-
-            if(timer > stunnedTime)
-            {
-                timerStarted = false;
-            }
+            SwitchState(0f, StateMachine.Destroy);
+            forceDestroy = false;
         }
     }
 
@@ -65,10 +62,15 @@ public class TwoHitDrone : BaseDroneController
                 sphereCollider.enabled = false;
                 droneCollider.enabled = true;
                 SwitchState(0f, StateMachine.Stunned);
+                StartCoroutine(StunDelay());
             }
 
         }
+    }
 
-
+    private IEnumerator StunDelay()
+    {
+        yield return new WaitForSeconds(stunnedTime);
+        timerStarted = false;
     }
 }

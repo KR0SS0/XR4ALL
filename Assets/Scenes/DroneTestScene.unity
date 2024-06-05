@@ -123,6 +123,67 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &125709060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 125709062}
+  - component: {fileID: 125709061}
+  m_Layer: 0
+  m_Name: DroneSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &125709061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125709060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cf6a03e0bcf5004cbd781d2874b493f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oneHitDrone: {fileID: 663363724089369304, guid: c07bed187d5075946b41a8c87143ef81, type: 3}
+  twoHitsDrone: {fileID: 6711416340134776016, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+  explosiveDrone: {fileID: 3366703428726261872, guid: 79696f14865a4bd4aaaaa4fce7cf47ff, type: 3}
+  minDistanceToPlayer: 10
+  maxDistanceToPlayer: 30
+  round1OneHitCount: 5
+  round1TwoHitsCount: 3
+  round1ExplosiveCount: 0
+  round2OneHitCount: 8
+  round2TwoHitsCount: 5
+  round2ExplosiveCount: 1
+  round3OneHitCount: 12
+  round3TwoHitsCount: 7
+  round3ExplosiveCount: 2
+  spawnTime: 5
+  spawnPercentageIncrease: 10
+  startGame: 0
+--- !u!4 &125709062
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125709060}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23, y: 2.19, z: 13.14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &216293410
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,6 +927,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7180219013323829265, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7313654230448209575, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_Name
       value: Player
@@ -877,6 +942,10 @@ PrefabInstance:
     - target: {fileID: 7313654230448209575, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_TagString
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430304614111551997, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8821029318128668983, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_Enabled
@@ -939,6 +1008,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 3
+  normalHitSound: {fileID: 0}
+  audioSource: {fileID: 0}
 --- !u!114 &452463685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -951,15 +1022,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0bb5b98b14b3f46bc3ab9de7e04363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sword: {fileID: 1031471818}
   shield: {fileID: 1135171349}
   scaleDuration: 0.5
-  lightsaberSource: {fileID: 0}
-  lightsaberOn: {fileID: 0}
-  lightsaberOff: {fileID: 0}
   shieldSource: {fileID: 0}
-  shieldOn: {fileID: 0}
-  shieldOff: {fileID: 0}
+  shieldOnClip: []
+  shieldOffClip: []
+  shieldBlockClip: []
+  shieldCooldownSlider: {fileID: 0}
+  shieldCooldownFillImage: {fileID: 0}
+  cooldownColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &529095315
 GameObject:
   m_ObjectHideFlags: 0
@@ -1602,11 +1673,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1031471818 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5444005870016447874, guid: a048766430bf4d740aa58da02b9d6c6f, type: 3}
-  m_PrefabInstance: {fileID: 576155382}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &1037122345 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 9014170783809206330, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
@@ -2237,6 +2303,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExplosiveDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 3366703428726261872, guid: 79696f14865a4bd4aaaaa4fce7cf47ff, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5428348267603073560, guid: 79696f14865a4bd4aaaaa4fce7cf47ff, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.65
@@ -2677,6 +2747,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TwoHitDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 6711416340134776016, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2733,6 +2807,10 @@ PrefabInstance:
     - target: {fileID: 663363724089369304, guid: c07bed187d5075946b41a8c87143ef81, type: 3}
       propertyPath: m_Name
       value: OneHitDrone
+      objectReference: {fileID: 0}
+    - target: {fileID: 663363724089369304, guid: c07bed187d5075946b41a8c87143ef81, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2872,3 +2950,4 @@ SceneRoots:
   - {fileID: 691919098}
   - {fileID: 277054013}
   - {fileID: 606011816}
+  - {fileID: 125709062}

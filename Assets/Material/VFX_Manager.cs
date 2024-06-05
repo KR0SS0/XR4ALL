@@ -136,7 +136,7 @@ public class VFX_Manager : MonoBehaviour
 
     public void PlayVFX(VFX_Type type)
     {
-        Debug.Log(spawnTime + " " + deathTime + " " + chargeTime + " " + stunTime);
+        //Debug.Log(spawnTime + " " + deathTime + " " + chargeTime + " " + stunTime);
 
         timer = 0;
         isPlayingVFX = true;
