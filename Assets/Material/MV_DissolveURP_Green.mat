@@ -26,8 +26,8 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Cutoff: 0.99970853
-    - _EmissiveIntensity: 4.06
+    - _Cutoff: 0
+    - _EmissiveIntensity: 4.2
     - _Metallic: 0
     - _UseEmissive: 1
     m_Colors:
