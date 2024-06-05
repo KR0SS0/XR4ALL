@@ -1,86 +1,119 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerItemSwitcher : MonoBehaviour
 {
-    [SerializeField] private GameObject sword;
     [SerializeField] private GameObject shield;
     [SerializeField] private float scaleDuration = 0.5f;
 
-    private GameObject currentHeldItem;
-    private Vector3 swordOriginalScale;
     private Vector3 shieldOriginalScale;
 
-    [SerializeField] private AudioSource lightsaberSource;
-    [SerializeField] private AudioClip lightsaberOn;
-    [SerializeField] private AudioClip lightsaberOff;
+    [Header("Audio")]
     [SerializeField] private AudioSource shieldSource;
-    [SerializeField] private AudioClip shieldOn;
-    [SerializeField] private AudioClip shieldOff;
+    [SerializeField] private AudioClip[] shieldOnClip;
+    [SerializeField] private AudioClip[] shieldOffClip;
+    [SerializeField] private AudioClip[] shieldBlockClip;
 
-    private bool isScaling = false;
+    [Header("UI")]
+    [SerializeField] private Slider shieldCooldownSlider; // Reference to the slider
+    [SerializeField] private Image shieldCooldownFillImage; // Reference to the slider's fill image
+    private Color originalColor;
+    [SerializeField] private Color cooldownColor;
+
+    private AccessibilityController accessibilityController;
+    private bool isShieldActive = false;
+    private bool isCooldownActive = false;
 
     void Start()
     {
-        swordOriginalScale = sword.transform.localScale;
         shieldOriginalScale = shield.transform.localScale;
+        shield.transform.localScale = Vector3.zero;
+        shield.SetActive(false);
 
-        currentHeldItem = sword;
-        ToggleItem(currentHeldItem, true);
-        ToggleItem(shield, false);
+        accessibilityController = FindObjectOfType<AccessibilityController>();
+
+        // Initialize the slider
+        shieldCooldownSlider.maxValue = accessibilityController.GetShieldCooldownValue();
+        shieldCooldownSlider.value = accessibilityController.GetShieldCooldownValue();
+        originalColor = shieldCooldownFillImage.color;
     }
 
     void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && !isScaling)
+        if(GameManager.Instance.CurrentState != GameManager.GameState.Active)
         {
-            Debug.Log("Switching held item");
-            ToggleItems();
-        }
-    }
-
-    void ToggleItems()
-    {
-        // Disable and scale down the current item
-        StartCoroutine(ScaleAndSetActive(currentHeldItem, false));
-
-        // Switch to the other item
-        currentHeldItem = currentHeldItem == sword ? shield : sword;
-
-        // Enable and scale up the new item
-        StartCoroutine(ScaleAndSetActive(currentHeldItem, true));
-    }
-
-    IEnumerator ScaleAndSetActive(GameObject item, bool isActive)
-    {
-        isScaling = true;
-
-        Vector3 originalScale = item == sword ? swordOriginalScale : shieldOriginalScale;
-        Vector3 initialScale = item.transform.localScale;
-        Vector3 targetScale = isActive ? originalScale : Vector3.zero;
-        float elapsedTime = 0f;
-
-        // Play the correct sound effect
-        if (isActive)
-        {
-            if (item == sword)
-            {
-                lightsaberSource.PlayOneShot(lightsaberOn);
-            } else
-            {
-                //shieldSource.PlayOneShot(shieldOn);
-            }
+            shieldCooldownSlider.gameObject.SetActive(false);
+            return;
         } else
         {
-            if (item == sword)
-            {
-                lightsaberSource.PlayOneShot(lightsaberOff);
-            } else
-            {
-                //shieldSource.PlayOneShot(shieldOff);
-            }
+            shieldCooldownSlider.gameObject.SetActive(true);
         }
+
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && !isShieldActive && !isCooldownActive)
+        {
+            ActivateShield();
+        }
+    }
+
+    private void ActivateShield()
+    {
+        StartCoroutine(ShieldRoutine());
+    }
+
+    private IEnumerator ShieldRoutine()
+    {
+        isShieldActive = true;
+
+        // Activate shield with scaling up
+        yield return StartCoroutine(ScaleAndSetActive(shield, true));
+        PlayShieldOnSound();
+
+        // Change slider color to indicate shield is active
+        shieldCooldownFillImage.color = originalColor;
+
+        float shieldDuration = accessibilityController.GetShieldDurationValue();
+        for (float t = 0; t < shieldDuration; t += Time.deltaTime)
+        {
+            shieldCooldownSlider.value = shieldDuration - t;
+            yield return null;
+        }
+
+        PlayShieldOffSound();
+        yield return StartCoroutine(ScaleAndSetActive(shield, false));
+
+        isShieldActive = false;
+        StartCoroutine(ShieldCooldown());
+    }
+
+    private IEnumerator ShieldCooldown()
+    {
+        isCooldownActive = true;
+
+        // Change slider color to indicate cooldown
+        shieldCooldownFillImage.color = cooldownColor;
+
+        float cooldownDuration = accessibilityController.GetShieldCooldownValue();
+        for (float t = 0; t < cooldownDuration; t += Time.deltaTime)
+        {
+            shieldCooldownSlider.value = t;
+            yield return null;
+        }
+
+        isCooldownActive = false;
+
+        // Reset slider color and value when cooldown is complete
+        shieldCooldownFillImage.color = originalColor;
+        shieldCooldownSlider.value = cooldownDuration;
+    }
+
+    private IEnumerator ScaleAndSetActive(GameObject item, bool isActive)
+    {
+        Vector3 initialScale = item.transform.localScale;
+        Vector3 targetScale = isActive ? shieldOriginalScale : Vector3.zero;
+        float elapsedTime = 0f;
 
         if (isActive)
         {
@@ -100,18 +133,37 @@ public class PlayerItemSwitcher : MonoBehaviour
         {
             item.SetActive(false);
         }
-        isScaling = false;
     }
 
-    void ToggleItem(GameObject item, bool isActive)
+    private void PlayShieldOnSound()
     {
-        if (isActive)
+        if (shieldOnClip.Length > 0)
         {
-            item.SetActive(true);
-        } else
+            AudioClip clip = shieldOnClip[Random.Range(0, shieldOnClip.Length)];
+            shieldSource.PlayOneShot(clip);
+        }
+    }
+
+    private void PlayShieldOffSound()
+    {
+        if (shieldOffClip.Length > 0)
         {
-            item.transform.localScale = Vector3.zero;
-            item.SetActive(false);
+            AudioClip clip = shieldOffClip[Random.Range(0, shieldOffClip.Length)];
+            shieldSource.PlayOneShot(clip);
+        }
+    }
+
+    public bool IsShieldActive()
+    {
+        return isShieldActive;
+    }
+
+    public void PlayShieldBlockSound()
+    {
+        if (shieldBlockClip.Length > 0)
+        {
+            AudioClip clip = shieldBlockClip[Random.Range(0, shieldBlockClip.Length)];
+            shieldSource.PlayOneShot(clip);
         }
     }
 }

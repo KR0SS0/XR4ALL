@@ -126,4 +126,7 @@ public class AccessibilityController : MonoBehaviour
         droneSpawnIntensityValue = PlayerPrefs.GetFloat("DroneSpawnIntensity", 1.0f);
         currentPresetIndex = PlayerPrefs.GetInt("SensorPresetIndex", 1);
     }
+
+    public float GetShieldCooldownValue() => shieldCooldownValue;
+    public float GetShieldDurationValue() => shieldDurationValue;
 }
