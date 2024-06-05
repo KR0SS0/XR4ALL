@@ -14,13 +14,14 @@ public abstract class BaseDroneController : MonoBehaviour
     protected StateMachine state;
     private StateMachine newState;
     protected RequiredSwingDirection requiredDirection;
-    private float requiredSpeed = 1.0f;
+    protected float requiredSpeed = 1.0f;
     protected AudioClip destroyClip;
     protected AudioSource source;
     protected int hp = 1;
     private VFX_Manager vfx_Manager;
     private Rigidbody rb;
     private MeshCollider meshCollider;
+    private float maxVelocity = 0f;
 
     private Transform playerTransform;
     private Transform bulletSpawnLocation;
@@ -28,16 +29,17 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private Vector3 startDirectionOffset;
     private float movementSpeed = 3.5f;
+    private float maxMovementSpeed = 4f;
     private float maxAmplitude = 25f;
     private float minAmplitude = 5f;
     private float frequency = 1f;
     private float distanceToPlayer;
     private float maxDistanceToPlayer = 2.5f;
+    
 
     private float spawnAnimationTime = 4.2f;
-    private float deathAnimationTime = 5.2f;
+    private float deathAnimationTime = 4.8f;
     private float stunnedAnimationTime = 0.5f;
-    private float stunnedTimer = 0f;
 
     private float rotationTime = 2f;
     private float rotationElapsedTime = 0.0f;
@@ -232,8 +234,21 @@ public abstract class BaseDroneController : MonoBehaviour
         Vector3 forceDirection = (targetPosition - transform.position).normalized;
         float forceMagnitude = movementSpeed * Time.deltaTime * 75f;
         Vector3 newVelocity = forceDirection * forceMagnitude;
-        newVelocity.y = rb.velocity.y; 
+        newVelocity.y = rb.velocity.y;
+
+        if (newVelocity.magnitude > maxMovementSpeed)
+        {
+            newVelocity = newVelocity.normalized * maxMovementSpeed;
+        }
+
         rb.velocity = newVelocity;
+
+
+        if(newVelocity.magnitude > maxVelocity)
+        {
+            maxVelocity = newVelocity.magnitude;
+            Debug.Log("Max Velocity: " + maxVelocity);
+        }
 
         if (distanceToPlayer <= maxDistanceToPlayer)
         {

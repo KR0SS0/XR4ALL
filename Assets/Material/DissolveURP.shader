@@ -10,7 +10,7 @@ Shader "Custom/DissolveURP"
         _Cutoff("Cutoff", Range(0,1)) = 0.0
         [Toggle(_EMISSIVE)] _UseEmissive("Use Emissive", Float) = 0.0
         _EmissiveColor("Emissive Color", Color) = (1,1,1,1)
-        _EmissiveIntensity("Emissive Intensity", Range(0,5)) = 1.0
+        _EmissiveIntensity("Emissive Intensity", Range(0,20)) = 1.0
     }
 
     SubShader
@@ -70,7 +70,7 @@ Shader "Custom/DissolveURP"
                 color.rgb = lerp(color.rgb, float3(0.04, 0.04, 0.04), _Metallic);
 
                 #ifdef _EMISSIVE
-                color.rgb += _EmissiveColor.rgb * _EmissiveIntensity;
+                color.rgb += _EmissiveColor.rgb * pow(2.0, _EmissiveIntensity);
                 #endif
 
                 return color;

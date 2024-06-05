@@ -7,6 +7,7 @@ public class ExplosiveDrone : BaseDroneController
 
     [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
+    [SerializeField] private bool forceDestroy = false;
 
     private void Awake()
     {
@@ -16,15 +17,29 @@ public class ExplosiveDrone : BaseDroneController
     // Start is called before the first frame update
     void Start()
     {
+        requiredSpeed = 0f;
         DestroyClip = destroyClipOverride;
         bullet = bulletShot;
         OnStart();
     }
 
+    private void FixedUpdate()
+    {
+        if (forceDestroy)
+        {
+            HandleHit();
+            forceDestroy = false;
+        }
 
+        if(state == StateMachine.Attacking)
+        {
+            SwitchState(0f, StateMachine.Destroy);
+        }
+    }
 
     protected override void HandleHit()
     {
-        throw new System.NotImplementedException();
+        hp--;
+        SwitchState(0f, StateMachine.Destroy);
     }
 }
