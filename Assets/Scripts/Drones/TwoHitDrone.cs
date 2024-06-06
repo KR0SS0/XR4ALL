@@ -11,14 +11,13 @@ public class TwoHitDrone : BaseDroneController
     private SphereCollider sphereCollider;
     private int baseHP = 2;
     private float stunnedTime = 0.5f;
-    private float timer = 0f;
     private bool timerStarted = false;
     public AnimationCurve stunnedAnimation;
     [SerializeField] private bool forceDestroy = false;
 
     private void Awake()
     {
-        droneType = DroneType.TwoHits;
+        DroneType = DroneType.TwoHits;
     }
 
     // Start is called before the first frame update
@@ -39,7 +38,7 @@ public class TwoHitDrone : BaseDroneController
     {
         if (forceDestroy)
         {
-            SwitchState(0f, StateMachine.Destroy);
+            HandleHit();
             forceDestroy = false;
         }
     }

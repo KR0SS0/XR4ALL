@@ -10,7 +10,7 @@ public class DirectionalHitDrone : BaseDroneController
 
     private void Awake()
     {
-        droneType = DroneType.Directional;       
+        DroneType = DroneType.Directional;       
     }
 
     // Start is called before the first frame update
