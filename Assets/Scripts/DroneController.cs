@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class DroneController : MonoBehaviour
 {
+    /*
     public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
     public RequiredSwingDirection requiredDirection = RequiredSwingDirection.Any;
     public float requiredSpeed = 1.0f;
@@ -59,4 +60,5 @@ public class DroneController : MonoBehaviour
         source.PlayOneShot(destroyClip);
         //Destroy(gameObject);
     }
+    */
 }

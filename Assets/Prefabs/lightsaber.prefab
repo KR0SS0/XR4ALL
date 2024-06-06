@@ -222,7 +222,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4667751019877801784}
   - component: {fileID: 5940981122932367037}
+  - component: {fileID: 1690650404526698471}
   - component: {fileID: 5994016048149301478}
+  - component: {fileID: 6770541728420480536}
   m_Layer: 0
   m_Name: lightsaber
   m_TagString: Untagged
@@ -275,6 +277,26 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a3324904d8c806149b0e1b00c7c8ed59, type: 3}
   - {fileID: 8300000, guid: bd7d63421d06ce847ac97d0e2de79ff7, type: 3}
   source: {fileID: 8242881841981183545}
+--- !u!114 &1690650404526698471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5444005870016447874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee1629827c786c947a4420e41dc0197f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controllerNode: 0
+  requiredSpeed: 1
+  minPitch: 0.9
+  maxPitch: 1.1
+  replayThreshold: 0.6
+  swingClips: []
+  source: {fileID: 0}
+  controllerNode: 0
 --- !u!136 &5994016048149301478
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -298,6 +320,27 @@ CapsuleCollider:
   m_Height: 0.55
   m_Direction: 2
   m_Center: {x: 0, y: 0.02, z: -0.24}
+--- !u!95 &6770541728420480536
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5444005870016447874}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2dafac06d8d435a40b8f94651616b5ff, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6026165164120466003
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,12 +3,6 @@ using UnityEngine.XR;
 
 public class LightsaberController : MonoBehaviour
 {
-    public XRNode controllerNode;
-    private Vector3 previousPosition;
-    private Vector3 currentVelocity;
-
-    private InputDevice controller;
-
     [Header("Audio")]
     public float requiredSpeed = 1.0f;
     public float minPitch = 0.9f;
@@ -17,55 +11,34 @@ public class LightsaberController : MonoBehaviour
     [SerializeField] private AudioClip[] swingClips;
     [SerializeField] private AudioSource source;
 
-    void Start()
-    {
-        controller = InputDevices.GetDeviceAtXRNode(controllerNode);
-        controller.TryGetFeatureValue(CommonUsages.devicePosition, out previousPosition);
-    }
-
-    void Update()
-    {
-        Vector3 currentPosition;
-
-        if (controller.TryGetFeatureValue(CommonUsages.devicePosition, out currentPosition))
-        {
-            currentVelocity = (currentPosition - previousPosition) / Time.deltaTime;
-            previousPosition = currentPosition;
-        }
-        PlaySwingSound();
-    }
-
     public void PlaySwingSound()
+    {
+        float randomPitch = Random.Range(minPitch, maxPitch);
+        source.pitch = randomPitch;
+
+        AudioClip clip = swingClips[Random.Range(0, swingClips.Length)];
+        source.clip = clip;
+        source.PlayOneShot(clip);
+    }
+
+    public void PlayVRSwingSound(Vector3 velocity)
     {
         if (source.isPlaying)
         {
-            float playbackPosition = source.time / source.clip.length;
-
-            if (playbackPosition < replayThreshold)
+            if (source.clip != null)
             {
-                return;
+                float playbackPosition = source.time / source.clip.length;
+
+                if (playbackPosition < replayThreshold)
+                {
+                    return;
+                }
             }
         }
-        float swingSpeed = GetVelocity().magnitude;
+        float swingSpeed = velocity.magnitude;
         if (swingSpeed > requiredSpeed)
         {
-            float randomPitch = Random.Range(minPitch, maxPitch);
-            source.pitch = randomPitch;
-
-            AudioClip clip = swingClips[Random.Range(0, swingClips.Length)];
-            source.clip = clip;
-            source.PlayOneShot(clip);
+            PlaySwingSound();
         }
-    }
-
-    public Vector3 GetVelocity()
-    {
-        return currentVelocity;
-    }
-
-    public Vector3 GetSwingDirection()
-    {
-        // Normalize the velocity to get the direction
-        return currentVelocity.normalized;
     }
 }
