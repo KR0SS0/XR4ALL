@@ -168,6 +168,7 @@ MonoBehaviour:
   round3ExplosiveCount: 2
   spawnTime: 5
   spawnPercentageIncrease: 10
+  spawnAngle: 90
   startGame: 0
 --- !u!4 &125709062
 Transform:
@@ -218,12 +219,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bcb7c5e691b94b4180249b27e641979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requiredDirection: 2
-  requiredSpeed: 0.8
-  source: {fileID: 216293417}
-  destroyClip: {fileID: 8300000, guid: eb11d497a98111b46baf21568dce6a89, type: 3}
-  sourceLightsaber: {fileID: 0}
-  lightsaberHitClip: {fileID: 0}
 --- !u!65 &216293412
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2570,7 +2565,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 466b89427fbb9b4408c7042bebcaa3fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerNode: 5
   requiredSpeed: 1
   minPitch: 0.9
   maxPitch: 1.1
@@ -2750,6 +2744,26 @@ PrefabInstance:
     - target: {fileID: 6711416340134776016, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[1].time
+      value: 0.20681353
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[2].time
+      value: 0.37231869
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[3].time
+      value: 0.587839
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[4].time
+      value: 0.76117295
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[5].time
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

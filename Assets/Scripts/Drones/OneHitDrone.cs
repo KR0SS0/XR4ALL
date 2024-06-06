@@ -10,7 +10,7 @@ public class OneHitDrone : BaseDroneController
 
     private void Awake()
     {
-        droneType = DroneType.OneHit;       
+        DroneType = DroneType.OneHit;       
     }
 
     // Start is called before the first frame update

@@ -20,8 +20,12 @@ public class DroneSpawner : MonoBehaviour
     [SerializeField] private int round3ExplosiveCount = 5;
     [SerializeField] private float spawnTime = 5f;
     [SerializeField] private float spawnPercentageIncrease = 10f;
+    [SerializeField] private float spawnAngle = 30f;
     [SerializeField] private bool startGame = false;
-    
+
+    private float minAngle;
+    private float maxAngle;
+
     private Transform playerLocation;
     private List<GameObject> activeDrones = new List<GameObject>();
     private int currentRound = 0;
@@ -37,6 +41,8 @@ public class DroneSpawner : MonoBehaviour
     {
         playerLocation = GameObject.FindGameObjectWithTag("Player").transform;
         ySpawnPosition = transform.position.y;
+        minAngle = - spawnAngle / 2f;
+        maxAngle = spawnAngle / 2f;
     }
 
     private void FixedUpdate()
@@ -155,7 +161,8 @@ public class DroneSpawner : MonoBehaviour
     private void SpawnDrone(GameObject dronePrefab)
     {
         Vector3 randomPosition = GetRandomPosition();
-        GameObject newDrone = Instantiate(dronePrefab, randomPosition, Quaternion.identity);
+        Quaternion randomRotation = GetRandomDirection();
+        GameObject newDrone = Instantiate(dronePrefab, randomPosition, randomRotation);
         newDrone.GetComponent<BaseDroneController>().SetSpawner(this);
         activeDrones.Add(newDrone);
     }
@@ -170,11 +177,24 @@ public class DroneSpawner : MonoBehaviour
 
     private Vector3 GetRandomPosition()
     {
-        Vector2 randomDirection = Random.insideUnitCircle.normalized;
+ 
+        float randomAngle = Random.Range(minAngle, maxAngle) * Mathf.Deg2Rad;
         float randomDistance = Random.Range(minDistanceToPlayer, maxDistanceToPlayer);
-        Vector3 randomPosition = playerLocation.position + new Vector3(randomDirection.x, 0, randomDirection.y) * randomDistance;
+
+        //Vector3 randomPosition = playerLocation.position + new Vector3(randomDirection.x, 0, randomDirection.y) * randomDistance;
+        Vector3 forward = playerLocation.forward;
+        Vector3 right = playerLocation.right;
+        Vector3 randomDirection = (forward * Mathf.Cos(randomAngle)) + (right * Mathf.Sin(randomAngle));
+        randomDirection.Normalize();
+        Vector3 randomPosition = playerLocation.position + randomDirection * randomDistance;
         randomPosition.y = ySpawnPosition;
+
         return randomPosition;
+    }
+
+    private Quaternion GetRandomDirection()
+    {
+        return Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
     }
 
     public void OnDroneDestroyed(GameObject drone, DroneType type)
