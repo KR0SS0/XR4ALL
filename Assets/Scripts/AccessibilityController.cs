@@ -129,4 +129,5 @@ public class AccessibilityController : MonoBehaviour
 
     public float GetShieldCooldownValue() => shieldCooldownValue;
     public float GetShieldDurationValue() => shieldDurationValue;
+    public float GetControllerPresetIndex() => currentPresetIndex;
 }

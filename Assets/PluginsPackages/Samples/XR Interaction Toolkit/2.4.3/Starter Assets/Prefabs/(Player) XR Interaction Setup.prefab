@@ -1000,7 +1000,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: lightsaber
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6770541728420480536, guid: a048766430bf4d740aa58da02b9d6c6f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

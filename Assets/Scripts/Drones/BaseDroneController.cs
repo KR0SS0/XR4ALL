@@ -77,7 +77,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out LightsaberController lightsaber) && state != StateMachine.Destroy)  
+        if (other.TryGetComponent(out LightsaberVR lightsaber) && state != StateMachine.Destroy)  
         {
             Debug.Log("Drone found saber in trigger");
             Vector3 swingDirection = lightsaber.GetSwingDirection();
