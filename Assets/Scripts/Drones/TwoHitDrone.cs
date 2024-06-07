@@ -5,7 +5,6 @@ using UnityEngine;
 public class TwoHitDrone : BaseDroneController
 {
 
-    [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
     private MeshCollider droneCollider;
     private SphereCollider sphereCollider;
@@ -24,13 +23,13 @@ public class TwoHitDrone : BaseDroneController
     void Start()
     {
         hp = baseHP;
-        DestroyClip = destroyClipOverride;
         bullet = bulletShot;
         OnStart();
         droneCollider = GetComponentInChildren<MeshCollider>();
         droneCollider.enabled = false;
         GetComponentInChildren<VFX_Manager>().StunnedAnimation = stunnedAnimation;
         sphereCollider = GetComponentInChildren<SphereCollider>();
+        Debug.Log(sphereCollider.name);
 
     }
 

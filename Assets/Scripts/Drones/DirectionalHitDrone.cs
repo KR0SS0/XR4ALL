@@ -5,7 +5,6 @@ using UnityEngine;
 public class DirectionalHitDrone : BaseDroneController
 {
     public RequiredSwingDirection direction;
-    [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
 
     private void Awake()
@@ -18,7 +17,6 @@ public class DirectionalHitDrone : BaseDroneController
     {
         OnStart();
         requiredDirection = direction;
-        DestroyClip = destroyClipOverride;
         bullet = bulletShot;
 
     }
