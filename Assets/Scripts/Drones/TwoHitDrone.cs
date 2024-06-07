@@ -11,13 +11,13 @@ public class TwoHitDrone : BaseDroneController
     private SphereCollider sphereCollider;
     private int baseHP = 2;
     private float stunnedTime = 0.5f;
-    private float timer = 0f;
     private bool timerStarted = false;
     public AnimationCurve stunnedAnimation;
+    [SerializeField] private bool forceDestroy = false;
 
     private void Awake()
     {
-        droneType = DroneType.TwoHits;
+        DroneType = DroneType.TwoHits;
     }
 
     // Start is called before the first frame update
@@ -36,14 +36,10 @@ public class TwoHitDrone : BaseDroneController
 
     private void FixedUpdate()
     {
-        if (timerStarted)
+        if (forceDestroy)
         {
-            timer += Time.fixedDeltaTime;
-
-            if(timer > stunnedTime)
-            {
-                timerStarted = false;
-            }
+            HandleHit();
+            forceDestroy = false;
         }
     }
 
@@ -65,10 +61,15 @@ public class TwoHitDrone : BaseDroneController
                 sphereCollider.enabled = false;
                 droneCollider.enabled = true;
                 SwitchState(0f, StateMachine.Stunned);
+                StartCoroutine(StunDelay());
             }
 
         }
+    }
 
-
+    private IEnumerator StunDelay()
+    {
+        yield return new WaitForSeconds(stunnedTime);
+        timerStarted = false;
     }
 }

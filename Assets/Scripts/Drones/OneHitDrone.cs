@@ -6,10 +6,11 @@ public class OneHitDrone : BaseDroneController
 {
     [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
+    [SerializeField] private bool forceDestroy = false;
 
     private void Awake()
     {
-        droneType = DroneType.OneHit;       
+        DroneType = DroneType.OneHit;       
     }
 
     // Start is called before the first frame update
@@ -19,6 +20,16 @@ public class OneHitDrone : BaseDroneController
         bullet = bulletShot;
         OnStart();
     }
+
+    private void FixedUpdate()
+    {
+        if (forceDestroy)
+        {
+            HandleHit();
+            forceDestroy = false;
+        }
+    }
+
 
     protected override void HandleHit()
     {

@@ -12,7 +12,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private enum AttackState { Braking, Charging, Attacking }
     private AttackState attackState = AttackState.Braking;
     private bool isChargingAttack = false;
-    protected DroneType droneType;
+    private DroneType droneType;
     protected StateMachine state;
     private StateMachine newState;
     protected RequiredSwingDirection requiredDirection;
@@ -49,6 +49,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private Quaternion targetRotation;
     private Quaternion initialRotation;
 
+    private DroneSpawner spawner;
 
     protected void OnStart()
     {
@@ -62,7 +63,6 @@ public abstract class BaseDroneController : MonoBehaviour
 
         source = GetComponent<AudioSource>();
         vfx_Manager = GetComponentInChildren<VFX_Manager>();
-        vfx_Manager.DroneType = droneType;
 
         float[] timers = new float[4] { spawnAnimationTime, deathAnimationTime, chargeAttackAnimationTime, stunnedAnimationTime };
         vfx_Manager.SetTimers(timers);
@@ -326,11 +326,6 @@ public abstract class BaseDroneController : MonoBehaviour
         meshCollider.enabled = false;
         source.PlayOneShot(destroyClip);
 
-        if (!vfx_Manager.IsParticleSystemDone)
-        {
-            vfx_Manager.InterruptParticleSystems();
-        }
-
         vfx_Manager.PlayVFX(VFX_Type.Destroy);
 
         SwitchState(0f, StateMachine.Destroy);
@@ -340,12 +335,12 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void DestroyUpdate()
     {
-        Decerlerate();
+        Decerlerate(0.98f);
     }
 
-    private void Decerlerate()
+    private void Decerlerate(float acceleration)
     {
-        rb.velocity *= 0.98f;
+        rb.velocity *= acceleration;
         if (rb.velocity.magnitude < 0.1f)
         {
             rb.velocity = Vector3.zero;
@@ -361,7 +356,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void StunnedUpdate()
     {
-        Decerlerate();
+        Decerlerate(0.95f);
     }
 
     protected abstract void HandleHit();
@@ -377,8 +372,9 @@ public abstract class BaseDroneController : MonoBehaviour
         get { return rb.velocity.magnitude; }
     }
 
-    public float SpawnAnimationTime { get => spawnAnimationTime; set => spawnAnimationTime = value; }
-    public float DeathAnimationTime { get => deathAnimationTime; set => deathAnimationTime = value; }
+    public float SpawnAnimationTime { get => spawnAnimationTime; }
+    public float DeathAnimationTime { get => deathAnimationTime; }
+    public DroneType DroneType { get => droneType; protected set => droneType = value; }
 
     private void StartDestroyTimer(float animationTime)
     {
@@ -388,6 +384,12 @@ public abstract class BaseDroneController : MonoBehaviour
     IEnumerator DestroyTimer(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
+
+        if (spawner != null)
+        {
+            spawner.OnDroneDestroyed(gameObject, DroneType);
+        }
+
         Destroy(gameObject);
     }
 
@@ -400,5 +402,10 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         this.newState = newState;
+    }
+
+    public void SetSpawner (DroneSpawner spawner)
+    {
+        this.spawner = spawner;
     }
 }

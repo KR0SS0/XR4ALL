@@ -19,7 +19,6 @@ public class VFX_Manager : MonoBehaviour
     private VFX_Type currentType = VFX_Type.Idle;
     private DroneType droneType;
     private Material[] droneMaterials;
-    private Material ballMaterial;
     private Material sphereMaterial;
     private Renderer _droneRenderer;
     private AnimationCurve stunnedAnimation;
@@ -52,18 +51,21 @@ public class VFX_Manager : MonoBehaviour
 
         _droneRenderer = GetComponentInParent<Renderer>();
         droneMaterials = _droneRenderer.materials;
-        ballMaterial = VFX_objs[2].GetComponentInChildren<Renderer>().material;
+
+        droneType = GetTypeFromGrandparent();
 
         if (VFX_objs.Length > 3 && droneType == DroneType.TwoHits)
         {
             sphereMaterial = VFX_objs[3].GetComponent<Renderer>().material;
-            //Debug.Log(_sphere_shield_renderer.name);
+            //Debug.Log(sphereMaterial.name);
         }
+
+        //Debug.Log(droneType.ToString());
 
         if (droneType == DroneType.Explosive)
         {
             startExplosiveLightIntensity = droneMaterials[2].GetFloat(emissiveShaderProperty);
-            endExplosiveLightIntensity = startExplosiveLightIntensity * 2f; 
+            endExplosiveLightIntensity = startExplosiveLightIntensity * 2f;
         }
     }
 
@@ -136,7 +138,7 @@ public class VFX_Manager : MonoBehaviour
 
     public void PlayVFX(VFX_Type type)
     {
-        Debug.Log(spawnTime + " " + deathTime + " " + chargeTime + " " + stunTime);
+        //Debug.Log(spawnTime + " " + deathTime + " " + chargeTime + " " + stunTime);
 
         timer = 0;
         isPlayingVFX = true;
@@ -151,6 +153,7 @@ public class VFX_Manager : MonoBehaviour
 
             case VFX_Type.Destroy:
                 effectTime = deathTime;
+                InterruptParticleSystems();
                 ActivateParticleSystem((int)type);
                 ChangeNoiseMap();
                 if(droneType == DroneType.Explosive)
@@ -190,6 +193,7 @@ public class VFX_Manager : MonoBehaviour
     {
         float value = RoundEvaluation(stunnedAnimation.Evaluate(Mathf.InverseLerp(0, effectTime, timer)));
         Debug.Log("Stun value: " + value);
+        Debug.Log("Timer: " + timer);
         sphereMaterial.SetFloat(sphereShaderProperty, value);
     }
 
@@ -225,21 +229,18 @@ public class VFX_Manager : MonoBehaviour
         }
     }
 
-    private void ChargeBallVFX()
-    {
-        float value = RoundEvaluation(fadeIn.Evaluate(Mathf.InverseLerp(0, effectTime, timer)));
-        ballMaterial.SetFloat(ballShaderProperty, value);
-    }
-
     private void ChargeExplosiveLightVFX()
     {
+        //red
         float normalizedTime = Mathf.Clamp01(timer / effectTime);
         float value1 = Mathf.Lerp(startExplosiveLightIntensity, endExplosiveLightIntensity, normalizedTime);
-        float value2 = RoundEvaluation(fadeIn.Evaluate(Mathf.InverseLerp(0, effectTime, timer))) * startExplosiveLightIntensity;
-
         droneMaterials[2].SetFloat(emissiveShaderProperty, value1);
 
-        droneMaterials[0].SetFloat(emissiveShaderProperty, value2);
+        //yellow
+        droneMaterials[1].SetFloat(emissiveShaderProperty, value1 / 2f );
+
+        //Debug.Log("start intensity: " + startExplosiveLightIntensity);
+        //Debug.Log("end intensity: " + endExplosiveLightIntensity);
     }
 
     private void SetFloatValueToDroneMaterials(float value)
@@ -258,38 +259,13 @@ public class VFX_Manager : MonoBehaviour
         }
     }
 
-    public void InterruptParticleSystems()
+    private void InterruptParticleSystems()
     {
-        foreach (ParticleSystem ps in particleSystems)
-        {
-            ps.Stop();
-        }
-
         SetFloatValueToDroneMaterials(0f);
+
+        DeactivateAllVFX();
     }
 
-    public bool IsParticleSystemDone
-    {
-        get
-        {
-            if (particleSystems == null || particleSystems.Length == 0)
-            {
-                return true;
-            }
-
-            foreach (ParticleSystem ps in particleSystems)
-            {
-                if (!ps.isStopped)
-                {
-                    return false; // Return false if any Particle System is still playing
-                }
-            }
-
-            return true; 
-        }
-    }
-
-    public DroneType DroneType { set => droneType = value; }
     public AnimationCurve StunnedAnimation { get => stunnedAnimation; set => stunnedAnimation = value; }
 
     public Transform GetBulletSpawnLocation()
@@ -309,5 +285,19 @@ public class VFX_Manager : MonoBehaviour
         }
 
         else return value;
+    }
+
+    private DroneType GetTypeFromGrandparent()
+    {
+        Transform parentTransform = transform.parent;
+        if (parentTransform != null)
+        {
+            Transform grandparentTransform = parentTransform.parent;
+            if (grandparentTransform != null)
+            {
+                return grandparentTransform.GetComponent<BaseDroneController>().DroneType;
+            }
+        }
+        return DroneType.OneHit;
     }
 }

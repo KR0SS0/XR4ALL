@@ -14,7 +14,7 @@ public class ExplosiveDrone : BaseDroneController
 
     private void Awake()
     {
-        droneType = DroneType.Explosive;
+        DroneType = DroneType.Explosive;
     }
 
     // Start is called before the first frame update

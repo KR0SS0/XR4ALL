@@ -157,12 +157,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bcb7c5e691b94b4180249b27e641979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requiredDirection: 2
-  requiredSpeed: 0.8
-  source: {fileID: 216293417}
-  destroyClip: {fileID: 8300000, guid: eb11d497a98111b46baf21568dce6a89, type: 3}
-  sourceLightsaber: {fileID: 0}
-  lightsaberHitClip: {fileID: 0}
 --- !u!65 &216293412
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -866,6 +860,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7180219013323829265, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7313654230448209575, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_Name
       value: Player
@@ -877,6 +875,10 @@ PrefabInstance:
     - target: {fileID: 7313654230448209575, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_TagString
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430304614111551997, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8821029318128668983, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_Enabled
@@ -939,6 +941,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 3
+  normalHitSound: {fileID: 0}
+  audioSource: {fileID: 0}
 --- !u!114 &452463685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -951,15 +955,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0bb5b98b14b3f46bc3ab9de7e04363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sword: {fileID: 1031471818}
   shield: {fileID: 1135171349}
   scaleDuration: 0.5
-  lightsaberSource: {fileID: 0}
-  lightsaberOn: {fileID: 0}
-  lightsaberOff: {fileID: 0}
   shieldSource: {fileID: 0}
-  shieldOn: {fileID: 0}
-  shieldOff: {fileID: 0}
+  shieldOnClip: []
+  shieldOffClip: []
+  shieldBlockClip: []
+  shieldCooldownSlider: {fileID: 0}
+  shieldCooldownFillImage: {fileID: 0}
+  cooldownColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &529095315
 GameObject:
   m_ObjectHideFlags: 0
@@ -1602,11 +1606,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1031471818 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5444005870016447874, guid: a048766430bf4d740aa58da02b9d6c6f, type: 3}
-  m_PrefabInstance: {fileID: 576155382}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &1037122345 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 9014170783809206330, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
@@ -2237,6 +2236,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExplosiveDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 3366703428726261872, guid: 79696f14865a4bd4aaaaa4fce7cf47ff, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5428348267603073560, guid: 79696f14865a4bd4aaaaa4fce7cf47ff, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.65
@@ -2377,6 +2380,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5895134528157447742}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &3857736609818215138
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 13.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630143043749107029, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5329946273100395794, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: m_Name
+      value: DroneSpawner
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
 --- !u!23 &4419581543512228200
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2500,7 +2560,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 466b89427fbb9b4408c7042bebcaa3fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerNode: 5
   requiredSpeed: 1
   minPitch: 0.9
   maxPitch: 1.1
@@ -2677,6 +2736,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: TwoHitDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 6711416340134776016, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[1].time
+      value: 0.20681353
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[2].time
+      value: 0.37231869
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[3].time
+      value: 0.587839
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[4].time
+      value: 0.76117295
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053432721485961407, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
+      propertyPath: stunnedAnimation.m_Curve.Array.data[5].time
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2733,6 +2816,10 @@ PrefabInstance:
     - target: {fileID: 663363724089369304, guid: c07bed187d5075946b41a8c87143ef81, type: 3}
       propertyPath: m_Name
       value: OneHitDrone
+      objectReference: {fileID: 0}
+    - target: {fileID: 663363724089369304, guid: c07bed187d5075946b41a8c87143ef81, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2872,3 +2959,4 @@ SceneRoots:
   - {fileID: 691919098}
   - {fileID: 277054013}
   - {fileID: 606011816}
+  - {fileID: 3857736609818215138}
