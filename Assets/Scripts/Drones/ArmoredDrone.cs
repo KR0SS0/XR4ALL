@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ShieldedDrone : BaseDroneController
 {
-    [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
 
     private void Awake()
@@ -16,7 +15,6 @@ public class ShieldedDrone : BaseDroneController
     void Start()
     {
         OnStart();
-        DestroyClip = destroyClipOverride;
         bullet = bulletShot;
     }
 
