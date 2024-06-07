@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int health = 3;
     [SerializeField] private AudioClip normalHitSound;
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private GameObject[] healthUI;
 
     private PlayerItemSwitcher playerItemSwitcher;
 
@@ -15,6 +16,7 @@ public class PlayerController : MonoBehaviour
         playerItemSwitcher = FindObjectOfType<PlayerItemSwitcher>();
     }
 
+    [ContextMenu("Hit()")]
     public void Hit()
     {
         if (playerItemSwitcher.IsShieldActive())
@@ -25,7 +27,12 @@ public class PlayerController : MonoBehaviour
             health--;
             audioSource.PlayOneShot(normalHitSound);
 
-            if (health < 0)
+            if (healthUI[health].gameObject != null)
+            {
+                healthUI[health].SetActive(false);
+            }
+
+            if (health <= 0)
             {
                 GameOver();
             }
@@ -35,5 +42,20 @@ public class PlayerController : MonoBehaviour
     private void GameOver()
     {
         GameManager.Instance.EndGame();
+    }
+
+    public void StartGame()
+    {
+        foreach(var item in healthUI)
+        {
+            item.SetActive(true);
+        }
+    }
+
+    public void WaitingToStart() {
+        foreach (var item in healthUI)
+        {
+            item.SetActive(false);
+        }
     }
 }

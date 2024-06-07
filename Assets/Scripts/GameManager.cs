@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.WaitingToStart:
+            WaitToStartGame();
             Debug.Log("Game is waiting to start");
             break;
             case GameState.Active:
@@ -93,6 +94,7 @@ public class GameManager : MonoBehaviour
             break;
             case GameState.GameOver:
             SetGameState(GameState.WaitingToStart);
+            WaitToStartGame();
             break;
         }
     }
@@ -100,12 +102,15 @@ public class GameManager : MonoBehaviour
     public void WaitToStartGame()
     {
         waitingToStartText.enabled = true;
+        FindObjectOfType<PlayerController>().WaitingToStart();
     }
 
     // Method to start the game
     public void StartGame()
     {
         SetGameState(GameState.Active);
+        FindObjectOfType<PlayerController>().StartGame();
+        FindObjectOfType<DroneSpawner>().StartGame();
         waitingToStartText.enabled = false;
         GameOverController.Instance.HideGameOverScreen();
     }
@@ -114,6 +119,8 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         SetGameState(GameState.GameOver);
+        FindObjectOfType<DroneSpawner>().DestroyAllDrones();
+        FindObjectOfType<DroneSpawner>().PauseGame();
         GameOverController.Instance.ShowGameOverScreen();
     }
 
