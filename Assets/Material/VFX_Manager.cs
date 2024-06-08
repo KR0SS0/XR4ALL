@@ -192,8 +192,8 @@ public class VFX_Manager : MonoBehaviour
     private void StunVFX()
     {
         float value = RoundEvaluation(stunnedAnimation.Evaluate(Mathf.InverseLerp(0, effectTime, timer)));
-        Debug.Log("Stun value: " + value);
-        Debug.Log("Timer: " + timer);
+        //Debug.Log("Stun value: " + value);
+        //Debug.Log("Timer: " + timer);
         sphereMaterial.SetFloat(sphereShaderProperty, value);
     }
 
