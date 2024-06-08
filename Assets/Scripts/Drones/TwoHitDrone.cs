@@ -29,7 +29,7 @@ public class TwoHitDrone : BaseDroneController
         droneCollider.enabled = false;
         GetComponentInChildren<VFX_Manager>().StunnedAnimation = stunnedAnimation;
         sphereCollider = GetComponentInChildren<SphereCollider>();
-        Debug.Log(sphereCollider.name);
+        //Debug.Log(sphereCollider.name);
 
     }
 
