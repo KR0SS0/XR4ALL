@@ -221,7 +221,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4667751019877801784}
-  - component: {fileID: 5940981122932367037}
   - component: {fileID: 1690650404526698471}
   - component: {fileID: 5994016048149301478}
   - component: {fileID: 6770541728420480536}
@@ -250,7 +249,7 @@ Transform:
   - {fileID: 5895134528436511353}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 84.02, y: -115.8, z: 0}
---- !u!114 &5940981122932367037
+--- !u!114 &1690650404526698471
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -259,10 +258,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5444005870016447874}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 466b89427fbb9b4408c7042bebcaa3fb, type: 3}
+  m_Script: {fileID: 11500000, guid: ee1629827c786c947a4420e41dc0197f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerNode: 5
   requiredSpeed: 1
   minPitch: 0.9
   maxPitch: 1.1
@@ -277,26 +275,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a3324904d8c806149b0e1b00c7c8ed59, type: 3}
   - {fileID: 8300000, guid: bd7d63421d06ce847ac97d0e2de79ff7, type: 3}
   source: {fileID: 8242881841981183545}
---- !u!114 &1690650404526698471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5444005870016447874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee1629827c786c947a4420e41dc0197f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controllerNode: 0
-  requiredSpeed: 1
-  minPitch: 0.9
-  maxPitch: 1.1
-  replayThreshold: 0.6
-  swingClips: []
-  source: {fileID: 0}
-  controllerNode: 0
+  controllerNode: 5
 --- !u!136 &5994016048149301478
 CapsuleCollider:
   m_ObjectHideFlags: 0
