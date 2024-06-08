@@ -21,7 +21,7 @@ public class DirectionalHitDrone : BaseDroneController
 
     }
 
-    protected override void HandleHit()
+    public override void HandleHit()
     {
         throw new System.NotImplementedException();
     }

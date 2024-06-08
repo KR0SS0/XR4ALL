@@ -33,7 +33,7 @@ public class ExplosiveDrone : BaseDroneController
         }
     }
 
-    protected override void HandleHit()
+    public override void HandleHit()
     {
         hp--;
         SwitchState(0f, StateMachine.Destroy);
