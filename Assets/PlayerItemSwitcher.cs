@@ -26,23 +26,35 @@ public class PlayerItemSwitcher : MonoBehaviour
     private bool isShieldActive = false;
     private bool isCooldownActive = false;
 
+    private InputAction anyInputAction;
+
     void Start()
     {
         shieldOriginalScale = shield.transform.localScale;
         shield.transform.localScale = Vector3.zero;
         shield.SetActive(false);
 
+        anyInputAction = new InputAction(type: InputActionType.Button);
+        anyInputAction.AddBinding("<Keyboard>/space");
+        anyInputAction.AddBinding("<XRController>/triggerPressed");
+        anyInputAction.AddBinding("<XRController>/gripPressed");
+        anyInputAction.AddBinding("<XRController>/primaryButton");
+        anyInputAction.AddBinding("<XRController>/secondaryButton");
+        anyInputAction.AddBinding("<Gamepad>/buttonSouth");
+        anyInputAction.performed += ctx => OnAnyInput();
+
         accessibilityController = FindObjectOfType<AccessibilityController>();
 
-        // Initialize the slider
-        shieldCooldownSlider.maxValue = accessibilityController.GetShieldCooldownValue();
-        shieldCooldownSlider.value = accessibilityController.GetShieldCooldownValue();
+        // Initialize the slider with the max value being the greater of shield duration and cooldown
+        float maxShieldValue = Mathf.Max(accessibilityController.GetShieldDurationValue(), accessibilityController.GetShieldCooldownValue());
+        shieldCooldownSlider.maxValue = maxShieldValue;
+        shieldCooldownSlider.value = maxShieldValue;
         originalColor = shieldCooldownFillImage.color;
     }
 
     void Update()
     {
-        if(GameManager.Instance.CurrentState != GameManager.GameState.Active)
+        if (GameManager.Instance.CurrentState != GameManager.GameState.Active)
         {
             shieldCooldownSlider.gameObject.SetActive(false);
             return;
@@ -50,7 +62,6 @@ public class PlayerItemSwitcher : MonoBehaviour
         {
             shieldCooldownSlider.gameObject.SetActive(true);
         }
-
 
         if (Keyboard.current.spaceKey.wasPressedThisFrame && !isShieldActive && !isCooldownActive)
         {
@@ -77,7 +88,7 @@ public class PlayerItemSwitcher : MonoBehaviour
         float shieldDuration = accessibilityController.GetShieldDurationValue();
         for (float t = 0; t < shieldDuration; t += Time.deltaTime)
         {
-            shieldCooldownSlider.value = shieldDuration - t;
+            shieldCooldownSlider.value = Mathf.Clamp(shieldDuration - t, 0, shieldCooldownSlider.maxValue);
             yield return null;
         }
 
@@ -98,7 +109,7 @@ public class PlayerItemSwitcher : MonoBehaviour
         float cooldownDuration = accessibilityController.GetShieldCooldownValue();
         for (float t = 0; t < cooldownDuration; t += Time.deltaTime)
         {
-            shieldCooldownSlider.value = t;
+            shieldCooldownSlider.value = Mathf.Clamp(t, 0, shieldCooldownSlider.maxValue);
             yield return null;
         }
 
@@ -106,7 +117,7 @@ public class PlayerItemSwitcher : MonoBehaviour
 
         // Reset slider color and value when cooldown is complete
         shieldCooldownFillImage.color = originalColor;
-        shieldCooldownSlider.value = cooldownDuration;
+        shieldCooldownSlider.value = shieldCooldownSlider.maxValue;
     }
 
     private IEnumerator ScaleAndSetActive(GameObject item, bool isActive)
@@ -164,6 +175,14 @@ public class PlayerItemSwitcher : MonoBehaviour
         {
             AudioClip clip = shieldBlockClip[Random.Range(0, shieldBlockClip.Length)];
             shieldSource.PlayOneShot(clip);
+        }
+    }
+
+    private void OnAnyInput()
+    {
+        if (!isShieldActive && !isCooldownActive)
+        {
+            ActivateShield();
         }
     }
 }

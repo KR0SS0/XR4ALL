@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.PlayerLoop;
 
 public class LightsaberXbox : MonoBehaviour
 {
@@ -14,6 +17,20 @@ public class LightsaberXbox : MonoBehaviour
 
     private int attackQueue = 0;
     private bool isAttacking = false;
+
+    private InputAction anyInputAction;
+
+    private void Start()
+    {
+        anyInputAction = new InputAction(type: InputActionType.Button);
+        anyInputAction.AddBinding("<Gamepad>/buttonEast");
+        anyInputAction.performed += ctx => OnAnyInput();
+    }
+
+    private void OnAnyInput()
+    {
+        QueueAttack();
+    }
 
     void Update()
     {

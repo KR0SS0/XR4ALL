@@ -21,7 +21,7 @@ public class AccessibilityController : MonoBehaviour
     private float shieldDurationValue = 1.0f;
     private float droneSpawnIntensityValue = 1.0f;
 
-    private string[] sensorPresets = { "OculusDefault", "AdaptiveControllerTwoButtonLayout", "AdaptiveControllerOneButtonLayout" };
+    private string[] sensorPresets = { "OculusDefault", "AdaptiveControllerTwoButtonLayout"};
     private int currentPresetIndex = 1;
 
     private void Start()
