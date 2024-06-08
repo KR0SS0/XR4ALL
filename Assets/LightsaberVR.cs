@@ -5,6 +5,7 @@ using UnityEngine.XR;
 
 public class LightsaberVR : LightsaberController
 {
+    [Header("Misc")]
     public XRNode controllerNode;
     private Vector3 previousPosition;
     private Vector3 currentVelocity;
@@ -39,5 +40,26 @@ public class LightsaberVR : LightsaberController
     public Vector3 GetSwingDirection()
     {
         return currentVelocity.normalized;
+    }
+
+    public void PlayVRSwingSound(Vector3 velocity)
+    {
+        if (source.isPlaying)
+        {
+            if (source.clip != null)
+            {
+                float playbackPosition = source.time / source.clip.length;
+
+                if (playbackPosition < replayThreshold)
+                {
+                    return;
+                }
+            }
+        }
+        float swingSpeed = velocity.magnitude;
+        if (swingSpeed > requiredSpeed)
+        {
+            PlaySwingSound();
+        }
     }
 }
