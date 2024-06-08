@@ -14,7 +14,7 @@ public class LightsaberXbox : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current.ctrlKey.wasPressedThisFrame)
         {
             QueueAttack();
         }
@@ -27,11 +27,11 @@ public class LightsaberXbox : MonoBehaviour
             attackQueue = 1; // Set to 1 since only one extra attack is needed after the first
         } else
         {
-            StartCoroutine(PerformAttack());
+            StartCoroutine(PerformAttackAnimation());
         }
     }
 
-    private IEnumerator PerformAttack()
+    private IEnumerator PerformAttackAnimation()
     {
         isAttacking = true;
 
