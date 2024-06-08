@@ -42,7 +42,7 @@ public class TwoHitDrone : BaseDroneController
         }
     }
 
-    protected override void HandleHit()
+    public override void HandleHit()
     {
         if (!timerStarted)
         {

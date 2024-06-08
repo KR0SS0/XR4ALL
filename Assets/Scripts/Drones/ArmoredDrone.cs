@@ -18,7 +18,7 @@ public class ShieldedDrone : BaseDroneController
         bullet = bulletShot;
     }
 
-    protected override void HandleHit()
+    public override void HandleHit()
     {
         throw new System.NotImplementedException();
     }

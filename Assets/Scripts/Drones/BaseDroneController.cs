@@ -363,7 +363,7 @@ public abstract class BaseDroneController : MonoBehaviour
         Decerlerate(0.95f);
     }
 
-    protected abstract void HandleHit();
+    public abstract void HandleHit();
 
     public float Velocity
     {
