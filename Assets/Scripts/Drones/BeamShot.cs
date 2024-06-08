@@ -35,18 +35,32 @@ public class BeamShot : MonoBehaviour
         rb.velocity = transform.forward * velocity;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.collider.CompareTag(playerTag))
+        if (other.CompareTag(playerTag))
         {
             Debug.Log("Bullet hit Player");
+            TryHitPlayer(other);
             Destroy(gameObject);
         }
+        
     }
 
     private IEnumerator LifeTime()
     {
         yield return new WaitForSeconds(5f);
         Destroy(gameObject);
+    }
+
+    private void TryHitPlayer(Collider collider)
+    {
+        try
+        {
+            collider.transform.root.GetComponent<PlayerController>().Hit();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("Failed to call Hit on PlayerController: " + e.Message);
+        }
     }
 }

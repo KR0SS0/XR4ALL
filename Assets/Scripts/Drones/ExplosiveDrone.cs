@@ -19,7 +19,8 @@ public class ExplosiveDrone : BaseDroneController
     // Start is called before the first frame update
     void Start()
     {
-        requiredSpeed = 0f; 
+        requiredSpeed = 0f;
+        maxDistanceToPlayer = 1.2f;
         bullet = bulletShot;
         OnStart();
     }
@@ -38,6 +39,8 @@ public class ExplosiveDrone : BaseDroneController
         hp--;
         SwitchState(0f, StateMachine.Destroy);
         Debug.Log("Explosion by being attacked");
+        HitPlayer();
+
     }
 
 
@@ -46,6 +49,7 @@ public class ExplosiveDrone : BaseDroneController
         yield return new WaitForSeconds(chargeExplosionDuration);
         SwitchState(0f, StateMachine.Destroy);
         Debug.Log("Explosion by attacking");
+        HitPlayer();
         yield return null;
     }
 }

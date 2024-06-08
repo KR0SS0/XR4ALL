@@ -25,6 +25,7 @@ public abstract class BaseDroneController : MonoBehaviour
     //private float maxVelocity = 0f;
 
     private Transform playerTransform;
+    private PlayerController playerController;
     private Transform bulletSpawnLocation;
     protected GameObject bullet;
 
@@ -35,7 +36,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private float minAmplitude = 5f;
     private float frequency = 1f;
     private float distanceToPlayer;
-    private float maxDistanceToPlayer = 2.5f;
+    protected float maxDistanceToPlayer = 2.5f;
     
 
     private float spawnAnimationTime = 2.2f;
@@ -60,7 +61,10 @@ public abstract class BaseDroneController : MonoBehaviour
         meshCollider = GetComponentInChildren<MeshCollider>();
         soundManager = GetComponent<SoundManager>();
         vfx_Manager = GetComponentInChildren<VFX_Manager>();
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        playerTransform = playerObject.transform;
+        playerController = playerObject.transform.root.GetComponent<PlayerController>();
 
         float[] timers = new float[4] { spawnAnimationTime, deathAnimationTime, chargeAttackAnimationTime, stunnedAnimationTime };
         vfx_Manager.SetTimers(timers);
@@ -405,5 +409,10 @@ public abstract class BaseDroneController : MonoBehaviour
     public void SetSpawner (DroneSpawner spawner)
     {
         this.spawner = spawner;
+    }
+
+    protected void HitPlayer()
+    {
+        playerController.Hit();
     }
 }
