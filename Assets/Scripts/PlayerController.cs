@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject[] healthUI;
 
     private PlayerItemSwitcher playerItemSwitcher;
+    private InputAction anyInputAction;
 
     private void Start()
     {

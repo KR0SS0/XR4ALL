@@ -9,6 +9,11 @@ public class GameManager : MonoBehaviour
 {
     public TMP_Text waitingToStartText;
 
+    [SerializeField] private GameObject VR_Lightsaber;
+    [SerializeField] private GameObject Gamepad_Lightsaber;
+
+    private AccessibilityController accessController;
+
     // Enum for the game states
     public enum GameState
     {
@@ -62,6 +67,13 @@ public class GameManager : MonoBehaviour
         debugCycleStateAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/d");
         debugCycleStateAction.performed += ctx => CycleGameState();
         debugCycleStateAction.Enable();
+
+        accessController = FindObjectOfType<AccessibilityController>();
+    }
+
+    private void Update()
+    {
+        CheckActivationStatus();
     }
 
     public void SetGameState(GameState newState)
@@ -129,6 +141,19 @@ public class GameManager : MonoBehaviour
         if (currentState == GameState.WaitingToStart)
         {
             StartGame();
+        }
+    }
+
+    private void CheckActivationStatus()
+    {
+        if (accessController.GetControllerPresetIndex() == 0)
+        {
+            VR_Lightsaber.gameObject.SetActive(true);
+            Gamepad_Lightsaber.gameObject.SetActive(false);
+        } else
+        {
+            VR_Lightsaber.gameObject.SetActive(false);
+            Gamepad_Lightsaber.gameObject.SetActive(true);
         }
     }
 }
