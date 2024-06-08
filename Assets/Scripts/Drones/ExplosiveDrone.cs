@@ -5,7 +5,6 @@ using UnityEngine;
 public class ExplosiveDrone : BaseDroneController
 {
 
-    [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
     [SerializeField] private bool forceDestroy = false;
     [SerializeField] private float chargeExplosionDuration = 1.5f;
@@ -20,8 +19,7 @@ public class ExplosiveDrone : BaseDroneController
     // Start is called before the first frame update
     void Start()
     {
-        requiredSpeed = 0f;
-        DestroyClip = destroyClipOverride;
+        requiredSpeed = 0f; 
         bullet = bulletShot;
         OnStart();
     }

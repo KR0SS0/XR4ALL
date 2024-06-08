@@ -17,8 +17,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private StateMachine newState;
     protected RequiredSwingDirection requiredDirection;
     protected float requiredSpeed = 1.0f;
-    protected AudioClip destroyClip;
-    protected AudioSource source;
+    private SoundManager soundManager;
     protected int hp = 1;
     private VFX_Manager vfx_Manager;
     private Rigidbody rb;
@@ -59,10 +58,9 @@ public abstract class BaseDroneController : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         meshCollider = GetComponentInChildren<MeshCollider>();
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-
-        source = GetComponent<AudioSource>();
+        soundManager = GetComponent<SoundManager>();
         vfx_Manager = GetComponentInChildren<VFX_Manager>();
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
         float[] timers = new float[4] { spawnAnimationTime, deathAnimationTime, chargeAttackAnimationTime, stunnedAnimationTime };
         vfx_Manager.SetTimers(timers);
@@ -85,6 +83,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
             if (IsValidSwing(swingDirection, swingSpeed))
             {
+                soundManager.PlayHitSound();
                 HandleHit();
             }
         }
@@ -215,8 +214,7 @@ public abstract class BaseDroneController : MonoBehaviour
         float randomAngle = Random.Range(-30f, 30f);
         startDirectionOffset = new Vector3(Mathf.Cos(randomAngle), 0f, Mathf.Sin(randomAngle));
 
-        // Optionally scale the offset if needed
-        //startDirectionOffset *= initialOffsetMagnitude;
+        soundManager.StartMovingSound();
     }
 
     private void MovingUpdate()
@@ -301,18 +299,19 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void ChargeAttack()
     {
+        soundManager.PlayChargeAttackSound(droneType);
         rb.velocity = Vector3.zero;
         isChargingAttack = true;
         Debug.Log("Start charging attack!");
         vfx_Manager.PlayVFX(VFX_Type.ChargeAttack);
         StartCoroutine(Attack());
-
     }
 
     protected virtual IEnumerator Attack()
     {
         yield return new WaitForSeconds(chargeAttackAnimationTime);
         Instantiate(bullet, bulletSpawnLocation.position, bulletSpawnLocation.rotation);
+        soundManager.PlayAttackSound();
         attackState = AttackState.Attacking;
         Debug.Log("Pew pew!");
         isChargingAttack = false;
@@ -324,7 +323,11 @@ public abstract class BaseDroneController : MonoBehaviour
         StopAllCoroutines();
 
         meshCollider.enabled = false;
-        source.PlayOneShot(destroyClip);
+        soundManager.PlayDestroySound();
+        if(droneType == DroneType.Explosive)
+        {
+            soundManager.PlayExplosionSound();
+        }
 
         vfx_Manager.PlayVFX(VFX_Type.Destroy);
 
@@ -349,6 +352,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnEnterStunned()
     {
+        soundManager.PlayStunSound();
         GetComponentInChildren<AnimatorManager>().PlayStunnedAnimation();
         vfx_Manager.PlayVFX(VFX_Type.Stunned);
         SwitchState(stunnedAnimationTime, StateMachine.Idle);
@@ -360,12 +364,6 @@ public abstract class BaseDroneController : MonoBehaviour
     }
 
     protected abstract void HandleHit();
-
-    protected AudioClip DestroyClip
-    {
-        get { return destroyClip; }
-        set { destroyClip = value; }
-    }
 
     public float Velocity
     {

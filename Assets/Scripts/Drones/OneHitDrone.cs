@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class OneHitDrone : BaseDroneController
 {
-    [SerializeField] private AudioClip destroyClipOverride;
     [SerializeField] private GameObject bulletShot;
     [SerializeField] private bool forceDestroy = false;
 
@@ -16,7 +15,6 @@ public class OneHitDrone : BaseDroneController
     // Start is called before the first frame update
     void Start()
     {
-        DestroyClip = destroyClipOverride;
         bullet = bulletShot;
         OnStart();
     }
