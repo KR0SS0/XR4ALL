@@ -28,14 +28,17 @@ public class DroneSpawner : MonoBehaviour
 
     private Transform playerLocation;
     private List<GameObject> activeDrones = new List<GameObject>();
+    private List<DroneType> droneList;
     private int currentRound = 0;
     private bool isGameOngoing = false;
     private bool isRoundFinished = true;
     private float ySpawnPosition;
+    private float originalSpawnTime;
 
     private int currentOneHitCount;
     private int currentTwoHitsCount;
     private int currentExplosiveCount;
+    private int maxActiveDrones = 10;
 
     private void Start()
     {
@@ -43,6 +46,7 @@ public class DroneSpawner : MonoBehaviour
         ySpawnPosition = transform.position.y;
         minAngle = - spawnAngle / 2f;
         maxAngle = spawnAngle / 2f;
+        originalSpawnTime = spawnTime;
     }
 
     private void FixedUpdate()
@@ -72,14 +76,14 @@ public class DroneSpawner : MonoBehaviour
         isGameOngoing = true;
         isRoundFinished = false;
         currentRound = 1;
-        StartCoroutine(SpawnDrones());
+        SpawnDrones();
     }
 
     private void NextRound()
     {
         isRoundFinished = false;
         currentRound++;
-        StartCoroutine(SpawnDrones());
+        SpawnDrones();
     }
 
     public void PauseGame()
@@ -106,7 +110,12 @@ public class DroneSpawner : MonoBehaviour
         StartGame();
     }
 
-    private IEnumerator SpawnDrones()
+    private void SpawnDrones()
+    {
+        StartCoroutine(SpawnDroneFromList());
+    }
+
+    private void CalculateDroneAmount()
     {
         switch (currentRound)
         {
@@ -131,31 +140,6 @@ public class DroneSpawner : MonoBehaviour
                 currentExplosiveCount = Mathf.RoundToInt(round3ExplosiveCount * (1 + spawnPercentageIncrease / 100f));
                 break;
         }
-
-        int totalDrones = currentOneHitCount + currentTwoHitsCount + currentExplosiveCount + 1;
-
-        for (int i = 0; i < currentOneHitCount; i++)
-        {
-            SpawnDrone(oneHitDrone);
-            yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
-            totalDrones--;
-        }
-
-        for (int i = 0; i < currentTwoHitsCount; i++)
-        {
-            SpawnDrone(twoHitsDrone);
-            yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
-            totalDrones--;
-        }
-
-        for (int i = 0; i < currentExplosiveCount; i++)
-        {
-            SpawnDrone(explosiveDrone);
-            yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
-            totalDrones--;
-        }
-        yield return null;
-        
     }
 
     private void SpawnDrone(GameObject dronePrefab)
@@ -175,6 +159,93 @@ public class DroneSpawner : MonoBehaviour
         return randomTime;
     }
 
+    private IEnumerator SpawnDroneFromList()
+    {
+        droneList = DroneList();
+
+        int totalDrones = currentOneHitCount + currentTwoHitsCount + currentExplosiveCount + 1;
+
+        spawnTime = originalSpawnTime + totalDrones / 10;
+
+        int currentDroneCount = droneList.Count;
+        int dronesToSpawn = Mathf.Min(maxActiveDrones, currentDroneCount);
+
+        for(int i = 0; i < dronesToSpawn; i++)
+        {
+            switch (droneList[i])
+            {
+                case DroneType.OneHit:
+                    SpawnDrone(oneHitDrone);
+                    yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
+                    totalDrones--;
+                    break;
+
+                case DroneType.TwoHits:
+                    SpawnDrone(twoHitsDrone);
+                    yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
+                    totalDrones--;
+                    break;
+
+                case DroneType.Explosive:
+                    SpawnDrone(explosiveDrone);
+                    yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
+                    totalDrones--;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        Debug.Log("from" + droneList.Count);
+        droneList.RemoveRange(0, dronesToSpawn);
+        Debug.Log("to: " + droneList.Count);
+        yield return null;
+    }
+
+    private IEnumerator SpawnAndWait(GameObject drone, float waitTime)
+    {
+        SpawnDrone(drone);
+        yield return new WaitForSeconds(waitTime);
+    }
+
+    private List<DroneType> DroneList()
+    {
+
+        CalculateDroneAmount();
+
+        List<DroneType> droneList = new List<DroneType>();
+
+        // Add OneHit drones
+        for (int i = 0; i < currentOneHitCount; i++)
+        {
+            droneList.Add(DroneType.OneHit);
+        }
+
+        // Add TwoHits drones
+        for (int i = 0; i < currentTwoHitsCount; i++)
+        {
+            droneList.Add(DroneType.TwoHits);
+        }
+
+        // Add Explosive drones
+        for (int i = 0; i < currentExplosiveCount; i++)
+        {
+            droneList.Add(DroneType.Explosive);
+        }
+
+        // Shuffle
+        for (int i = 0; i < droneList.Count; i++)
+        {
+            int randomIndex = Random.Range(0, droneList.Count);
+            DroneType temp = droneList[i];
+            droneList[i] = droneList[randomIndex];
+            droneList[randomIndex] = temp;
+        }
+
+        return droneList;
+    }
+
     private Vector3 GetRandomPosition()
     {
  
@@ -187,7 +258,7 @@ public class DroneSpawner : MonoBehaviour
         Vector3 randomDirection = (forward * Mathf.Cos(randomAngle)) + (right * Mathf.Sin(randomAngle));
         randomDirection.Normalize();
         Vector3 randomPosition = playerLocation.position + randomDirection * randomDistance;
-        randomPosition.y = ySpawnPosition;
+        randomPosition.y = ySpawnPosition + Random.Range(-1f, 0.2f);
 
         return randomPosition;
     }
@@ -202,6 +273,11 @@ public class DroneSpawner : MonoBehaviour
         activeDrones.Remove(drone);
         Debug.Log($"Drone destroyed. Remaining drones - OneHit: {currentOneHitCount}, TwoHits: {currentTwoHitsCount}, Explosive: {currentExplosiveCount}");
 
+        if(droneList.Count > 0)
+        {
+            SpawnNext();
+        }
+
         switch (type)
         {
             case DroneType.OneHit:
@@ -214,5 +290,27 @@ public class DroneSpawner : MonoBehaviour
                 currentExplosiveCount--;
                 break;
         }
+    }
+
+    private void SpawnNext()
+    {
+        DroneType newDrone = droneList[0];
+
+        switch (newDrone)
+        {
+            case DroneType.OneHit:
+                SpawnDrone(oneHitDrone);
+                break;
+
+            case DroneType.TwoHits:
+                SpawnDrone(twoHitsDrone);
+                break; 
+
+            case DroneType.Explosive:
+                SpawnDrone(explosiveDrone);
+                break;
+
+        }
+        droneList.Remove(0);
     }
 }

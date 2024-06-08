@@ -37,7 +37,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private float frequency = 1f;
     private float distanceToPlayer;
     protected float maxDistanceToPlayer = 2.5f;
-    
+    private float yOffset = 0f;
 
     private float spawnAnimationTime = 2.2f;
     private float deathAnimationTime = 3.0f;
@@ -70,6 +70,9 @@ public abstract class BaseDroneController : MonoBehaviour
         vfx_Manager.SetTimers(timers);
         vfx_Manager.PlayVFX(VFX_Type.Spawn);
         bulletSpawnLocation = vfx_Manager.GetBulletSpawnLocation();
+
+        yOffset = Random.Range(-0.2f, 0.2f);
+        Debug.Log("offset: " + yOffset);
     }
 
     private void Update()
@@ -235,14 +238,18 @@ public abstract class BaseDroneController : MonoBehaviour
         // Sinus
         float sinValue = Mathf.Sin(Time.time * frequency) * currentAmplitude * (distanceToPlayer / 10f);
         Vector3 offset = Vector3.Cross(directionToPlayer, Vector3.up) * sinValue;
-        Vector3 targetPosition = playerTransform.position + offset;
-        targetPosition.y = transform.position.y; 
+        Vector3 targetPosition = playerTransform.position + offset + Vector3.up * yOffset;
+
+        // rotation
+        Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+        targetRotation.eulerAngles = new Vector3(0, targetRotation.eulerAngles.y, 0);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * 5f);
 
         // Force
         Vector3 forceDirection = (targetPosition - transform.position).normalized;
         float forceMagnitude = movementSpeed * Time.deltaTime * 75f;
         Vector3 newVelocity = forceDirection * forceMagnitude;
-        newVelocity.y = rb.velocity.y;
+        //newVelocity.y = rb.velocity.y * 0.2f;
 
         if (newVelocity.magnitude > maxMovementSpeed)
         {
