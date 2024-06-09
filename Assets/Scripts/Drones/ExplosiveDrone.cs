@@ -22,6 +22,7 @@ public class ExplosiveDrone : BaseDroneController
         requiredSpeed = 0f;
         maxDistanceToPlayer = 1.2f;
         bullet = bulletShot;
+        movementSpeed = 1.4f;
         OnStart();
     }
 

@@ -28,17 +28,19 @@ public class DroneSpawner : MonoBehaviour
 
     private Transform playerLocation;
     private List<GameObject> activeDrones = new List<GameObject>();
-    private List<DroneType> droneList;
     private int currentRound = 0;
     private bool isGameOngoing = false;
     private bool isRoundFinished = true;
     private float ySpawnPosition;
     private float originalSpawnTime;
 
-    private int currentOneHitCount;
-    private int currentTwoHitsCount;
-    private int currentExplosiveCount;
-    private int maxActiveDrones = 10;
+    private int currentOneHitToSpawn;
+    private int currentTwoHitsToSpawn;
+    private int currentExplosiveToSpawn;
+    private int currentOneHitKilled;
+    private int currentTwoHitsKilled;
+    private int currentExplosiveKilled;
+    private int maxActiveDrones = 8;
 
     private void Start()
     {
@@ -112,7 +114,11 @@ public class DroneSpawner : MonoBehaviour
 
     private void SpawnDrones()
     {
-        StartCoroutine(SpawnDroneFromList());
+        currentOneHitKilled = 0;
+        currentTwoHitsKilled = 0;
+        currentExplosiveKilled = 0;
+
+        StartCoroutine(ActivateDroneFromList());
     }
 
     private void CalculateDroneAmount()
@@ -120,24 +126,24 @@ public class DroneSpawner : MonoBehaviour
         switch (currentRound)
         {
             case 1:
-                currentOneHitCount = round1OneHitCount;
-                currentTwoHitsCount = round1TwoHitsCount;
-                currentExplosiveCount = round1ExplosiveCount;
+                currentOneHitToSpawn = round1OneHitCount;
+                currentTwoHitsToSpawn = round1TwoHitsCount;
+                currentExplosiveToSpawn = round1ExplosiveCount;
                 break;
             case 2:
-                currentOneHitCount = round2OneHitCount;
-                currentTwoHitsCount = round2TwoHitsCount;
-                currentExplosiveCount = round2ExplosiveCount;
+                currentOneHitToSpawn = round2OneHitCount;
+                currentTwoHitsToSpawn = round2TwoHitsCount;
+                currentExplosiveToSpawn = round2ExplosiveCount;
                 break;
             case 3:
-                currentOneHitCount = round3OneHitCount;
-                currentTwoHitsCount = round3TwoHitsCount;
-                currentExplosiveCount = round3ExplosiveCount;
+                currentOneHitToSpawn = round3OneHitCount;
+                currentTwoHitsToSpawn = round3TwoHitsCount;
+                currentExplosiveToSpawn = round3ExplosiveCount;
                 break;
             default:
-                currentOneHitCount = Mathf.RoundToInt(round3OneHitCount * (1 + spawnPercentageIncrease / 100f));
-                currentTwoHitsCount = Mathf.RoundToInt(round3TwoHitsCount * (1 + spawnPercentageIncrease / 100f));
-                currentExplosiveCount = Mathf.RoundToInt(round3ExplosiveCount * (1 + spawnPercentageIncrease / 100f));
+                currentOneHitToSpawn = Mathf.RoundToInt(round3OneHitCount * (1 + spawnPercentageIncrease / 100f));
+                currentTwoHitsToSpawn = Mathf.RoundToInt(round3TwoHitsCount * (1 + spawnPercentageIncrease / 100f));
+                currentExplosiveToSpawn = Mathf.RoundToInt(round3ExplosiveCount * (1 + spawnPercentageIncrease / 100f));
                 break;
         }
     }
@@ -149,6 +155,7 @@ public class DroneSpawner : MonoBehaviour
         GameObject newDrone = Instantiate(dronePrefab, randomPosition, randomRotation);
         newDrone.GetComponent<BaseDroneController>().SetSpawner(this);
         activeDrones.Add(newDrone);
+        newDrone.SetActive(false);
     }
 
     private float CalculateRandomInterval(int totalDrones)
@@ -159,91 +166,54 @@ public class DroneSpawner : MonoBehaviour
         return randomTime;
     }
 
-    private IEnumerator SpawnDroneFromList()
+    private IEnumerator ActivateDroneFromList()
     {
-        droneList = DroneList();
-
-        int totalDrones = currentOneHitCount + currentTwoHitsCount + currentExplosiveCount + 1;
-
-        spawnTime = originalSpawnTime + totalDrones / 10;
-
-        int currentDroneCount = droneList.Count;
-        int dronesToSpawn = Mathf.Min(maxActiveDrones, currentDroneCount);
-
-        for(int i = 0; i < dronesToSpawn; i++)
-        {
-            switch (droneList[i])
-            {
-                case DroneType.OneHit:
-                    SpawnDrone(oneHitDrone);
-                    yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
-                    totalDrones--;
-                    break;
-
-                case DroneType.TwoHits:
-                    SpawnDrone(twoHitsDrone);
-                    yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
-                    totalDrones--;
-                    break;
-
-                case DroneType.Explosive:
-                    SpawnDrone(explosiveDrone);
-                    yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
-                    totalDrones--;
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        Debug.Log("from" + droneList.Count);
-        droneList.RemoveRange(0, dronesToSpawn);
-        Debug.Log("to: " + droneList.Count);
-        yield return null;
-    }
-
-    private IEnumerator SpawnAndWait(GameObject drone, float waitTime)
-    {
-        SpawnDrone(drone);
-        yield return new WaitForSeconds(waitTime);
-    }
-
-    private List<DroneType> DroneList()
-    {
-
         CalculateDroneAmount();
 
-        List<DroneType> droneList = new List<DroneType>();
-
         // Add OneHit drones
-        for (int i = 0; i < currentOneHitCount; i++)
+        for (int i = 0; i < currentOneHitToSpawn; i++)
         {
-            droneList.Add(DroneType.OneHit);
+            SpawnDrone(oneHitDrone);
         }
 
         // Add TwoHits drones
-        for (int i = 0; i < currentTwoHitsCount; i++)
+        for (int i = 0; i < currentTwoHitsToSpawn; i++)
         {
-            droneList.Add(DroneType.TwoHits);
+            SpawnDrone(twoHitsDrone);
         }
 
         // Add Explosive drones
-        for (int i = 0; i < currentExplosiveCount; i++)
+        for (int i = 0; i < currentExplosiveToSpawn; i++)
         {
-            droneList.Add(DroneType.Explosive);
+            SpawnDrone(explosiveDrone);
         }
 
+        SuffleList();
+
+        int totalDrones = currentOneHitToSpawn + currentTwoHitsToSpawn + currentExplosiveToSpawn + 1;
+
+        spawnTime = originalSpawnTime + totalDrones / 10;
+        int dronesToSpawn = Mathf.Min(maxActiveDrones, totalDrones - 1);
+
+        for (int i = 0; i < dronesToSpawn; i++)
+        {
+            yield return new WaitForSeconds(CalculateRandomInterval(totalDrones));
+            SetDroneActive(i);
+            totalDrones--;
+        }
+        yield return null;
+    }
+
+    private void SuffleList()
+    {
         // Shuffle
-        for (int i = 0; i < droneList.Count; i++)
+        for (int i = 0; i < activeDrones.Count; i++)
         {
-            int randomIndex = Random.Range(0, droneList.Count);
-            DroneType temp = droneList[i];
-            droneList[i] = droneList[randomIndex];
-            droneList[randomIndex] = temp;
+            int randomIndex = Random.Range(0, activeDrones.Count);
+            GameObject temp = activeDrones[i];
+            activeDrones[i] = activeDrones[randomIndex];
+            activeDrones[randomIndex] = temp;
         }
-
-        return droneList;
     }
 
     private Vector3 GetRandomPosition()
@@ -258,7 +228,7 @@ public class DroneSpawner : MonoBehaviour
         Vector3 randomDirection = (forward * Mathf.Cos(randomAngle)) + (right * Mathf.Sin(randomAngle));
         randomDirection.Normalize();
         Vector3 randomPosition = playerLocation.position + randomDirection * randomDistance;
-        randomPosition.y = ySpawnPosition + Random.Range(-1f, 0.2f);
+        randomPosition.y = ySpawnPosition + Random.Range(-0.5f, 0.1f);
 
         return randomPosition;
     }
@@ -271,46 +241,54 @@ public class DroneSpawner : MonoBehaviour
     public void OnDroneDestroyed(GameObject drone, DroneType type)
     {
         activeDrones.Remove(drone);
-        Debug.Log($"Drone destroyed. Remaining drones - OneHit: {currentOneHitCount}, TwoHits: {currentTwoHitsCount}, Explosive: {currentExplosiveCount}");
-
-        if(droneList.Count > 0)
-        {
-            SpawnNext();
-        }
 
         switch (type)
         {
             case DroneType.OneHit:
-                currentOneHitCount--;
+                currentOneHitKilled++;
                 break;
             case DroneType.TwoHits:
-                currentTwoHitsCount--;
+                currentTwoHitsKilled++;
                 break;
             case DroneType.Explosive:
-                currentExplosiveCount--;
+                currentExplosiveKilled++;
                 break;
+        }
+        Debug.Log(type + $" destroyed. Remaining drones - OneHit: {currentOneHitToSpawn - currentOneHitKilled}, " +
+            $"TwoHits: {currentTwoHitsToSpawn - currentTwoHitsKilled}, " +
+            $"Explosive: {currentExplosiveToSpawn - currentExplosiveKilled}");
+
+        if(!areAllDronesKilled() && activeDrones.Count > 0)
+        {
+            SpawnNext();
         }
     }
 
     private void SpawnNext()
     {
-        DroneType newDrone = droneList[0];
-
-        switch (newDrone)
+        for(int i = 0; i < activeDrones.Count; i++)
         {
-            case DroneType.OneHit:
-                SpawnDrone(oneHitDrone);
-                break;
-
-            case DroneType.TwoHits:
-                SpawnDrone(twoHitsDrone);
-                break; 
-
-            case DroneType.Explosive:
-                SpawnDrone(explosiveDrone);
-                break;
-
+            if (!activeDrones[i].activeSelf)
+            {
+                activeDrones[i].SetActive(true);
+                return;
+            }
         }
-        droneList.Remove(0);
+        Debug.Log("Current list count of drones: " + activeDrones.Count);
+    }
+
+    private bool areAllDronesKilled()
+    {
+        return currentOneHitToSpawn - currentOneHitKilled <= 0 && 
+            currentTwoHitsToSpawn - currentTwoHitsKilled <= 0 && 
+            currentExplosiveToSpawn - currentExplosiveKilled <= 0;
+    }
+
+    private void SetDroneActive(int index)
+    {
+        if(index < activeDrones.Count && index >= 0)
+        {
+            activeDrones[index].SetActive(true);
+        }
     }
 }

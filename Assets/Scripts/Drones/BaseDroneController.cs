@@ -30,7 +30,7 @@ public abstract class BaseDroneController : MonoBehaviour
     protected GameObject bullet;
 
     private Vector3 startDirectionOffset;
-    private float movementSpeed = 3.5f;
+    protected float movementSpeed = 3.5f;
     private float maxMovementSpeed = 4f;
     private float maxAmplitude = 25f;
     private float minAmplitude = 5f;
@@ -43,6 +43,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private float deathAnimationTime = 3.0f;
     private float chargeAttackAnimationTime = 2f;
     private float stunnedAnimationTime = 0.5f;
+    private float movementAccelerationTimer = 0f;
 
     private float rotationTime = 2f;
     private float rotationElapsedTime = 0.0f;
@@ -71,8 +72,8 @@ public abstract class BaseDroneController : MonoBehaviour
         vfx_Manager.PlayVFX(VFX_Type.Spawn);
         bulletSpawnLocation = vfx_Manager.GetBulletSpawnLocation();
 
-        yOffset = Random.Range(-0.2f, 0.2f);
-        Debug.Log("offset: " + yOffset);
+        yOffset = Random.Range(-0.25f, 0.15f);
+        //Debug.Log("offset: " + yOffset);
     }
 
     private void Update()
@@ -189,6 +190,11 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnEnterIdle()
     {
+        SetRotationTarget();
+    }
+
+    private void SetRotationTarget()
+    {
         initialRotation = transform.rotation;
         float y = Quaternion.LookRotation(playerTransform.position - transform.position).eulerAngles.y;
         targetRotation = Quaternion.Euler(0f, y, 0f);
@@ -201,7 +207,6 @@ public abstract class BaseDroneController : MonoBehaviour
         if (rotationElapsedTime < rotationTime)
         {
             RotateTowardsPlayer();
-            rotationElapsedTime += Time.deltaTime;
         }
         else
         {
@@ -213,6 +218,7 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         float t = Mathf.Clamp(rotationElapsedTime, 0f, rotationTime);
         transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, t);
+        rotationElapsedTime += Time.deltaTime;
     }
 
     private void OnEnterMoving()
@@ -220,7 +226,7 @@ public abstract class BaseDroneController : MonoBehaviour
         // Set a random start direction offset (example: random direction in the XZ plane)
         float randomAngle = Random.Range(-30f, 30f);
         startDirectionOffset = new Vector3(Mathf.Cos(randomAngle), 0f, Mathf.Sin(randomAngle));
-
+        movementAccelerationTimer = 0f;
         soundManager.StartMovingSound();
     }
 
@@ -241,13 +247,12 @@ public abstract class BaseDroneController : MonoBehaviour
         Vector3 targetPosition = playerTransform.position + offset + Vector3.up * yOffset;
 
         // rotation
-        Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
-        targetRotation.eulerAngles = new Vector3(0, targetRotation.eulerAngles.y, 0);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * 5f);
+        Quaternion targetRotation = Quaternion.LookRotation((playerTransform.position - transform.position).normalized);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime);
 
         // Force
         Vector3 forceDirection = (targetPosition - transform.position).normalized;
-        float forceMagnitude = movementSpeed * Time.deltaTime * 75f;
+        float forceMagnitude = MovementSpeed() * Time.deltaTime * 75f;
         Vector3 newVelocity = forceDirection * forceMagnitude;
         //newVelocity.y = rb.velocity.y * 0.2f;
 
@@ -270,11 +275,14 @@ public abstract class BaseDroneController : MonoBehaviour
         {
             SwitchState(0f, StateMachine.Attacking);
         }
+
+        movementAccelerationTimer += Time.deltaTime;
     }
 
     private void OnEnterAttack()
     {
         attackState = AttackState.Braking;
+        SetRotationTarget();
     }
 
     private void AttackingUpdate()
@@ -290,6 +298,7 @@ public abstract class BaseDroneController : MonoBehaviour
                 {
                     ChargeAttack();
                 }
+                RotateTowardsPlayer();
                 break;
 
             case AttackState.Attacking:
@@ -392,12 +401,12 @@ public abstract class BaseDroneController : MonoBehaviour
 
     IEnumerator DestroyTimer(float waitTime)
     {
-        yield return new WaitForSeconds(waitTime);
-
         if (spawner != null)
         {
             spawner.OnDroneDestroyed(gameObject, DroneType);
         }
+
+        yield return new WaitForSeconds(waitTime);
 
         Destroy(gameObject);
     }
@@ -421,5 +430,14 @@ public abstract class BaseDroneController : MonoBehaviour
     protected void HitPlayer()
     {
         playerController.Hit();
+    }
+
+    private float MovementSpeed()
+    {
+        if(distanceToPlayer < maxDistanceToPlayer + 2f)
+        {
+            return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed * 0.75f);
+        }      
+        return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed);
     }
 }
