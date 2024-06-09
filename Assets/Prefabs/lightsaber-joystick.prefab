@@ -107,6 +107,9 @@ MonoBehaviour:
   source: {fileID: 1940260122018552336}
   animator: {fileID: 3854063980569791025}
   smoothingSpeed: 7
+  inputThreshold: 0.05
+  attackThreshold: 0.5
+  attackRange: 5
 --- !u!95 &3854063980569791025 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8655276393058551604, guid: f6337fc52cb7094418e38ec11ee128ac, type: 3}

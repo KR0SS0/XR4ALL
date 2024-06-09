@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject VR_Lightsaber;
     [SerializeField] private GameObject Gamepad_Lightsaber;
+    [SerializeField] private GameObject Joystick_Lightsaber;
 
     private AccessibilityController accessController;
 
@@ -150,10 +151,19 @@ public class GameManager : MonoBehaviour
         {
             VR_Lightsaber.gameObject.SetActive(true);
             Gamepad_Lightsaber.gameObject.SetActive(false);
-        } else
+            Joystick_Lightsaber.gameObject.SetActive(false);
+        } 
+        else if(accessController.GetControllerPresetIndex() == 1)
         {
             VR_Lightsaber.gameObject.SetActive(false);
             Gamepad_Lightsaber.gameObject.SetActive(true);
+            Joystick_Lightsaber.gameObject.SetActive(false);
+        } 
+        else if (accessController.GetControllerPresetIndex() == 2)
+        {
+            VR_Lightsaber.gameObject.SetActive(false);
+            Gamepad_Lightsaber.gameObject.SetActive(false);
+            Joystick_Lightsaber.gameObject.SetActive(true);
         }
     }
 }
