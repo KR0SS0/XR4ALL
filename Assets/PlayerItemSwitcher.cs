@@ -34,14 +34,15 @@ public class PlayerItemSwitcher : MonoBehaviour
         shield.transform.localScale = Vector3.zero;
         shield.SetActive(false);
 
-        anyInputAction = new InputAction(type: InputActionType.Button);
+        anyInputAction = new InputAction();
         anyInputAction.AddBinding("<Keyboard>/space");
         anyInputAction.AddBinding("<XRController>/triggerPressed");
         anyInputAction.AddBinding("<XRController>/gripPressed");
         anyInputAction.AddBinding("<XRController>/primaryButton");
         anyInputAction.AddBinding("<XRController>/secondaryButton");
-        anyInputAction.AddBinding("<Gamepad>/buttonSouth");
+        anyInputAction.AddBinding("<Gamepad>/buttonEast");
         anyInputAction.performed += ctx => OnAnyInput();
+        anyInputAction.Enable();
 
         accessibilityController = FindObjectOfType<AccessibilityController>();
 
