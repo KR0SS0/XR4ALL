@@ -258,7 +258,7 @@ public class DroneSpawner : MonoBehaviour
             $"TwoHits: {currentTwoHitsToSpawn - currentTwoHitsKilled}, " +
             $"Explosive: {currentExplosiveToSpawn - currentExplosiveKilled}");
 
-        if(areAllDronesKilled() && activeDrones.Count > 0)
+        if(!areAllDronesKilled() && activeDrones.Count > 0)
         {
             SpawnNext();
         }
@@ -266,8 +266,15 @@ public class DroneSpawner : MonoBehaviour
 
     private void SpawnNext()
     {
+        for(int i = 0; i < activeDrones.Count; i++)
+        {
+            if (!activeDrones[i].activeSelf)
+            {
+                activeDrones[i].SetActive(true);
+                return;
+            }
+        }
         Debug.Log("Current list count of drones: " + activeDrones.Count);
-        SetDroneActive(activeDrones.Count - 1);   
     }
 
     private bool areAllDronesKilled()
