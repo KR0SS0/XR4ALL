@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
         {
             item.SetActive(true);
         }
+        health = 3;
     }
 
     public void WaitingToStart() {
@@ -59,5 +60,6 @@ public class PlayerController : MonoBehaviour
         {
             item.SetActive(false);
         }
+        health = 3;
     }
 }

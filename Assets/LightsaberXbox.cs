@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
 
-public class LightsaberXbox : MonoBehaviour
+public class LightsaberXbox : LightsaberController
 {
     [SerializeField] private Animator animator;
     [SerializeField] private string attackTrigger1 = "attack1";
@@ -22,9 +22,10 @@ public class LightsaberXbox : MonoBehaviour
 
     private void Start()
     {
-        anyInputAction = new InputAction(type: InputActionType.Button);
-        anyInputAction.AddBinding("<Gamepad>/buttonEast");
+        anyInputAction = new InputAction();
+        anyInputAction.AddBinding("<Gamepad>/buttonWest");
         anyInputAction.performed += ctx => OnAnyInput();
+        anyInputAction.Enable();
     }
 
     private void OnAnyInput()
@@ -93,9 +94,11 @@ public class LightsaberXbox : MonoBehaviour
             if (distanceToDrone <= attackRange)
             {
                 drone.HandleHit();
+                PlayStrikeSound();
                 Debug.Log("Drone hit!");
             } else
             {
+                PlaySwingSound();
                 Debug.Log("Drone is out of attack range.");
             }
         } else
