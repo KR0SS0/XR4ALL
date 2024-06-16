@@ -37,6 +37,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private float frequency = 1f;
     private float distanceToPlayer;
     protected float maxDistanceToPlayer = 2.5f;
+    private static float staticMaxDistanceToPlayer;
     private float yOffset = 0f;
 
     private float spawnAnimationTime = 2.2f;
@@ -51,6 +52,8 @@ public abstract class BaseDroneController : MonoBehaviour
     private Quaternion initialRotation;
 
     private DroneSpawner spawner;
+    private Vector3 targetPosition;
+    private float gizmoSize = 0.2f;
 
     protected void OnStart()
     {
@@ -74,6 +77,8 @@ public abstract class BaseDroneController : MonoBehaviour
 
         yOffset = Random.Range(-0.25f, 0.15f);
         //Debug.Log("offset: " + yOffset);
+        staticMaxDistanceToPlayer = maxDistanceToPlayer;
+
     }
 
     private void Update()
@@ -244,7 +249,7 @@ public abstract class BaseDroneController : MonoBehaviour
         // Sinus
         float sinValue = Mathf.Sin(Time.time * frequency) * currentAmplitude * (distanceToPlayer / 10f);
         Vector3 offset = Vector3.Cross(directionToPlayer, Vector3.up) * sinValue;
-        Vector3 targetPosition = playerTransform.position + offset + Vector3.up * yOffset;
+        targetPosition = playerTransform.position + offset + Vector3.up * yOffset;
 
         // rotation
         Quaternion targetRotation = Quaternion.LookRotation((playerTransform.position - transform.position).normalized);
@@ -394,6 +399,8 @@ public abstract class BaseDroneController : MonoBehaviour
     public float DeathAnimationTime { get => deathAnimationTime; }
     public DroneType DroneType { get => droneType; protected set => droneType = value; }
 
+    public static float MaxDistanceToPlayer { get => staticMaxDistanceToPlayer; }
+
     private void StartDestroyTimer(float animationTime)
     {
         StartCoroutine(DestroyTimer(animationTime));
@@ -439,5 +446,29 @@ public abstract class BaseDroneController : MonoBehaviour
             return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed * 0.75f);
         }      
         return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (targetPosition != null)
+        {
+            Gizmos.color = GetColor();
+            Gizmos.DrawWireSphere(targetPosition, gizmoSize);
+        }
+    }
+
+    private Color GetColor()
+    {
+        switch(droneType)
+        {
+            case DroneType.OneHit:
+                return Color.red;
+            case DroneType.TwoHits:
+                return Color.blue;
+            case DroneType.Explosive:
+                return Color.yellow;
+            default:
+                return Color.white;
+        }
     }
 }

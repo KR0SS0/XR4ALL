@@ -874,15 +874,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7313654230448209575, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 7873184977108000993, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_RequestedTrackingOriginMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8430304614111551997, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8472466676443561377, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8472466676443561377, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8821029318128668983, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9014170783728641054, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3919
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -943,6 +959,7 @@ MonoBehaviour:
   health: 3
   normalHitSound: {fileID: 0}
   audioSource: {fileID: 0}
+  healthUI: []
 --- !u!114 &452463685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -964,6 +981,11 @@ MonoBehaviour:
   shieldCooldownSlider: {fileID: 0}
   shieldCooldownFillImage: {fileID: 0}
   cooldownColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!4 &469657489 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9014170783728641054, guid: 895f6f3c2d334633b5800312285058d2, type: 3}
+  m_PrefabInstance: {fileID: 452463679}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &529095315
 GameObject:
   m_ObjectHideFlags: 0
@@ -1128,6 +1150,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waitingToStartText: {fileID: 529095317}
+  VR_Lightsaber: {fileID: 0}
+  Gamepad_Lightsaber: {fileID: 0}
 --- !u!4 &573259969
 Transform:
   m_ObjectHideFlags: 0
@@ -2428,6 +2452,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DroneSpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 7535194708470244303, guid: 0e07fcd1561f97244bcef9e6562e5025, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 469657489}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2569,6 +2597,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 336b20bf6d0d3f54385cf7cce5ab3f2f, type: 3}
   - {fileID: 8300000, guid: a3324904d8c806149b0e1b00c7c8ed59, type: 3}
   - {fileID: 8300000, guid: bd7d63421d06ce847ac97d0e2de79ff7, type: 3}
+  strikeClips: []
   source: {fileID: 8242881842297012862}
 --- !u!136 &5994016048897186977
 CapsuleCollider:
