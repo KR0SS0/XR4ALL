@@ -62,3 +62,6 @@ MonoBehaviour:
   spawnPercentageIncrease: 10
   spawnAngle: 70
   startGame: 0
+  debug: 1
+  playerTransform: {fileID: 0}
+  maxActiveDrones: 8

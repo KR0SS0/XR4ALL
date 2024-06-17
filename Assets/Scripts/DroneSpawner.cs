@@ -22,12 +22,19 @@ public class DroneSpawner : MonoBehaviour
     [SerializeField] private float spawnPercentageIncrease = 10f;
     [SerializeField] private float spawnAngle = 30f;
     [SerializeField] private bool startGame = false;
+    [SerializeField] private bool debug = false;
+    [SerializeField] private Transform playerTransform;
+
+    private Color sphereColor = Color.black;
+    private Color spawnAreaColor = Color.red;
+    private Mesh cylinderMesh;
+    private float sphereRadius; //drone distance to player
 
     private float minAngle;
     private float maxAngle;
 
     private Transform playerLocation;
-    private List<GameObject> activeDrones = new List<GameObject>();
+    private readonly List<GameObject> activeDrones = new List<GameObject>();
     private int currentRound = 0;
     private bool isGameOngoing = false;
     private bool isRoundFinished = true;
@@ -40,7 +47,11 @@ public class DroneSpawner : MonoBehaviour
     private int currentOneHitKilled;
     private int currentTwoHitsKilled;
     private int currentExplosiveKilled;
-    private int maxActiveDrones = 8;
+    [SerializeField] private int maxActiveDrones = 8;
+
+    public float MinDistanceToPlayer { get => minDistanceToPlayer; set => minDistanceToPlayer = value; }
+    public float MaxDistanceToPlayer { get => maxDistanceToPlayer; set => maxDistanceToPlayer = value; }
+    public float SpawnAngle { get => spawnAngle; set => spawnAngle = value; }
 
     private void Start()
     {
@@ -49,6 +60,7 @@ public class DroneSpawner : MonoBehaviour
         minAngle = - spawnAngle / 2f;
         maxAngle = spawnAngle / 2f;
         originalSpawnTime = spawnTime;
+        sphereRadius = BaseDroneController.MaxDistanceToPlayer;
     }
 
     private void FixedUpdate()
@@ -290,5 +302,70 @@ public class DroneSpawner : MonoBehaviour
         {
             activeDrones[index].SetActive(true);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+
+        if (playerTransform != null && debug)
+        {
+            // Draw the sphere
+            Gizmos.color = sphereColor;
+            Gizmos.DrawWireSphere(playerTransform.position, sphereRadius);
+
+
+            // Draw the spawn area
+            Gizmos.color = spawnAreaColor;
+            if (cylinderMesh == null)
+            {
+                cylinderMesh = CreateCylinderMesh(minDistanceToPlayer, maxDistanceToPlayer, spawnAngle);
+            }
+            Gizmos.DrawWireMesh(cylinderMesh, playerTransform.position, Quaternion.identity, Vector3.one);
+        }
+    }
+
+    private Mesh CreateCylinderMesh(float minRadius, float maxRadius, float angle)
+    {
+        Mesh mesh = new Mesh();
+
+        int segments = 8;
+        float angleStep = Mathf.Deg2Rad * angle / segments;
+
+        int vertexCount = (segments + 1) * 2;
+        Vector3[] vertices = new Vector3[vertexCount];
+        int[] triangles = new int[segments * 6];
+
+        for (int i = 0; i <= segments; i++)
+        {
+            float currentAngle = i * angleStep - angleStep * segments / 2 + Mathf.PI / 2f;
+            float cos = Mathf.Cos(currentAngle);
+            float sin = Mathf.Sin(currentAngle);
+
+            vertices[i] = new Vector3(cos * minRadius, 0, sin * minRadius); //  inner arc
+            vertices[i + segments + 1] = new Vector3(cos * maxRadius, 0, sin * maxRadius); //  outer arc
+        }
+
+        for (int i = 0; i < segments; i++)
+        {
+            int innerBottomLeft = i;
+            int outerBottomLeft = i + segments + 1;
+            int innerBottomRight = (i + 1) % (segments + 1);
+            int outerBottomRight = (i + 1) % (segments + 1) + segments + 1;
+
+            // Bottom face
+            triangles[i * 6] = innerBottomLeft;
+            triangles[i * 6 + 1] = outerBottomRight;
+            triangles[i * 6 + 2] = outerBottomLeft;
+
+            triangles[i * 6 + 3] = innerBottomLeft;
+            triangles[i * 6 + 4] = innerBottomRight;
+            triangles[i * 6 + 5] = outerBottomRight;
+        }
+
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+
+        return mesh;
     }
 }
