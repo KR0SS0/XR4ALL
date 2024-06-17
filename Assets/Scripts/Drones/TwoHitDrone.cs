@@ -13,6 +13,7 @@ public class TwoHitDrone : BaseDroneController
     private bool timerStarted = false;
     public AnimationCurve stunnedAnimation;
     [SerializeField] private bool forceDestroy = false;
+    public static float MaxDistanceToPlayer { get => maxDistanceToPlayer; }
 
     private void Awake()
     {

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PriorityLevel {low, medium, high}
+
 public class SoundManager : MonoBehaviour
 {
     [SerializeField] private AudioClip[] hitClips;
@@ -15,62 +17,91 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip[] explosionClips;
     [SerializeField] private AudioClip[] movingClips;
 
-    private AudioSource audioSource;
+    private Dictionary<PriorityLevel, float[]> volumeLevels;
+    private PriorityLevel currentPriorityLevel = PriorityLevel.low;
+
+    private AudioSource oneShotSource;
     private AudioSource loopSource;
+
+    //one shots
+    private float lowVolumeOS = 0.2f;
+    private float mediumVolumeOS = 0.4f;
+    private float highVolumeOS = 0.6f;
+
+    //loops
+    private float lowVolumeLoop = 0.15f;
+    private float mediumVolumeLoop = 0.3f;
+    private float highVolumeLoop = 0.4f;
+
+    private float[] startVolumes;
+    private float[] endVolumes;
+    private float lerpDuration = 0.5f;
+    private float elapsedTime = 0f;
+    private bool isLerping = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        audioSource = GetComponents<AudioSource>()[0];
+        oneShotSource = GetComponents<AudioSource>()[0];
         loopSource = GetComponents<AudioSource>()[1];
         loopSource.clip = RandomClip(movingClips);
+        loopSource.loop = true;
+
+        volumeLevels = new Dictionary<PriorityLevel, float[]>
+        {
+            {PriorityLevel.low, new float [2] {lowVolumeOS, lowVolumeLoop} },
+            {PriorityLevel.medium, new float [2] {mediumVolumeOS, mediumVolumeLoop} },
+            {PriorityLevel.high, new float[2] { highVolumeOS, highVolumeLoop} },
+
+        };
 
         PlaySpawnSound();
+
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
+        if(isLerping)
+        {
+            LerpVolume();
+        }
     }
 
     public void PlayHitSound()
     {
-        audioSource.pitch = RandomPitch();
-        audioSource.PlayOneShot(RandomClip(hitClips));
+        oneShotSource.pitch = RandomPitch();
+        oneShotSource.PlayOneShot(RandomClip(hitClips));
     }
 
     public void PlaySpawnSound()
     {
-        audioSource.pitch = RandomPitch();
-        audioSource.PlayOneShot(RandomClip(spawnClips));
+        oneShotSource.pitch = RandomPitch();
+        oneShotSource.PlayOneShot(RandomClip(spawnClips));
     }
 
     public void PlayStunSound()
     {
-        audioSource.pitch = RandomPitch();
-        audioSource.PlayOneShot(RandomClip(stunClips));
+        oneShotSource.pitch = RandomPitch();
+        oneShotSource.PlayOneShot(RandomClip(stunClips));
     }
 
     public void PlayDestroySound()
     {
-        loopSource.Stop();
-        audioSource.pitch = RandomPitch();
-        audioSource.PlayOneShot(RandomClip(destroyClips));
+        oneShotSource.pitch = RandomPitch();
+        oneShotSource.PlayOneShot(RandomClip(destroyClips));
     }
 
     public void PlayChargeAttackSound(DroneType droneType)
     {
-        loopSource.Stop();
-        audioSource.pitch = RandomPitch();
+        oneShotSource.pitch = RandomPitch();
 
         switch (droneType)
         {
             case DroneType.Explosive:
-                audioSource.PlayOneShot(RandomClip(chargeExplosionAttackClips));
+                oneShotSource.PlayOneShot(RandomClip(chargeExplosionAttackClips));
                 break;
             default:
-                audioSource.PlayOneShot(RandomClip(chargeBulletAttackClips));
+                oneShotSource.PlayOneShot(RandomClip(chargeBulletAttackClips));
                 break;
 
         }
@@ -78,10 +109,9 @@ public class SoundManager : MonoBehaviour
 
     public void PlayAttackSound()
     {
-        loopSource.Stop();
-        audioSource.pitch = RandomPitch();
-        audioSource.PlayOneShot(RandomClip(bulletAttackClips));
-        audioSource.PlayOneShot(RandomClip(electricShotClips));
+        oneShotSource.pitch = RandomPitch();
+        oneShotSource.PlayOneShot(RandomClip(bulletAttackClips));
+        oneShotSource.PlayOneShot(RandomClip(electricShotClips));
     }
 
     public void StartMovingSound()
@@ -92,9 +122,8 @@ public class SoundManager : MonoBehaviour
 
     public void PlayExplosionSound()
     {
-        loopSource.Stop();
-        audioSource.pitch = RandomPitch();
-        audioSource.PlayOneShot(RandomClip(explosionClips));
+        oneShotSource.pitch = RandomPitch();
+        oneShotSource.PlayOneShot(RandomClip(explosionClips));
     }
 
     private float RandomPitch()
@@ -104,6 +133,34 @@ public class SoundManager : MonoBehaviour
 
     private AudioClip RandomClip(AudioClip[] clips)
     {
-        return clips[Random.Range(0, clips.Length - 1)];
+        return clips[Random.Range(0, clips.Length)];
+    }
+
+    public void SwitchLevel(PriorityLevel newLevel)
+    {
+        if(currentPriorityLevel == newLevel) return;
+
+        startVolumes = volumeLevels[currentPriorityLevel];
+        endVolumes = volumeLevels[newLevel];
+        elapsedTime = 0.0f;
+        isLerping = true;
+        currentPriorityLevel = newLevel;
+    }
+
+    private void LerpVolume()
+    {
+        elapsedTime += Time.fixedDeltaTime;
+
+        float t = elapsedTime / lerpDuration;
+
+        oneShotSource.volume = Mathf.Lerp(startVolumes[0], endVolumes[0], t);
+        loopSource.volume = Mathf.Lerp(startVolumes[1], endVolumes[1], t);
+
+        if (elapsedTime >= lerpDuration)
+        {
+            isLerping = false;
+            oneShotSource.volume = endVolumes[0];
+            loopSource.volume = endVolumes[1];
+        }
     }
 }

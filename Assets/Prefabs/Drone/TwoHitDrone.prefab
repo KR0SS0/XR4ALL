@@ -24638,8 +24638,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5d0451ee77701df469a06cab36c035ea, type: 3}
   - {fileID: 8300000, guid: 4e94e79304e61514580a9db1bfa46ecc, type: 3}
   movingClips:
-  - {fileID: 8300000, guid: dafb8ac9b1db8904a9bcf69e39f9a0ea, type: 3}
-  - {fileID: 8300000, guid: e8227231db61ea14a8025bcba7481252, type: 3}
+  - {fileID: 8300000, guid: aac3048a486e94b45b1445dddc7ab8c5, type: 3}
+  - {fileID: 8300000, guid: d3c591f0156257b4db2878982dafb5f9, type: 3}
 --- !u!82 &573123403358138821
 AudioSource:
   m_ObjectHideFlags: 0

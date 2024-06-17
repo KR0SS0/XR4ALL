@@ -132,8 +132,7 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         SetGameState(GameState.GameOver);
-        FindObjectOfType<DroneSpawner>().DestroyAllDrones();
-        FindObjectOfType<DroneSpawner>().PauseGame();
+        FindObjectOfType<DroneSpawner>().EndGame();
         GameOverController.Instance.ShowGameOverScreen();
     }
 

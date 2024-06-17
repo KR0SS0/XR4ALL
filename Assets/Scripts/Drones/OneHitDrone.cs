@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class OneHitDrone : BaseDroneController
 {
     [SerializeField] private GameObject bulletShot;
     [SerializeField] private bool forceDestroy = false;
+    public static float MaxDistanceToPlayer { get => maxDistanceToPlayer; }
 
     private void Awake()
     {
