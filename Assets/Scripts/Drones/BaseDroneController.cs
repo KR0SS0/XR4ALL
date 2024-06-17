@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Linq;
-using System.Threading;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
 public enum DroneType { OneHit, TwoHits, Armored, Directional, Explosive}
@@ -35,9 +35,8 @@ public abstract class BaseDroneController : MonoBehaviour
     private float maxAmplitude = 25f;
     private float minAmplitude = 5f;
     private float frequency = 1f;
-    private float distanceToPlayer;
-    protected float maxDistanceToPlayer = 2.5f;
-    private static float staticMaxDistanceToPlayer;
+    private float distanceToPlayer = float.MaxValue;
+    protected static float maxDistanceToPlayer = 2.5f;
     private float yOffset = 0f;
 
     private float spawnAnimationTime = 2.2f;
@@ -77,7 +76,6 @@ public abstract class BaseDroneController : MonoBehaviour
 
         yOffset = Random.Range(-0.25f, 0.15f);
         //Debug.Log("offset: " + yOffset);
-        staticMaxDistanceToPlayer = maxDistanceToPlayer;
 
     }
 
@@ -228,7 +226,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnEnterMoving()
     {
-        // Set a random start direction offset (example: random direction in the XZ plane)
+        // Set a random start direction offset in the XZ plane
         float randomAngle = Random.Range(-30f, 30f);
         startDirectionOffset = new Vector3(Mathf.Cos(randomAngle), 0f, Mathf.Sin(randomAngle));
         movementAccelerationTimer = 0f;
@@ -399,7 +397,7 @@ public abstract class BaseDroneController : MonoBehaviour
     public float DeathAnimationTime { get => deathAnimationTime; }
     public DroneType DroneType { get => droneType; protected set => droneType = value; }
 
-    public static float MaxDistanceToPlayer { get => staticMaxDistanceToPlayer; }
+    public float DistanceToPlayer { get => distanceToPlayer;}
 
     private void StartDestroyTimer(float animationTime)
     {
@@ -469,6 +467,26 @@ public abstract class BaseDroneController : MonoBehaviour
                 return Color.yellow;
             default:
                 return Color.white;
+        }
+    }
+
+    public class DistanceToPlayerComparer : IComparer<GameObject>
+    {
+        public int Compare(GameObject x, GameObject y)
+        {
+            if(x == null || y == null)
+            {
+                return 0;
+            }
+
+            BaseDroneController xController = x.GetComponent<BaseDroneController>();
+            BaseDroneController yController = y.GetComponent<BaseDroneController>();
+
+            if (xController == null || yController == null)
+            {
+                return 0;
+            }
+            return xController.DistanceToPlayer.CompareTo(yController.DistanceToPlayer);
         }
     }
 }

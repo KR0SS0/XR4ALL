@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ExplosiveDrone : BaseDroneController
@@ -10,6 +11,7 @@ public class ExplosiveDrone : BaseDroneController
     [SerializeField] private float chargeExplosionDuration = 1.5f;
 
     public float ChargeExplosionDuration { get => chargeExplosionDuration;}
+    public static float MaxDistanceToPlayer = 1.2f;
 
     private void Awake()
     {
