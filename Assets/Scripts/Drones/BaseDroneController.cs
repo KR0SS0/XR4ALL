@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
 public enum DroneType { OneHit, TwoHits, Armored, Directional, Explosive}
+public enum PriorityLevel { low, medium, high }
 
 public abstract class BaseDroneController : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public abstract class BaseDroneController : MonoBehaviour
     protected StateMachine state;
     private StateMachine newState;
     protected RequiredSwingDirection requiredDirection;
+    private PriorityLevel currentPriorityLevel = PriorityLevel.low;
     protected float requiredSpeed = 1.0f;
     private SoundManager soundManager;
     protected int hp = 1;
@@ -30,7 +33,7 @@ public abstract class BaseDroneController : MonoBehaviour
     protected GameObject bullet;
 
     private Vector3 startDirectionOffset;
-    protected float movementSpeed = 3.5f;
+    private float movementSpeed = 3f;
     private float maxMovementSpeed = 4f;
     private float maxAmplitude = 25f;
     private float minAmplitude = 5f;
@@ -79,7 +82,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         HandleState();
     }
@@ -221,7 +224,7 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         float t = Mathf.Clamp(rotationElapsedTime, 0f, rotationTime);
         transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, t);
-        rotationElapsedTime += Time.deltaTime;
+        rotationElapsedTime += Time.fixedDeltaTime;
     }
 
     private void OnEnterMoving()
@@ -251,11 +254,11 @@ public abstract class BaseDroneController : MonoBehaviour
 
         // rotation
         Quaternion targetRotation = Quaternion.LookRotation((playerTransform.position - transform.position).normalized);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.fixedDeltaTime);
 
         // Force
         Vector3 forceDirection = (targetPosition - transform.position).normalized;
-        float forceMagnitude = MovementSpeed() * Time.deltaTime * 75f;
+        float forceMagnitude = MovementSpeed(droneType) * Time.fixedDeltaTime * 75f;
         Vector3 newVelocity = forceDirection * forceMagnitude;
         //newVelocity.y = rb.velocity.y * 0.2f;
 
@@ -279,7 +282,7 @@ public abstract class BaseDroneController : MonoBehaviour
             SwitchState(0f, StateMachine.Attacking);
         }
 
-        movementAccelerationTimer += Time.deltaTime;
+        movementAccelerationTimer += Time.fixedDeltaTime;
     }
 
     private void OnEnterAttack()
@@ -313,8 +316,8 @@ public abstract class BaseDroneController : MonoBehaviour
     private void BrakingUpdate()
     {
         //brake
-        rb.velocity *= 0.98f;
-        if (rb.velocity.magnitude < 0.1f)
+        rb.velocity *= 0.9f;
+        if (rb.velocity.magnitude < 0.5f)
         {
             attackState = AttackState.Charging;
         }
@@ -398,6 +401,7 @@ public abstract class BaseDroneController : MonoBehaviour
     public DroneType DroneType { get => droneType; protected set => droneType = value; }
 
     public float DistanceToPlayer { get => distanceToPlayer;}
+    public PriorityLevel CurrentPriorityLevel { get => currentPriorityLevel; set => currentPriorityLevel = value; }
 
     private void StartDestroyTimer(float animationTime)
     {
@@ -437,13 +441,41 @@ public abstract class BaseDroneController : MonoBehaviour
         playerController.Hit();
     }
 
-    private float MovementSpeed()
+    public float MovementSpeed(DroneType droneType)
     {
-        if(distanceToPlayer < maxDistanceToPlayer + 2f)
+        float speed = 0f;
+
+        switch (droneType)
         {
-            return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed * 0.75f);
-        }      
-        return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed);
+            case DroneType.OneHit:
+                speed = movementSpeed;
+                break;
+
+            case DroneType.TwoHits:
+                speed = movementSpeed * 0.65f;
+                break;
+
+            case DroneType.Explosive:
+                speed = movementSpeed * 0.35f;
+                break;
+        }
+
+        switch (currentPriorityLevel)
+        {
+            case PriorityLevel.low:
+                speed *= 0.8f;
+                break;
+
+            case PriorityLevel.medium:
+                speed *= 1f;
+                break;
+
+            case PriorityLevel.high:
+                speed *= 1.2f;
+                break;
+        }          
+
+        return Mathf.Min(speed * movementAccelerationTimer, speed);
     }
 
     private void OnDrawGizmos()
@@ -488,5 +520,14 @@ public abstract class BaseDroneController : MonoBehaviour
             }
             return xController.DistanceToPlayer.CompareTo(yController.DistanceToPlayer);
         }
+    }
+
+    public void SwitchLevel(PriorityLevel newLevel)
+    {
+        if (currentPriorityLevel == newLevel) return;
+
+        currentPriorityLevel = newLevel;
+        soundManager.SwitchLevel(currentPriorityLevel, newLevel);
+
     }
 }
