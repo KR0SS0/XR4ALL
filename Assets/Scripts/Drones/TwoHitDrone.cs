@@ -30,12 +30,11 @@ public class TwoHitDrone : BaseDroneController
         droneCollider.enabled = false;
         GetComponentInChildren<VFX_Manager>().StunnedAnimation = stunnedAnimation;
         sphereCollider = GetComponentInChildren<SphereCollider>();
-        movementSpeed = 2.5f;
         //Debug.Log(sphereCollider.name);
 
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         if (forceDestroy)
         {

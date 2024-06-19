@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PriorityLevel {low, medium, high}
-
 public class SoundManager : MonoBehaviour
 {
     [SerializeField] private AudioClip[] hitClips;
@@ -18,7 +16,6 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip[] movingClips;
 
     private Dictionary<PriorityLevel, float[]> volumeLevels;
-    private PriorityLevel currentPriorityLevel = PriorityLevel.low;
 
     private AudioSource oneShotSource;
     private AudioSource loopSource;
@@ -136,15 +133,15 @@ public class SoundManager : MonoBehaviour
         return clips[Random.Range(0, clips.Length)];
     }
 
-    public void SwitchLevel(PriorityLevel newLevel)
+    public void SwitchLevel(PriorityLevel oldLevel, PriorityLevel newLevel)
     {
-        if(currentPriorityLevel == newLevel) return;
+        if (oldLevel == newLevel) return;
 
-        startVolumes = volumeLevels[currentPriorityLevel];
+        startVolumes = volumeLevels[oldLevel];
         endVolumes = volumeLevels[newLevel];
         elapsedTime = 0.0f;
         isLerping = true;
-        currentPriorityLevel = newLevel;
+
     }
 
     private void LerpVolume()

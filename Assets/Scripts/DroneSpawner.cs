@@ -38,6 +38,7 @@ public class DroneSpawner : MonoBehaviour
 
     private float minAngle;
     private float maxAngle;
+    private float gapAngle = 20;
 
     private Transform playerLocation;
     private readonly List<GameObject> droneList = new List<GameObject>();
@@ -87,7 +88,7 @@ public class DroneSpawner : MonoBehaviour
     {
         currentRound = 1;
         SpawnDrones(0f);
-        StartCoroutine(SetSoundPriority());
+        StartCoroutine(SetPriority());
     }
 
     private void NextRound()
@@ -99,16 +100,29 @@ public class DroneSpawner : MonoBehaviour
     public void EndGame()
     {
         DestroyAllDrones();
+        DestroyAllBullets();
     }
 
     private void DestroyAllDrones()
     {
-        foreach (var drone in droneList)
+        foreach (GameObject drone in droneList)
         {
             Destroy(drone);
         }
         droneList.Clear();
         gameState = GameState.NoGame;
+    }
+
+    private void DestroyAllBullets()
+    {
+        BeamShot[] bullets = FindObjectsOfType<BeamShot>();
+
+        Debug.Log("Destroying: " + bullets.Length + " bullets");
+        
+        foreach (BeamShot bullet in bullets)
+        {
+            Destroy(bullet.gameObject);
+        }
     }
 
     public void RestartGame()
@@ -156,9 +170,9 @@ public class DroneSpawner : MonoBehaviour
         }
     }
 
-    private void SpawnDrone(GameObject dronePrefab)
+    private void SpawnDrone(GameObject dronePrefab, int i)
     {
-        Vector3 randomPosition = GetRandomPosition();
+        Vector3 randomPosition = GetRandomPosition(i);
         Quaternion randomRotation = GetRandomDirection();
         GameObject newDrone = Instantiate(dronePrefab, randomPosition, randomRotation);
         newDrone.GetComponent<BaseDroneController>().SetSpawner(this);
@@ -185,19 +199,19 @@ public class DroneSpawner : MonoBehaviour
         // Add OneHit drones
         for (int i = 0; i < currentOneHitToSpawn; i++)
         {
-            SpawnDrone(oneHitDrone);
+            SpawnDrone(oneHitDrone, i);
         }
 
         // Add TwoHits drones
         for (int i = 0; i < currentTwoHitsToSpawn; i++)
         {
-            SpawnDrone(twoHitsDrone);
+            SpawnDrone(twoHitsDrone, i);
         }
 
         // Add Explosive drones
         for (int i = 0; i < currentExplosiveToSpawn; i++)
         {
-            SpawnDrone(explosiveDrone);
+            SpawnDrone(explosiveDrone, i);
         }
 
         SuffleList();
@@ -228,10 +242,22 @@ public class DroneSpawner : MonoBehaviour
         }
     }
 
-    private Vector3 GetRandomPosition()
+    private Vector3 GetRandomPosition(int i)
     {
- 
-        float randomAngle = Random.Range(minAngle, maxAngle) * Mathf.Deg2Rad;
+        bool even = i % 2 == 0;
+
+        float randomAngle;
+
+        if (even)
+        {
+            randomAngle = Random.Range(minAngle, -gapAngle / 2f) * Mathf.Deg2Rad;
+        }
+
+        else
+        {
+            randomAngle = Random.Range(gapAngle / 2f, maxAngle) * Mathf.Deg2Rad;
+        }
+       
         float randomDistance = Random.Range(minDistanceToPlayer, maxDistanceToPlayer);
 
         //Vector3 randomPosition = playerLocation.position + new Vector3(randomDirection.x, 0, randomDirection.y) * randomDistance;
@@ -394,42 +420,45 @@ public class DroneSpawner : MonoBehaviour
         return activeDrones;
     }
 
-    private IEnumerator SetSoundPriority()
+    private IEnumerator SetPriority()
     {
         List<GameObject> list = GetSortedActiveDroneList();
 
-        int highPriority = Mathf.Min(maxSlotsHighPriority, list.Count);
-        int mediumPriority = Mathf.Min(maxSlotsMediumPriority, list.Count - highPriority);
-
-        for (int i = 0; i < highPriority; i++)
+        if(list.Count > 0)
         {
-            GameObject drone = list[i];
-            drone.GetComponent<SoundManager>().SwitchLevel(PriorityLevel.high);
-            Debug.Log("high priority set");
-        }
+            int highPriority = Mathf.Min(maxSlotsHighPriority, list.Count);
+            int mediumPriority = Mathf.Min(maxSlotsMediumPriority, list.Count - highPriority);
 
-        if(highPriority < list.Count)
-        {
-            for (int i = highPriority; i < highPriority + mediumPriority; i++)
+            for (int i = 0; i < highPriority; i++)
             {
                 GameObject drone = list[i];
-                drone.GetComponent<SoundManager>().SwitchLevel(PriorityLevel.medium);
-                Debug.Log("medium priority set");
+                drone.GetComponent<BaseDroneController>().SwitchLevel(PriorityLevel.high);
+                Debug.Log("high priority set");
             }
-        }
 
-        if(highPriority + mediumPriority < list.Count)
-        {
-            for (int i = highPriority + mediumPriority; i < list.Count; i++)
+            if(highPriority < list.Count)
             {
-                GameObject drone = list[i];
-                drone.GetComponent<SoundManager>().SwitchLevel(PriorityLevel.low);
-                Debug.Log("low priority set");
+                for (int i = highPriority; i < highPriority + mediumPriority; i++)
+                {
+                    GameObject drone = list[i];
+                    drone.GetComponent<BaseDroneController>().SwitchLevel(PriorityLevel.medium);
+                    Debug.Log("medium priority set");
+                }
+            }
+
+            if(highPriority + mediumPriority < list.Count)
+            {
+                for (int i = highPriority + mediumPriority; i < list.Count; i++)
+                {
+                    GameObject drone = list[i];
+                    drone.GetComponent<BaseDroneController>().SwitchLevel(PriorityLevel.low);
+                    Debug.Log("low priority set");
+                }
             }
         }
 
         yield return new WaitForSeconds(0.5f);
 
-        StartCoroutine(SetSoundPriority());
+        StartCoroutine(SetPriority());
     }
 }
