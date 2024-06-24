@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
 public enum DroneType { OneHit, TwoHits, Armored, Directional, Explosive}
@@ -500,6 +498,15 @@ public abstract class BaseDroneController : MonoBehaviour
         }
     }
 
+    public void SwitchLevel(PriorityLevel newLevel)
+    {
+        if (currentPriorityLevel == newLevel) return;
+
+        currentPriorityLevel = newLevel;
+        soundManager.SwitchLevel(currentPriorityLevel, newLevel);
+
+    }
+
     public class DistanceToPlayerComparer : IComparer<GameObject>
     {
         public int Compare(GameObject x, GameObject y)
@@ -518,14 +525,5 @@ public abstract class BaseDroneController : MonoBehaviour
             }
             return xController.DistanceToPlayer.CompareTo(yController.DistanceToPlayer);
         }
-    }
-
-    public void SwitchLevel(PriorityLevel newLevel)
-    {
-        if (currentPriorityLevel == newLevel) return;
-
-        currentPriorityLevel = newLevel;
-        soundManager.SwitchLevel(currentPriorityLevel, newLevel);
-
     }
 }

@@ -1237,6 +1237,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: lightsaber
       objectReference: {fileID: 0}
+    - target: {fileID: 5994016048149301478, guid: a048766430bf4d740aa58da02b9d6c6f, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

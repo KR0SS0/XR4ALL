@@ -19509,13 +19509,13 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 3120427709277138792, guid: a2cae1d72312c4e44bac5ba5ed14ca31, type: 3}
+  m_Mesh: {fileID: -6210286292261194602, guid: 8ab0d3562c106384fa151c114da3a0cf, type: 3}
 --- !u!95 &8995867734000924453
 Animator:
   serializedVersion: 5
