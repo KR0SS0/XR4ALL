@@ -88,6 +88,7 @@ public class DroneSpawner : MonoBehaviour
     {
         currentRound = 1;
         SpawnDrones(0f);
+        ActivateTowers();
         StartCoroutine(SetPriority());
     }
 
@@ -99,6 +100,7 @@ public class DroneSpawner : MonoBehaviour
 
     public void EndGame()
     {
+        DeactivateTowers();
         DestroyAllDrones();
         DestroyAllBullets();
     }
@@ -460,5 +462,31 @@ public class DroneSpawner : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(SetPriority());
+    }
+
+    private void ActivateTowers()
+    {
+        TowerManager[] towers = FindObjectsOfType<TowerManager>();
+
+        if(towers.Length > 0)
+        {
+            foreach (TowerManager tower in towers)
+            {
+                tower.StartTowerVFX();
+            }
+        }
+    }
+
+    private void DeactivateTowers()
+    {
+        TowerManager[] towers = FindObjectsOfType<TowerManager>();
+
+        if (towers.Length > 0)
+        {
+            foreach (TowerManager tower in towers)
+            {
+                tower.StopTowerVFX();
+            }
+        }
     }
 }

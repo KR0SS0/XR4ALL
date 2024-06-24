@@ -25,7 +25,6 @@ public abstract class BaseDroneController : MonoBehaviour
     private VFX_Manager vfx_Manager;
     private Rigidbody rb;
     private MeshCollider meshCollider;
-    //private float maxVelocity = 0f;
 
     private Transform playerTransform;
     private PlayerController playerController;
@@ -43,7 +42,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private float yOffset = 0f;
 
     private float spawnAnimationTime = 2.2f;
-    private float deathAnimationTime = 3.0f;
+    private float deathAnimationTime = 2.0f;
     private float chargeAttackAnimationTime = 2f;
     private float stunnedAnimationTime = 0.5f;
     private float movementAccelerationTimer = 0f;
@@ -135,7 +134,7 @@ public abstract class BaseDroneController : MonoBehaviour
         if (state != newState)
         {
             state = newState;
-            Debug.Log("New State updated to: " + state);
+            //Debug.Log("New State updated to: " + state);
 
             switch (state)
             {
@@ -260,7 +259,6 @@ public abstract class BaseDroneController : MonoBehaviour
         Vector3 forceDirection = (targetPosition - transform.position).normalized;
         float forceMagnitude = MovementSpeed(droneType) * Time.fixedDeltaTime * 75f;
         Vector3 newVelocity = forceDirection * forceMagnitude;
-        //newVelocity.y = rb.velocity.y * 0.2f;
 
         if (newVelocity.magnitude > maxMovementSpeed)
         {
