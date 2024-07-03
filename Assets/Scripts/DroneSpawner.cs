@@ -58,6 +58,8 @@ public class DroneSpawner : MonoBehaviour
     private int maxSlotsHighPriority = 2;
     private int maxSlotsMediumPriority = 4;
 
+    public float SpawnAngle { get => spawnAngle; set => spawnAngle = value; }
+
     private void Start()
     {
         playerLocation = GameObject.FindGameObjectWithTag("Player").transform;
@@ -88,6 +90,7 @@ public class DroneSpawner : MonoBehaviour
     {
         currentRound = 1;
         SpawnDrones(0f);
+        ActivateTowers();
         StartCoroutine(SetPriority());
     }
 
@@ -99,6 +102,7 @@ public class DroneSpawner : MonoBehaviour
 
     public void EndGame()
     {
+        DeactivateTowers();
         DestroyAllDrones();
         DestroyAllBullets();
     }
@@ -296,12 +300,12 @@ public class DroneSpawner : MonoBehaviour
             $"TwoHits: {currentTwoHitsToSpawn - currentTwoHitsKilled}, " +
             $"Explosive: {currentExplosiveToSpawn - currentExplosiveKilled}");
 
-        if(!areAllDronesKilled() && droneList.Count > 0)
+        if(!AreAllDronesKilled() && droneList.Count > 0)
         {
             SpawnNext();
         }
 
-        if (areAllDronesKilled())
+        if (AreAllDronesKilled())
         {
             gameState = GameState.NextRound;
         }
@@ -320,7 +324,7 @@ public class DroneSpawner : MonoBehaviour
         Debug.Log("Current list count of drones: " + droneList.Count);
     }
 
-    private bool areAllDronesKilled()
+    private bool AreAllDronesKilled()
     {
         return currentOneHitToSpawn - currentOneHitKilled <= 0 && 
             currentTwoHitsToSpawn - currentTwoHitsKilled <= 0 && 
@@ -420,6 +424,24 @@ public class DroneSpawner : MonoBehaviour
         return activeDrones;
     }
 
+    public BaseDroneController GetClosestActiveDrone()
+    {
+        List<GameObject> activeDrones = new();
+
+        foreach (GameObject drone in droneList)
+        {
+            if (drone.activeInHierarchy)
+            {
+                activeDrones.Add(drone);
+            }
+        }
+
+        // Sort the active drones based on distanceToPlayer
+        activeDrones.Sort(new DistanceToPlayerComparer());
+
+        return activeDrones.Count > 0 ? activeDrones[0].GetComponent<BaseDroneController>() : null;
+    }
+
     private IEnumerator SetPriority()
     {
         List<GameObject> list = GetSortedActiveDroneList();
@@ -460,5 +482,31 @@ public class DroneSpawner : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(SetPriority());
+    }
+
+    private void ActivateTowers()
+    {
+        TowerManager[] towers = FindObjectsOfType<TowerManager>();
+
+        if(towers.Length > 0)
+        {
+            foreach (TowerManager tower in towers)
+            {
+                tower.StartTowerVFX();
+            }
+        }
+    }
+
+    private void DeactivateTowers()
+    {
+        TowerManager[] towers = FindObjectsOfType<TowerManager>();
+
+        if (towers.Length > 0)
+        {
+            foreach (TowerManager tower in towers)
+            {
+                tower.StopTowerVFX();
+            }
+        }
     }
 }

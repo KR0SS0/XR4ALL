@@ -48,7 +48,7 @@ MonoBehaviour:
   twoHitsDrone: {fileID: 6711416340134776016, guid: 4db0f3817a8b7e44c8bbd58b15c35f52, type: 3}
   explosiveDrone: {fileID: 3366703428726261872, guid: 79696f14865a4bd4aaaaa4fce7cf47ff, type: 3}
   minDistanceToPlayer: 10
-  maxDistanceToPlayer: 30
+  maxDistanceToPlayer: 22
   round1OneHitCount: 4
   round1TwoHitsCount: 2
   round1ExplosiveCount: 0
@@ -60,8 +60,8 @@ MonoBehaviour:
   round3ExplosiveCount: 2
   spawnTime: 5
   spawnPercentageIncrease: 10
-  spawnAngle: 70
+  spawnAngle: 75
   startGame: 0
   debug: 1
   playerTransform: {fileID: 0}
-  maxActiveDrones: 8
+  maxActiveDrones: 4

@@ -31,8 +31,10 @@ public class LightsaberController : MonoBehaviour
         source.clip = clip;
         source.PlayOneShot(clip);
     }
+
     public BaseDroneController FindNearestDrone()
     {
+        /*
         BaseDroneController[] drones = FindObjectsOfType<BaseDroneController>();
         BaseDroneController nearestDrone = null;
         float nearestDistance = Mathf.Infinity;
@@ -48,5 +50,10 @@ public class LightsaberController : MonoBehaviour
         }
 
         return nearestDrone;
+        */
+
+        DroneSpawner droneSpawner = FindObjectOfType<DroneSpawner>();
+        BaseDroneController drone = droneSpawner.GetClosestActiveDrone();
+        return drone;
     }
 }

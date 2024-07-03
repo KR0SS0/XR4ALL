@@ -42,8 +42,7 @@ public class BeamShot : MonoBehaviour
             Debug.Log("Bullet hit Player");
             TryHitPlayer(other);
             Destroy(gameObject);
-        }
-        
+        }        
     }
 
     private IEnumerator LifeTime()

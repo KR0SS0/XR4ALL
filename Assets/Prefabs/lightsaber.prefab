@@ -241,8 +241,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.355644, y: -0.62943536, z: 0.566945, w: 0.3948441}
   m_LocalPosition: {x: 3.7695475, y: 0.1659, z: 6.764166}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1.2, y: 1.2, z: 2}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1098807866768753001}
   - {fileID: 1419516191210718995}
@@ -274,6 +274,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 336b20bf6d0d3f54385cf7cce5ab3f2f, type: 3}
   - {fileID: 8300000, guid: a3324904d8c806149b0e1b00c7c8ed59, type: 3}
   - {fileID: 8300000, guid: bd7d63421d06ce847ac97d0e2de79ff7, type: 3}
+  strikeClips: []
   source: {fileID: 8242881841981183545}
   controllerNode: 5
 --- !u!136 &5994016048149301478
