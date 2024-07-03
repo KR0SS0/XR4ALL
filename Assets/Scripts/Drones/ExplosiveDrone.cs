@@ -11,7 +11,7 @@ public class ExplosiveDrone : BaseDroneController
     [SerializeField] private float chargeExplosionDuration = 1.5f;
 
     public float ChargeExplosionDuration { get => chargeExplosionDuration;}
-    public static float MaxDistanceToPlayer = 1.2f;
+    public static float MaxDistanceToPlayer = 1f;
 
     private void Awake()
     {
@@ -22,7 +22,7 @@ public class ExplosiveDrone : BaseDroneController
     void Start()
     {
         requiredSpeed = 0f;
-        maxDistanceToPlayer = 1.2f;
+        maxDistanceToPlayer = 1f;
         bullet = bulletShot;
         OnStart();
     }

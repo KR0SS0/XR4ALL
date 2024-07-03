@@ -58,6 +58,8 @@ public class DroneSpawner : MonoBehaviour
     private int maxSlotsHighPriority = 2;
     private int maxSlotsMediumPriority = 4;
 
+    public float SpawnAngle { get => spawnAngle; set => spawnAngle = value; }
+
     private void Start()
     {
         playerLocation = GameObject.FindGameObjectWithTag("Player").transform;
@@ -298,12 +300,12 @@ public class DroneSpawner : MonoBehaviour
             $"TwoHits: {currentTwoHitsToSpawn - currentTwoHitsKilled}, " +
             $"Explosive: {currentExplosiveToSpawn - currentExplosiveKilled}");
 
-        if(!areAllDronesKilled() && droneList.Count > 0)
+        if(!AreAllDronesKilled() && droneList.Count > 0)
         {
             SpawnNext();
         }
 
-        if (areAllDronesKilled())
+        if (AreAllDronesKilled())
         {
             gameState = GameState.NextRound;
         }
@@ -322,7 +324,7 @@ public class DroneSpawner : MonoBehaviour
         Debug.Log("Current list count of drones: " + droneList.Count);
     }
 
-    private bool areAllDronesKilled()
+    private bool AreAllDronesKilled()
     {
         return currentOneHitToSpawn - currentOneHitKilled <= 0 && 
             currentTwoHitsToSpawn - currentTwoHitsKilled <= 0 && 
@@ -420,6 +422,24 @@ public class DroneSpawner : MonoBehaviour
         activeDrones.Sort(new DistanceToPlayerComparer());
 
         return activeDrones;
+    }
+
+    public BaseDroneController GetClosestActiveDrone()
+    {
+        List<GameObject> activeDrones = new();
+
+        foreach (GameObject drone in droneList)
+        {
+            if (drone.activeInHierarchy)
+            {
+                activeDrones.Add(drone);
+            }
+        }
+
+        // Sort the active drones based on distanceToPlayer
+        activeDrones.Sort(new DistanceToPlayerComparer());
+
+        return activeDrones.Count > 0 ? activeDrones[0].GetComponent<BaseDroneController>() : null;
     }
 
     private IEnumerator SetPriority()
