@@ -101,6 +101,7 @@ public abstract class BaseDroneController : MonoBehaviour
                 AddImpulse(swingDirection, swingSpeed);
                 soundManager.PlayHitSound();
                 HandleHit();
+                lightsaber.StartTriggerVibration();
             }
         }
     }

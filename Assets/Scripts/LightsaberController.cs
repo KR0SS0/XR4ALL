@@ -1,4 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.XR;
 
 public class LightsaberController : MonoBehaviour
@@ -11,6 +15,9 @@ public class LightsaberController : MonoBehaviour
     public AudioClip[] swingClips;
     public AudioClip[] strikeClips;
     public AudioSource source;
+
+    [Header("Vibration")]
+    public float vibrationStrength = 0.3f;
 
     public void PlaySwingSound()
     {
@@ -55,5 +62,34 @@ public class LightsaberController : MonoBehaviour
         DroneSpawner droneSpawner = FindObjectOfType<DroneSpawner>();
         BaseDroneController drone = droneSpawner.GetClosestActiveDrone();
         return drone;
+    }
+
+    [ContextMenu("Vibrate")]
+    public void StartTriggerVibration() { 
+        StartCoroutine(TriggerVibration());
+    }
+    private IEnumerator TriggerVibration()
+    {
+        // Check if a gamepad is connected
+        if (Gamepad.current != null)
+        {
+            Gamepad gamepad = Gamepad.current;
+            gamepad.SetMotorSpeeds(vibrationStrength, vibrationStrength); // Set light vibration
+            yield return new WaitForSeconds(0.1f); // Vibration duration
+            gamepad.SetMotorSpeeds(0, 0); // Stop vibration
+        }
+
+        // Check if XR controllers are connected
+        var rightHandDevice = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+
+        if(rightHandDevice != null)
+        {
+            if (rightHandDevice.TryGetHapticCapabilities(out HapticCapabilities capabilities) && capabilities.supportsImpulse)
+            {
+                uint channel = 0;
+                rightHandDevice.SendHapticImpulse(channel, vibrationStrength, 0.1f);
+            }
+        }
+        
     }
 }
