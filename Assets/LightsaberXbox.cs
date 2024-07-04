@@ -94,6 +94,7 @@ public class LightsaberXbox : LightsaberController
             if (distanceToDrone <= attackRange)
             {
                 drone.HandleHit();
+                StartTriggerVibration();
                 PlayStrikeSound();
                 Debug.Log("Drone hit!");
             } else

@@ -47,6 +47,7 @@ public class LightsaberJoystick : LightsaberController
                     if (distanceToDrone <= attackRange)
                     {
                         drone.HandleHit();
+                        StartTriggerVibration();
                         if (!source.isPlaying)
                         {
                             PlayStrikeSound();
