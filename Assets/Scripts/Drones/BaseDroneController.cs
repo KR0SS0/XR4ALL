@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public enum RequiredSwingDirection { Any, Up, Down, Left, Right }
 public enum DroneType { OneHit, TwoHits, Armored, Directional, Explosive}
+public enum PriorityLevel { low, medium, high }
 
 public abstract class BaseDroneController : MonoBehaviour
 {
@@ -16,31 +16,33 @@ public abstract class BaseDroneController : MonoBehaviour
     protected StateMachine state;
     private StateMachine newState;
     protected RequiredSwingDirection requiredDirection;
+    private PriorityLevel currentPriorityLevel = PriorityLevel.low;
+
     protected float requiredSpeed = 1.0f;
     private SoundManager soundManager;
     protected int hp = 1;
     private VFX_Manager vfx_Manager;
     private Rigidbody rb;
     private MeshCollider meshCollider;
-    //private float maxVelocity = 0f;
 
     private Transform playerTransform;
     private PlayerController playerController;
     private Transform bulletSpawnLocation;
     protected GameObject bullet;
+    private DroneSpawner spawner;
 
     private Vector3 startDirectionOffset;
-    protected float movementSpeed = 3.5f;
+    private float movementSpeed = 3f;
     private float maxMovementSpeed = 4f;
     private float maxAmplitude = 25f;
     private float minAmplitude = 5f;
     private float frequency = 1f;
     private float distanceToPlayer = float.MaxValue;
-    protected static float maxDistanceToPlayer = 2.5f;
+    protected static float maxDistanceToPlayer = 1.8f;
     private float yOffset = 0f;
 
     private float spawnAnimationTime = 2.2f;
-    private float deathAnimationTime = 3.0f;
+    private float deathAnimationTime = 2.0f;
     private float chargeAttackAnimationTime = 2f;
     private float stunnedAnimationTime = 0.5f;
     private float movementAccelerationTimer = 0f;
@@ -50,9 +52,11 @@ public abstract class BaseDroneController : MonoBehaviour
     private Quaternion targetRotation;
     private Quaternion initialRotation;
 
-    private DroneSpawner spawner;
-    private Vector3 targetPosition;
+    private Vector3 targetPosition; //target point that moves in a sinus wave
+    private Vector3 targetLocation; //random location around player
     private float gizmoSize = 0.2f;
+
+    private float impulseMultiplier = 1f;
 
     protected void OnStart()
     {
@@ -79,14 +83,14 @@ public abstract class BaseDroneController : MonoBehaviour
 
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         HandleState();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider collider)
     {
-        if (other.TryGetComponent(out LightsaberVR lightsaber) && state != StateMachine.Destroy)  
+        if (collider.TryGetComponent(out LightsaberVR lightsaber) && state != StateMachine.Destroy)  
         {
             Debug.Log("Drone found saber in trigger");
             Vector3 swingDirection = lightsaber.GetSwingDirection();
@@ -94,10 +98,20 @@ public abstract class BaseDroneController : MonoBehaviour
 
             if (IsValidSwing(swingDirection, swingSpeed))
             {
+                AddImpulse(swingDirection, swingSpeed);
                 soundManager.PlayHitSound();
                 HandleHit();
             }
         }
+    }
+
+    private void AddImpulse(Vector3 swingDirection, float swingSpeed)
+    {
+        //Calculate the impulse force
+        Vector3 impulseForce = swingDirection * (swingSpeed * impulseMultiplier);
+
+        //Apply the impulse
+        rb.AddForce(impulseForce, ForceMode.Impulse);
     }
 
     private bool IsValidSwing(Vector3 direction, float speed)
@@ -132,7 +146,7 @@ public abstract class BaseDroneController : MonoBehaviour
         if (state != newState)
         {
             state = newState;
-            Debug.Log("New State updated to: " + state);
+            //Debug.Log("New State updated to: " + state);
 
             switch (state)
             {
@@ -221,7 +235,7 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         float t = Mathf.Clamp(rotationElapsedTime, 0f, rotationTime);
         transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, t);
-        rotationElapsedTime += Time.deltaTime;
+        rotationElapsedTime += Time.fixedDeltaTime;
     }
 
     private void OnEnterMoving()
@@ -229,6 +243,7 @@ public abstract class BaseDroneController : MonoBehaviour
         // Set a random start direction offset in the XZ plane
         float randomAngle = Random.Range(-30f, 30f);
         startDirectionOffset = new Vector3(Mathf.Cos(randomAngle), 0f, Mathf.Sin(randomAngle));
+        targetLocation = GetRandomPointAroundPlayer();
         movementAccelerationTimer = 0f;
         soundManager.StartMovingSound();
     }
@@ -247,17 +262,16 @@ public abstract class BaseDroneController : MonoBehaviour
         // Sinus
         float sinValue = Mathf.Sin(Time.time * frequency) * currentAmplitude * (distanceToPlayer / 10f);
         Vector3 offset = Vector3.Cross(directionToPlayer, Vector3.up) * sinValue;
-        targetPosition = playerTransform.position + offset + Vector3.up * yOffset;
+        targetPosition = targetLocation + offset + Vector3.up * yOffset;
 
         // rotation
         Quaternion targetRotation = Quaternion.LookRotation((playerTransform.position - transform.position).normalized);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.fixedDeltaTime);
 
         // Force
         Vector3 forceDirection = (targetPosition - transform.position).normalized;
-        float forceMagnitude = MovementSpeed() * Time.deltaTime * 75f;
+        float forceMagnitude = MovementSpeed(droneType) * Time.fixedDeltaTime * 75f;
         Vector3 newVelocity = forceDirection * forceMagnitude;
-        //newVelocity.y = rb.velocity.y * 0.2f;
 
         if (newVelocity.magnitude > maxMovementSpeed)
         {
@@ -279,7 +293,7 @@ public abstract class BaseDroneController : MonoBehaviour
             SwitchState(0f, StateMachine.Attacking);
         }
 
-        movementAccelerationTimer += Time.deltaTime;
+        movementAccelerationTimer += Time.fixedDeltaTime;
     }
 
     private void OnEnterAttack()
@@ -313,8 +327,8 @@ public abstract class BaseDroneController : MonoBehaviour
     private void BrakingUpdate()
     {
         //brake
-        rb.velocity *= 0.98f;
-        if (rb.velocity.magnitude < 0.1f)
+        rb.velocity *= 0.9f;
+        if (rb.velocity.magnitude < 0.5f)
         {
             attackState = AttackState.Charging;
         }
@@ -333,10 +347,17 @@ public abstract class BaseDroneController : MonoBehaviour
     protected virtual IEnumerator Attack()
     {
         yield return new WaitForSeconds(chargeAttackAnimationTime);
-        Instantiate(bullet, bulletSpawnLocation.position, bulletSpawnLocation.rotation);
-        soundManager.PlayAttackSound();
+
+        distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        if (distanceToPlayer <= maxDistanceToPlayer && state != StateMachine.Destroy)
+        {
+            Instantiate(bullet, bulletSpawnLocation.position, bulletSpawnLocation.rotation);
+            soundManager.PlayAttackSound();
+            Debug.Log("Pew pew!");
+        }
+
         attackState = AttackState.Attacking;
-        Debug.Log("Pew pew!");
         isChargingAttack = false;
         yield return null;
     }
@@ -398,6 +419,7 @@ public abstract class BaseDroneController : MonoBehaviour
     public DroneType DroneType { get => droneType; protected set => droneType = value; }
 
     public float DistanceToPlayer { get => distanceToPlayer;}
+    public PriorityLevel CurrentPriorityLevel { get => currentPriorityLevel; set => currentPriorityLevel = value; }
 
     private void StartDestroyTimer(float animationTime)
     {
@@ -437,21 +459,72 @@ public abstract class BaseDroneController : MonoBehaviour
         playerController.Hit();
     }
 
-    private float MovementSpeed()
+    public float MovementSpeed(DroneType droneType)
     {
-        if(distanceToPlayer < maxDistanceToPlayer + 2f)
+        float speed = 0f;
+
+        switch (droneType)
         {
-            return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed * 0.75f);
-        }      
-        return Mathf.Min(movementSpeed * movementAccelerationTimer, movementSpeed);
+            case DroneType.OneHit:
+                speed = movementSpeed;
+                break;
+
+            case DroneType.TwoHits:
+                speed = movementSpeed * 0.65f;
+                break;
+
+            case DroneType.Explosive:
+                speed = movementSpeed * 0.35f;
+                break;
+        }
+
+        switch (currentPriorityLevel)
+        {
+            case PriorityLevel.low:
+                speed *= 0.8f;
+                break;
+
+            case PriorityLevel.medium:
+                speed *= 1f;
+                break;
+
+            case PriorityLevel.high:
+                speed *= 1.2f;
+                break;
+        }          
+
+        return Mathf.Min(speed * movementAccelerationTimer, speed);
+    }
+
+    private Vector3 GetRandomPointAroundPlayer()
+    {
+        //degrees
+        float sectorAngle = spawner.SpawnAngle;
+        float halfSectorAngle = sectorAngle / 2f;
+
+        //inner and outer radius
+        float outerRadius = maxDistanceToPlayer;
+        float innerRadius = maxDistanceToPlayer * 0.75f;
+
+        //Generate a random angle and random radius
+        float randomAngle = Random.Range(-halfSectorAngle, halfSectorAngle) + 90f;
+        float randomRadius = Random.Range(innerRadius, outerRadius);
+
+        //Convert polar coordinates to Cartesian coordinates
+        float x = randomRadius * Mathf.Cos(randomAngle * Mathf.Deg2Rad);
+        float z = randomRadius * Mathf.Sin(randomAngle * Mathf.Deg2Rad);
+
+        Vector3 randomPoint = new Vector3(x, 0f, z);
+
+        return playerTransform.position + randomPoint;
     }
 
     private void OnDrawGizmos()
     {
-        if (targetPosition != null)
+        if (targetLocation != null)
         {
             Gizmos.color = GetColor();
-            Gizmos.DrawWireSphere(targetPosition, gizmoSize);
+            Gizmos.DrawWireSphere(targetLocation, gizmoSize);
         }
     }
 
@@ -468,6 +541,15 @@ public abstract class BaseDroneController : MonoBehaviour
             default:
                 return Color.white;
         }
+    }
+
+    public void SwitchLevel(PriorityLevel newLevel)
+    {
+        if (currentPriorityLevel == newLevel) return;
+
+        currentPriorityLevel = newLevel;
+        soundManager.SwitchLevel(currentPriorityLevel, newLevel);
+
     }
 
     public class DistanceToPlayerComparer : IComparer<GameObject>

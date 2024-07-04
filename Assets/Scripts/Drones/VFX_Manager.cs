@@ -12,7 +12,6 @@ public class VFX_Manager : MonoBehaviour
     private ParticleSystem[] particleSystems;
     private float timer = 0;
     private int droneShaderProperty;
-    private int ballShaderProperty;
     private int sphereShaderProperty;
     private int emissiveShaderProperty;
     private bool isPlayingVFX;
@@ -45,7 +44,6 @@ public class VFX_Manager : MonoBehaviour
     {
 
         droneShaderProperty = Shader.PropertyToID("_Cutoff");
-        ballShaderProperty = Shader.PropertyToID("_Anim");
         sphereShaderProperty = Shader.PropertyToID("_AlphaIntensity");
         emissiveShaderProperty = Shader.PropertyToID("_EmissiveIntensity");
 
@@ -88,7 +86,7 @@ public class VFX_Manager : MonoBehaviour
     {
         foreach(GameObject obj in VFX_objs)
         {
-            if (obj.name != "SphereShield" && obj.name != "BombEmbers") 
+            if (obj.name != "SphereShield" && obj.name != "BombEmbers" && obj.name != "Lightning") 
             { 
                 //Debug.Log(obj.name + " setting inactive");
                 obj.SetActive(false);
