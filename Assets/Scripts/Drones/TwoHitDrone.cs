@@ -18,10 +18,11 @@ public class TwoHitDrone : BaseDroneController
     private void Awake()
     {
         DroneType = DroneType.TwoHits;
+        Debug.Log("Dronetype: " + DroneType);
     }
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         hp = baseHP;
         bullet = bulletShot;

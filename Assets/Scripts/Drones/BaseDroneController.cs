@@ -8,7 +8,7 @@ public enum PriorityLevel { low, medium, high }
 
 public abstract class BaseDroneController : MonoBehaviour
 {
-    protected enum StateMachine { Spawn, Idle, Moving, Attacking, Destroy, Stunned}
+    protected enum StateMachine { Spawn, Idle, Moving, Attacking, Destroy, Stunned, Standby}
     private enum AttackState { Braking, Charging, Attacking }
     private AttackState attackState = AttackState.Braking;
     private bool isChargingAttack = false;
@@ -58,11 +58,25 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private float impulseMultiplier = 1f;
 
+    protected bool tutorialDrone = false;
+    private bool staticDrone = false;
+
     protected void OnStart()
     {
         state = StateMachine.Spawn;
         newState = state;
-        SwitchState(spawnAnimationTime, StateMachine.Idle);
+
+        if (tutorialDrone && staticDrone)
+        {
+            Debug.Log("Tutorial Static Drone On Start");
+            SwitchState(spawnAnimationTime, StateMachine.Standby);
+        }
+
+        else
+        {
+            Debug.Log("Normal Drone On Start");
+            SwitchState(spawnAnimationTime, StateMachine.Idle);
+        }
 
         rb = GetComponent<Rigidbody>();
         meshCollider = GetComponentInChildren<MeshCollider>();
@@ -102,6 +116,11 @@ public abstract class BaseDroneController : MonoBehaviour
                 soundManager.PlayHitSound();
                 HandleHit();
                 lightsaber.StartTriggerVibration();
+            }
+
+            else if(!IsValidSwing(swingDirection, swingSpeed) && tutorialDrone && GetComponent<ITutorial>() != null)
+            {
+                GetComponent<ITutorial>().HandleFailedHit();
             }
         }
     }
@@ -170,6 +189,10 @@ public abstract class BaseDroneController : MonoBehaviour
                 case StateMachine.Stunned:
                     OnEnterStunned();
                     break;
+
+                case StateMachine.Standby:
+                    OnEnterStandby();
+                    break;
             }
         }
 
@@ -194,8 +217,13 @@ public abstract class BaseDroneController : MonoBehaviour
             case StateMachine.Destroy:
                 DestroyUpdate();
                 break;
+
             case StateMachine.Stunned:
                 StunnedUpdate();
+                break;
+
+            case StateMachine.Standby:
+                StandbyUpdate();
                 break;
         }
     }
@@ -209,6 +237,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private void OnEnterIdle()
     {
         SetRotationTarget();
+        
     }
 
     private void SetRotationTarget()
@@ -353,7 +382,15 @@ public abstract class BaseDroneController : MonoBehaviour
 
         if (distanceToPlayer <= maxDistanceToPlayer && state != StateMachine.Destroy)
         {
-            Instantiate(bullet, bulletSpawnLocation.position, bulletSpawnLocation.rotation);
+            GameObject bulletToSpawn = Instantiate(bullet, bulletSpawnLocation.position, bulletSpawnLocation.rotation);
+            if (tutorialDrone && bulletToSpawn.GetComponent<TutorialBeamShot>())
+            {
+                Debug.Log("TutorialDrone was:" + tutorialDrone);
+                Debug.Log("Dronetype was: " + droneType);
+                bulletToSpawn.GetComponent<TutorialBeamShot>().DroneType = droneType;
+                Debug.Log("Now dronetype is: " + bulletToSpawn.GetComponent<TutorialBeamShot>().DroneType);
+            }
+           
             soundManager.PlayAttackSound();
             Debug.Log("Pew pew!");
         }
@@ -410,17 +447,22 @@ public abstract class BaseDroneController : MonoBehaviour
 
     public abstract void HandleHit();
 
+    protected virtual void OnEnterStandby() { }
+    protected virtual void StandbyUpdate() { }
+
     public float Velocity
     {
         get { return rb.velocity.magnitude; }
     }
 
-    public float SpawnAnimationTime { get => spawnAnimationTime; }
+    protected float SpawnAnimationTime { get => spawnAnimationTime; set => spawnAnimationTime = value; }
     public float DeathAnimationTime { get => deathAnimationTime; }
     public DroneType DroneType { get => droneType; protected set => droneType = value; }
 
     public float DistanceToPlayer { get => distanceToPlayer;}
     public PriorityLevel CurrentPriorityLevel { get => currentPriorityLevel; set => currentPriorityLevel = value; }
+    public bool StaticDrone { get => staticDrone; set => staticDrone = value; }
+    public float SpawnAnimationTime1 { get => spawnAnimationTime; set => spawnAnimationTime = value; }
 
     private void StartDestroyTimer(float animationTime)
     {
@@ -499,6 +541,11 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private Vector3 GetRandomPointAroundPlayer()
     {
+        if(spawner == null)
+        {
+            spawner = FindFirstObjectByType<DroneSpawner>();
+        }
+
         //degrees
         float sectorAngle = spawner.SpawnAngle;
         float halfSectorAngle = sectorAngle / 2f;
