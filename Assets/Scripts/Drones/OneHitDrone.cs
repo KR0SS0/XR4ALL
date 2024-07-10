@@ -12,11 +12,11 @@ public class OneHitDrone : BaseDroneController
 
     private void Awake()
     {
-        DroneType = DroneType.OneHit;       
+        DroneType = DroneType.OneHit;      
     }
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         bullet = bulletShot;
         OnStart();

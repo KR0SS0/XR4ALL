@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class ExplosiveDrone : BaseDroneController
 {
-
-    [SerializeField] private GameObject bulletShot;
     [SerializeField] private bool forceDestroy = false;
     [SerializeField] private float chargeExplosionDuration = 1.5f;
 
@@ -19,11 +17,10 @@ public class ExplosiveDrone : BaseDroneController
     }
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         requiredSpeed = 0f;
         maxDistanceToPlayer = 1f;
-        bullet = bulletShot;
         OnStart();
     }
 

@@ -1,0 +1,34 @@
+{
+    "name": "DebugInput",
+    "maps": [
+        {
+            "name": "Debug",
+            "id": "ef35e77f-d936-42b8-927e-23c59f331e0b",
+            "actions": [
+                {
+                    "name": "DebugAction",
+                    "type": "Button",
+                    "id": "24fecf90-ffcf-4328-8467-0989ecb6a73e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "63a869a5-3e82-4be1-bf01-6ce60a687bea",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
