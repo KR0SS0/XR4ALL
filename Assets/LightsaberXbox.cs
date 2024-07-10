@@ -24,6 +24,7 @@ public class LightsaberXbox : LightsaberController
     {
         anyInputAction = new InputAction();
         anyInputAction.AddBinding("<Gamepad>/buttonWest");
+        anyInputAction.AddBinding("<Keyboard>/w");
         anyInputAction.performed += ctx => OnAnyInput();
         anyInputAction.Enable();
     }
