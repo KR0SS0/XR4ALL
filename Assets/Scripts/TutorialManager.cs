@@ -12,9 +12,9 @@ public class TutorialManager : MonoBehaviour
     public TutorialState currentState = TutorialState.Standby;
     private AudioSource audioSource;
     [SerializeField] private AudioClip objetive;            //Objetive
-    [SerializeField] private AudioClip controlsAttackIntro;  //Controls Intro
+    [SerializeField] private AudioClip controlsAttackIntro; //Controls Intro
     [SerializeField] private AudioClip[] controlsAttack;    //Controls Attack
-    [SerializeField] private AudioClip controlsDefendIntro;  //Controls Intro
+    [SerializeField] private AudioClip controlsDefendIntro; //Controls Intro
     [SerializeField] private AudioClip[] controlsDefend;    //Controls Defend
     [SerializeField] private AudioClip dronesIntro;         //Drones Intro
     [SerializeField] private AudioClip dronesRegularIntro;  //Regular Drone
@@ -24,16 +24,21 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private AudioClip dronesExplosiveIntro;//Explosive Drone
     [SerializeField] private AudioClip[] dronesPart3;       //Explosive Drone
     [SerializeField] private AudioClip tutorialComplete;    //Completed Tutorial
-    public Transform staticDroneSpawnLocation;
-    public Transform movingDroneSpawnLocation;
+    private Transform staticDroneSpawnLocation;
+    private Transform movingDroneSpawnLocation;
 
     public enum TutorialState { Standby, Objetive, ControlsAttack, ControlsDefend, Drones, DronesRegular, DronesShielded, DronesExplosive, Completed }
+    public bool OngoingTutorial { get => ongoingTutorial; set => ongoingTutorial = value; }
 
     private bool ongoingTutorial = false;
     private DebugInput debugInputActions;
 
+    private BaseDroneController currentActiveDrone;
+
     void Start()
     {
+        transform.position = Vector3.zero;
+
         audioSource = GetComponent<AudioSource>();
 
         debugInputActions = new DebugInput();
@@ -42,7 +47,7 @@ public class TutorialManager : MonoBehaviour
 
         staticDroneSpawnLocation = transform.GetChild(0);
         movingDroneSpawnLocation = transform.GetChild(1);
-        Debug.Log("Spawn Location: " + staticDroneSpawnLocation.position);
+        //Debug.Log("Spawn Location: " + staticDroneSpawnLocation.position);
     }
 
     private void OnDebugAction(InputAction.CallbackContext context)
@@ -125,6 +130,7 @@ public class TutorialManager : MonoBehaviour
 
             case TutorialState.Drones:
                 PlaySound(dronesIntro, true);
+                StartCoroutine(ShowAndHideDrones(dronesIntro.length));
                 break;
 
             case TutorialState.DronesRegular:
@@ -186,7 +192,8 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             case TutorialState.ControlsDefend:
-                PlaySound(controlsDefend[3]);            
+                PlaySound(controlsDefend[3]);
+                StartCoroutine(InstatiateDrone(controlsDefend[3].length));
                 break;
 
             case TutorialState.DronesRegular:
@@ -199,6 +206,7 @@ public class TutorialManager : MonoBehaviour
 
             case TutorialState.DronesExplosive:
                 PlaySound(dronesPart3[0]);
+                StartCoroutine(InstatiateDrone(dronesPart3[0].length));
                 break;
 
             default: 
@@ -212,15 +220,22 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialState.ControlsDefend:
                 PlaySound(controlsDefend[1]);
+                currentActiveDrone.ForceDestroy();
+                StartCoroutine(InstatiateDrone(controlsDefend[1].length));
                 break;
             case TutorialState.DronesRegular:
+                currentActiveDrone.ForceDestroy();
                 PlaySound(dronesPart1[0]);
+                StartCoroutine(InstatiateDrone(dronesPart1[0].length));
                 break;
             case TutorialState.DronesShielded:
+                currentActiveDrone.ForceDestroy();
                 PlaySound(dronesPart2[0]);
+                StartCoroutine(InstatiateDrone(dronesPart2[0].length));
                 break;
             case TutorialState.DronesExplosive:
                 PlaySound(controlsDefend[2]);
+                StartCoroutine(InstatiateDrone(controlsDefend[2].length));
                 break;
             default:
                 break;
@@ -233,10 +248,11 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialState.ControlsDefend:
                 PlaySound(controlsDefend[4], true);
+                currentActiveDrone.ForceDestroy();             
                 break;
 
             case TutorialState.DronesExplosive:
-                PlaySound(dronesPart3[1], true);
+                PlaySound(dronesPart3[1], true);            
                 break;
 
             default:
@@ -246,7 +262,6 @@ public class TutorialManager : MonoBehaviour
 
     private IEnumerator InstatiateDrone(float waitTime)
     {
-
         yield return new WaitForSeconds(waitTime);
 
         GameObject newDrone;
@@ -280,10 +295,45 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             default:
+                newDrone = new();
                 break;
         }
 
+        currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
         yield return null;
     }
 
+
+    private IEnumerator ShowAndHideDrones(float introTime)
+    {
+        GameObject[] exampleDrones = new GameObject[transform.GetChild(2).childCount]; 
+        
+        for (int i = 0; i < transform.GetChild(2).childCount; i++)
+        {
+            exampleDrones[i] = transform.GetChild(2).GetChild(i).gameObject;
+        }
+
+        float halftime = introTime / 2;
+        yield return new WaitForSeconds(halftime - 0.2f);
+        exampleDrones[0].SetActive(true);
+
+        yield return new WaitForSeconds(1.25f);
+        exampleDrones[1].SetActive(true);
+
+        yield return new WaitForSeconds(1.25f);
+        exampleDrones[2].SetActive(true);
+
+        yield return new WaitForSeconds(4f);
+
+        for (int i = 1; i < transform.GetChild(2).childCount; i++)
+        {
+            exampleDrones[i].SetActive(false);
+        }
+
+        yield return new WaitForSeconds(8f);
+
+        exampleDrones[0].SetActive(false);
+
+        yield return null;
+    }
 }

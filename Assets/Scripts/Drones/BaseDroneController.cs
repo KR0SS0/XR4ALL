@@ -445,6 +445,11 @@ public abstract class BaseDroneController : MonoBehaviour
         Decerlerate(0.95f);
     }
 
+    public void ForceDestroy()
+    {
+        SwitchState(0f, StateMachine.Destroy);
+    }
+
     public abstract void HandleHit();
 
     protected virtual void OnEnterStandby() { }
