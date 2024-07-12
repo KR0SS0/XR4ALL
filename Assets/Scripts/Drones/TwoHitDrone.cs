@@ -14,6 +14,7 @@ public class TwoHitDrone : BaseDroneController
     public AnimationCurve stunnedAnimation;
     [SerializeField] private bool forceDestroy = false;
     public static float MaxDistanceToPlayer { get => maxDistanceToPlayer; }
+    protected bool destroy = false;
 
     private void Awake()
     {
@@ -54,6 +55,7 @@ public class TwoHitDrone : BaseDroneController
             {
                 timerStarted = true;
                 SwitchState(0f, StateMachine.Destroy);
+                destroy = true;
             }
 
             else

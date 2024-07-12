@@ -15,8 +15,9 @@ public class TutorialTwoHits : TwoHitDrone, ITutorial
     public override void HandleHit()
     {
         base.HandleHit();
-        if(state == StateMachine.Destroy)
+        if(destroy)
         {
+            Debug.Log("Reached");
             manager.OnDroneDestroyed();
         }
     }

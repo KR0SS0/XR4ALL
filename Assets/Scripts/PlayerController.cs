@@ -12,10 +12,12 @@ public class PlayerController : MonoBehaviour
 
     private PlayerItemSwitcher playerItemSwitcher;
     private InputAction anyInputAction;
+    private TutorialManager tutorial;
 
     private void Start()
     {
         playerItemSwitcher = FindObjectOfType<PlayerItemSwitcher>();
+        tutorial = FindFirstObjectByType<TutorialManager>();
     }
 
     [ContextMenu("Hit()")]
@@ -24,10 +26,27 @@ public class PlayerController : MonoBehaviour
         if (playerItemSwitcher.IsShieldActive())
         {
             playerItemSwitcher.PlayShieldBlockSound();
+            if(tutorial != null) 
+            {
+                if (tutorial.OngoingTutorial)
+                {
+                    tutorial.OnPlayerSuccessBlock();
+                }
+            }
+
         } else
         {
             health--;
             audioSource.PlayOneShot(normalHitSound);
+
+            if (tutorial != null)
+            {
+                if (tutorial.OngoingTutorial)
+                {
+                    tutorial.OnPlayerGetHit();
+                }
+            }
+
 
             if (healthUI[health].gameObject != null)
             {

@@ -51,7 +51,7 @@ public class BeamShot : MonoBehaviour
         Destroy(gameObject);
     }
 
-    protected virtual void TryHitPlayer(Collider collider)
+    private void TryHitPlayer(Collider collider)
     {
         try
         {
