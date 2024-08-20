@@ -61,7 +61,12 @@ public class LightsaberController : MonoBehaviour
 
         DroneSpawner droneSpawner = FindObjectOfType<DroneSpawner>();
         BaseDroneController drone = droneSpawner.GetClosestActiveDrone();
-        return drone;
+        if(drone != null)
+        {
+            return drone;
+        }
+        else { return null; }
+
     }
 
     [ContextMenu("Vibrate")]

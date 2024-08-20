@@ -17,6 +17,7 @@ public class LightsaberJoystick : LightsaberController
     // Update is called once per frame
     void Update()
     {
+        if(Gamepad.current == null) { return; }
         inputVector = Gamepad.current.leftStick.ReadValue();
 
         // Check if input magnitude is above the threshold

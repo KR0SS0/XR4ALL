@@ -47,7 +47,7 @@ public class PlayerItemSwitcher : MonoBehaviour
         accessibilityController = FindObjectOfType<AccessibilityController>();
 
         // Initialize the slider with the max value being the greater of shield duration and cooldown
-        float maxShieldValue = Mathf.Max(accessibilityController.GetShieldDurationValue(), accessibilityController.GetShieldCooldownValue());
+        float maxShieldValue = accessibilityController.GetShieldDurationValue();
         shieldCooldownSlider.maxValue = maxShieldValue;
         shieldCooldownSlider.value = maxShieldValue;
         originalColor = shieldCooldownFillImage.color;
@@ -79,17 +79,23 @@ public class PlayerItemSwitcher : MonoBehaviour
     {
         isShieldActive = true;
 
-        // Activate shield with scaling up
-        yield return StartCoroutine(ScaleAndSetActive(shield, true));
+        // Start decreasing the slider value immediately
+        float shieldDuration = accessibilityController.GetShieldDurationValue();
+        shieldCooldownSlider.maxValue = accessibilityController.GetShieldDurationValue();
+        float elapsedTime = 0f;
+
+        // Start the shield scaling while also updating the slider value in parallel
+        StartCoroutine(ScaleAndSetActive(shield, true));
         PlayShieldOnSound();
 
         // Change slider color to indicate shield is active
         shieldCooldownFillImage.color = originalColor;
 
-        float shieldDuration = accessibilityController.GetShieldDurationValue();
-        for (float t = 0; t < shieldDuration; t += Time.deltaTime)
+        while (elapsedTime < shieldDuration)
         {
-            shieldCooldownSlider.value = Mathf.Clamp(shieldDuration - t, 0, shieldCooldownSlider.maxValue);
+            // Update the slider value
+            shieldCooldownSlider.value = Mathf.Clamp(shieldDuration - elapsedTime, 0, shieldCooldownSlider.maxValue);
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
@@ -100,12 +106,15 @@ public class PlayerItemSwitcher : MonoBehaviour
         StartCoroutine(ShieldCooldown());
     }
 
+
     private IEnumerator ShieldCooldown()
     {
         isCooldownActive = true;
 
         // Change slider color to indicate cooldown
         shieldCooldownFillImage.color = cooldownColor;
+
+        shieldCooldownSlider.maxValue = accessibilityController.GetShieldCooldownValue();
 
         float cooldownDuration = accessibilityController.GetShieldCooldownValue();
         for (float t = 0; t < cooldownDuration; t += Time.deltaTime)
