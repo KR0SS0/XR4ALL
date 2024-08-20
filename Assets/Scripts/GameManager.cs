@@ -1,13 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using static UnityEngine.CullingGroup;
 
 public class GameManager : MonoBehaviour
 {
-    public TMP_Text waitingToStartText;
+    public event EventHandler OnAnyInputOccurred;
+
+    public GameObject startGame;
+
+    [SerializeField] private TMP_Text inputText;
 
     [SerializeField] private GameObject VR_Lightsaber;
     [SerializeField] private GameObject Gamepad_Lightsaber;
@@ -70,11 +76,14 @@ public class GameManager : MonoBehaviour
         debugCycleStateAction.Enable();
 
         accessController = FindObjectOfType<AccessibilityController>();
+
+        inputText.text = accessController.GetInputTypeString();
     }
 
     private void Update()
     {
         CheckActivationStatus();
+        inputText.text = accessController.GetInputTypeString();
     }
 
     public void SetGameState(GameState newState)
@@ -114,7 +123,7 @@ public class GameManager : MonoBehaviour
 
     public void WaitToStartGame()
     {
-        waitingToStartText.enabled = true;
+        startGame.SetActive(true);
         FindObjectOfType<PlayerController>().WaitingToStart();
     }
 
@@ -124,7 +133,7 @@ public class GameManager : MonoBehaviour
         SetGameState(GameState.Active);
         FindObjectOfType<PlayerController>().StartGame();
         FindObjectOfType<DroneSpawner>().StartGame();
-        waitingToStartText.enabled = false;
+        startGame.SetActive(false);
         GameOverController.Instance.HideGameOverScreen();
     }
 
@@ -141,7 +150,9 @@ public class GameManager : MonoBehaviour
         if (currentState == GameState.WaitingToStart)
         {
             StartGame();
+
         }
+        OnAnyInputOccurred?.Invoke(this, EventArgs.Empty);
     }
 
     private void CheckActivationStatus()

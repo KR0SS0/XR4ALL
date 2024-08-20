@@ -14,25 +14,33 @@ public class AccessibilityController : MonoBehaviour
 
     [SerializeField] private TMP_Text sensorPreset;
 
-    private int currentSelection = 0;
+    private int currentSelection = 3;
     private bool menuActive = false;
 
     private float shieldCooldownValue = 1.0f;
     private float shieldDurationValue = 1.0f;
     private float droneSpawnIntensityValue = 1.0f;
 
-    private string[] sensorPresets = { "OculusDefault", "AdaptiveControllerTwoButtonLayout", "Joystick"};
-    private int currentPresetIndex = 1;
+    private string[] sensorPresets = { "1. Freehand", "2. Voice", "3. Joystick"};
+    private int currentPresetIndex = 0;
 
     private void Start()
     {
         LoadSettings();
         UpdateMenu();
         accessibilityMenu.SetActive(menuActive);
+        currentSelection = 3;
     }
 
     private void Update()
     {
+        if(GameManager.Instance.CurrentState == GameManager.GameState.WaitingToStart)
+        {
+            //HandleMenuNavigation();
+            HandleValueChange();
+            UpdateMenu();
+        }
+        /*
         if (Keyboard.current.f1Key.wasPressedThisFrame)
         {
             ToggleMenu();
@@ -43,6 +51,7 @@ public class AccessibilityController : MonoBehaviour
             HandleMenuNavigation();
             HandleValueChange();
         }
+        */
     }
 
     private void ToggleMenu()
@@ -68,6 +77,7 @@ public class AccessibilityController : MonoBehaviour
 
     private void HandleValueChange()
     {
+        // Check for left and right arrow keys on the keyboard
         if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
         {
             ChangeValue(-1);
@@ -77,7 +87,42 @@ public class AccessibilityController : MonoBehaviour
         {
             ChangeValue(1);
         }
+
+        // Check for left and right directions on the gamepad D-pad
+        if (Gamepad.current != null)
+        {
+            if (Gamepad.current.dpad.left.wasPressedThisFrame)
+            {
+                ChangeValue(-1);
+            }
+
+            if (Gamepad.current.dpad.right.wasPressedThisFrame)
+            {
+                ChangeValue(1);
+            }
+
+            // Check for left and right on the joystick (left stick)
+            if (Gamepad.current.leftStick.left.wasPressedThisFrame)
+            {
+                ChangeValue(-1);
+            }
+
+            if (Gamepad.current.leftStick.right.wasPressedThisFrame)
+            {
+                ChangeValue(1);
+            }
+            if (Gamepad.current.rightStick.left.wasPressedThisFrame)
+            {
+                ChangeValue(-1);
+            }
+
+            if (Gamepad.current.rightStick.right.wasPressedThisFrame)
+            {
+                ChangeValue(1);
+            }
+        }
     }
+
 
     private void ChangeValue(int direction)
     {
@@ -130,4 +175,6 @@ public class AccessibilityController : MonoBehaviour
     public float GetShieldCooldownValue() => shieldCooldownValue;
     public float GetShieldDurationValue() => shieldDurationValue;
     public float GetControllerPresetIndex() => currentPresetIndex;
+
+    public string GetInputTypeString() => sensorPreset.text;
 }

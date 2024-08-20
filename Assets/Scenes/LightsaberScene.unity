@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &27747193
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1797,6 +1797,10 @@ PrefabInstance:
       propertyPath: Joystick_Lightsaber
       value: 
       objectReference: {fileID: 250528595}
+    - target: {fileID: 7633003102373973608, guid: 008b64ebcc603594587e3d008452f744, type: 3}
+      propertyPath: m_fontSize
+      value: 24.75
+      objectReference: {fileID: 0}
     - target: {fileID: 7908493044115445636, guid: 008b64ebcc603594587e3d008452f744, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.8383005

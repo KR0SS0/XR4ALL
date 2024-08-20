@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverController : MonoBehaviour
@@ -13,6 +15,9 @@ public class GameOverController : MonoBehaviour
 
     [SerializeField] private TMP_Text bestTimeSurvivedText;
     private string initialBestTimeSurvivedText;
+
+    private float timerInput;
+    private float timeToAllowInput = 0.5f;
 
     private static GameOverController instance;
     public static GameOverController Instance
@@ -47,6 +52,37 @@ public class GameOverController : MonoBehaviour
         initialBestTimeSurvivedText = bestTimeSurvivedText != null ? bestTimeSurvivedText.text : "";
         HideGameOverScreen();
     }
+
+    private void Update()
+    {
+        if(GameManager.Instance.CurrentState == GameManager.GameState.GameOver)
+        {
+            timerInput += Time.deltaTime;
+        }
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnAnyInputOccurred += HandleAnyInput;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnAnyInputOccurred -= HandleAnyInput;
+    }
+
+    private void HandleAnyInput(object sender, EventArgs e)
+    {
+        if (GameManager.Instance.CurrentState == GameManager.GameState.GameOver)
+        {
+            if(timerInput > timeToAllowInput) {
+                Scene currentScene = SceneManager.GetActiveScene();
+
+                SceneManager.LoadScene(currentScene.name);
+            }
+        }
+    }
+
 
     public void ShowGameOverScreen()
     {
