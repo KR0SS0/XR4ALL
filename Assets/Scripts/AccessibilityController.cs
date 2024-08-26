@@ -17,8 +17,10 @@ public class AccessibilityController : MonoBehaviour
     private int currentSelection = 3;
     private bool menuActive = false;
 
-    private float shieldCooldownValue = 1.0f;
-    private float shieldDurationValue = 1.0f;
+    [SerializeField] private float shieldCooldownValue = 1.0f;
+    [SerializeField] private float shieldDurationValue = 2.5f;
+    [SerializeField] private float voiceShieldCooldownValue = 0.5f;
+    [SerializeField] private float voiceShieldDurationValue = 5.0f;
     private float droneSpawnIntensityValue = 1.0f;
 
     private string[] sensorPresets = { "1. Freehand", "2. Voice", "3. Joystick"};
@@ -30,6 +32,8 @@ public class AccessibilityController : MonoBehaviour
         UpdateMenu();
         accessibilityMenu.SetActive(menuActive);
         currentSelection = 3;
+
+        Debug.Log(PlayerPrefs.GetFloat("ShieldCooldown", 1.0f) + ", " + PlayerPrefs.GetFloat("ShieldDuration", 1.0f));
     }
 
     private void Update()
@@ -89,6 +93,7 @@ public class AccessibilityController : MonoBehaviour
         }
 
         // Check for left and right directions on the gamepad D-pad
+        /*
         if (Gamepad.current != null)
         {
             if (Gamepad.current.dpad.left.wasPressedThisFrame)
@@ -121,6 +126,7 @@ public class AccessibilityController : MonoBehaviour
                 ChangeValue(1);
             }
         }
+        */
     }
 
 
@@ -161,19 +167,19 @@ public class AccessibilityController : MonoBehaviour
         shieldCooldown.text = "Shield Cooldown: " + shieldCooldownValue.ToString("F1");
         shieldDuration.text = "Shield Duration: " + shieldDurationValue.ToString("F1");
         droneSpawnIntensity.text = "Drone Spawn Intensity: " + droneSpawnIntensityValue.ToString("F1");
-        sensorPreset.text = "Sensor Preset: " + sensorPresets[currentPresetIndex];
+        sensorPreset.text = "Controller: " + sensorPresets[currentPresetIndex];
     }
 
     private void LoadSettings()
     {
-        shieldCooldownValue = PlayerPrefs.GetFloat("ShieldCooldown", 1.0f);
-        shieldDurationValue = PlayerPrefs.GetFloat("ShieldDuration", 1.0f);
-        droneSpawnIntensityValue = PlayerPrefs.GetFloat("DroneSpawnIntensity", 1.0f);
+        //shieldCooldownValue = PlayerPrefs.GetFloat("ShieldCooldown", 1.0f);
+        //shieldDurationValue = PlayerPrefs.GetFloat("ShieldDuration", 1.0f);
+        //droneSpawnIntensityValue = PlayerPrefs.GetFloat("DroneSpawnIntensity", 1.0f);
         currentPresetIndex = PlayerPrefs.GetInt("SensorPresetIndex", 1);
     }
 
-    public float GetShieldCooldownValue() => shieldCooldownValue;
-    public float GetShieldDurationValue() => shieldDurationValue;
+    public float GetShieldCooldownValue() => currentPresetIndex == 1 ? voiceShieldCooldownValue : shieldCooldownValue;
+    public float GetShieldDurationValue() => currentPresetIndex == 1 ? voiceShieldDurationValue : shieldDurationValue;
     public float GetControllerPresetIndex() => currentPresetIndex;
 
     public string GetInputTypeString() => sensorPreset.text;

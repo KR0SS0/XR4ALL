@@ -10,6 +10,7 @@ using static UnityEngine.CullingGroup;
 public class GameManager : MonoBehaviour
 {
     public event EventHandler OnAnyInputOccurred;
+    public event EventHandler OnStartInputOccurred;
 
     public GameObject startGame;
 
@@ -56,14 +57,14 @@ public class GameManager : MonoBehaviour
     }
 
     private InputAction anyInputAction;
+    private InputAction startInputAction;
     private InputAction debugCycleStateAction;
 
     void Start()
     {
         SetGameState(GameState.WaitingToStart);
 
-        anyInputAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/enter");
-        anyInputAction.AddBinding("<Gamepad>/buttonSouth");
+        anyInputAction = new InputAction(type: InputActionType.Button, binding: "<Gamepad>/buttonSouth");
         anyInputAction.AddBinding("<XRController>/triggerPressed");
         anyInputAction.AddBinding("<XRController>/gripPressed");
         anyInputAction.AddBinding("<XRController>/primaryButton");
@@ -71,9 +72,13 @@ public class GameManager : MonoBehaviour
         anyInputAction.performed += ctx => OnAnyInput();
         anyInputAction.Enable();
 
-        debugCycleStateAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/d");
-        debugCycleStateAction.performed += ctx => CycleGameState();
-        debugCycleStateAction.Enable();
+        startInputAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/enter");
+        startInputAction.performed += ctx => OnStartInput();
+        startInputAction.Enable();
+
+        //debugCycleStateAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/d");
+        //debugCycleStateAction.performed += ctx => CycleGameState();
+        //debugCycleStateAction.Enable();
 
         accessController = FindObjectOfType<AccessibilityController>();
 
@@ -154,12 +159,16 @@ public class GameManager : MonoBehaviour
 
     private void OnAnyInput()
     {
+        OnAnyInputOccurred?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnStartInput()
+    {
         if (currentState == GameState.WaitingToStart)
         {
             StartGame();
-
         }
-        OnAnyInputOccurred?.Invoke(this, EventArgs.Empty);
+        OnStartInputOccurred?.Invoke(this, EventArgs.Empty);
     }
 
     private void CheckActivationStatus()
