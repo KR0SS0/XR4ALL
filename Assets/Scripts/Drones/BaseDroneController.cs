@@ -478,6 +478,7 @@ public abstract class BaseDroneController : MonoBehaviour
     {
         if (spawner != null)
         {
+            Debug.Log(spawner.name);
             spawner.OnDroneDestroyed(gameObject, DroneType);
         }
 
@@ -546,13 +547,8 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private Vector3 GetRandomPointAroundPlayer()
     {
-        if(spawner == null)
-        {
-            spawner = FindFirstObjectByType<DroneSpawner>();
-        }
-
         //degrees
-        float sectorAngle = spawner.SpawnAngle;
+        float sectorAngle = spawner == null ? 70f : spawner.SpawnAngle;
         float halfSectorAngle = sectorAngle / 2f;
 
         //inner and outer radius
