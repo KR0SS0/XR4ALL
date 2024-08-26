@@ -107,5 +107,25 @@ public class LightsaberXbox : LightsaberController
         {
             Debug.Log("No drones found.");
         }
+        //HIT TWICE
+        drone = FindNearestDrone();
+        if (drone != null)
+        {
+            float distanceToDrone = Vector3.Distance(transform.position, drone.transform.position);
+            if (distanceToDrone <= attackRange)
+            {
+                drone.HandleHit();
+                StartTriggerVibration();
+                PlayStrikeSound();
+                Debug.Log("Drone hit!");
+            } else
+            {
+                PlaySwingSound();
+                Debug.Log("Drone is out of attack range.");
+            }
+        } else
+        {
+            Debug.Log("No drones found.");
+        }
     }
 }
