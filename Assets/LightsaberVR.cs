@@ -24,13 +24,14 @@ public class LightsaberVR : LightsaberController
     // Update is called once per frame
     void Update()
     {
-        Vector3 currentPosition;
+        //Vector3 currentPosition;
 
-        if (controller.TryGetFeatureValue(CommonUsages.devicePosition, out currentPosition))
+        currentVelocity = (transform.position - previousPosition) / Time.deltaTime;
+        previousPosition = transform.position;
+        /* if (controller.TryGetFeatureValue(CommonUsages.devicePosition, out currentPosition))
         {
-            currentVelocity = (currentPosition - previousPosition) / Time.deltaTime;
-            previousPosition = currentPosition;
         }
+        */
         PlayVRSwingSound(GetVelocity());
     }
 

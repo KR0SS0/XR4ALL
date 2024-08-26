@@ -137,6 +137,13 @@ public class GameManager : MonoBehaviour
         GameOverController.Instance.HideGameOverScreen();
     }
 
+    //
+    public void RestartWave()
+    {
+        FindObjectOfType<PlayerController>().StartGame();
+        FindObjectOfType<DroneSpawner>().RestartGame();
+    }
+
     // Method to end the game
     public void EndGame()
     {

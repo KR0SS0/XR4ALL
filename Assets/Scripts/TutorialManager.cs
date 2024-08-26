@@ -2,12 +2,16 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class TutorialManager : MonoBehaviour
 {
     [SerializeField] private GameObject oneHitDrone;
     [SerializeField] private GameObject twoHitsDrone;
     [SerializeField] private GameObject explosiveDrone;
+
+    [SerializeField] private DroneSpawner droneSpawner;
+    private GameManager gameManager;
 
     public TutorialState currentState = TutorialState.Standby;
     private AudioSource audioSource;
@@ -23,11 +27,14 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private AudioClip[] dronesPart2;       //Shielded Drone
     [SerializeField] private AudioClip dronesExplosiveIntro;//Explosive Drone
     [SerializeField] private AudioClip[] dronesPart3;       //Explosive Drone
+    [SerializeField] private AudioClip testWaveIntro;       //Test Wave Intro
+    [SerializeField] private AudioClip[] testWaveClips;     //Test Wave Fail/Success
     [SerializeField] private AudioClip tutorialComplete;    //Completed Tutorial
     private Transform staticDroneSpawnLocation;
     private Transform movingDroneSpawnLocation;
 
-    public enum TutorialState { Standby, Objetive, ControlsAttack, ControlsDefend, Drones, DronesRegular, DronesShielded, DronesExplosive, Completed }
+    public enum TutorialState { Standby, Objetive, ControlsAttack, ControlsDefend, Drones, DronesRegular, DronesShielded, DronesExplosive,
+        TestWave, Completed }
     public bool OngoingTutorial { get => ongoingTutorial; set => ongoingTutorial = value; }
 
     private bool ongoingTutorial = false;
@@ -48,6 +55,10 @@ public class TutorialManager : MonoBehaviour
         staticDroneSpawnLocation = transform.GetChild(0);
         movingDroneSpawnLocation = transform.GetChild(1);
         //Debug.Log("Spawn Location: " + staticDroneSpawnLocation.position);
+
+        droneSpawner.SetTutorialManager(this);
+
+        gameManager = FindFirstObjectByType<GameManager>();
     }
 
     private void OnDebugAction(InputAction.CallbackContext context)
@@ -148,8 +159,14 @@ public class TutorialManager : MonoBehaviour
                 StartCoroutine(InstatiateDrone(dronesExplosiveIntro.length));
                 break;
 
+            case TutorialState.TestWave:
+                PlaySound(testWaveIntro);
+                StartCoroutine(InstatiateDrone(testWaveIntro.length));
+                break;
+
             case TutorialState.Completed:
                 PlaySound(tutorialComplete);
+                StartCoroutine(EndTutorial());
                 break;
         }
     }
@@ -171,9 +188,6 @@ public class TutorialManager : MonoBehaviour
 
             case TutorialState.DronesShielded:
                 PlaySound(controlsAttack[1]);
-                break;
-
-            case TutorialState.DronesExplosive:               
                 break;
 
             default:
@@ -252,12 +266,44 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             case TutorialState.DronesExplosive:
-                PlaySound(dronesPart3[1], true);            
+                StartCoroutine(DelayedPlaySound(dronesPart3[1], 1.0f, true));
                 break;
 
             default:
                 break;
         }
+    }
+
+    private IEnumerator DelayedPlaySound(AudioClip clip, float delay, bool playNext)
+    {
+        yield return new WaitForSeconds(delay);
+        PlaySound(clip, playNext);
+    }
+
+
+    public void OnFailureTestWave()
+    {
+        PlaySound(testWaveClips[0]);
+        StartCoroutine(RestartTestWave());
+    }
+
+    public void OnSuccessTestWave()
+    {
+        PlaySound(testWaveClips[1], true);
+    }
+
+    private IEnumerator RestartTestWave()
+    {
+        yield return new WaitForSeconds(testWaveClips[0].length);
+        gameManager.RestartWave();
+        yield return null;
+    }
+
+    private IEnumerator EndTutorial()
+    {
+        yield return new WaitForSeconds(tutorialComplete.length);
+        gameManager.EndGame();
+        yield return null;
     }
 
     private IEnumerator InstatiateDrone(float waitTime)
@@ -271,35 +317,40 @@ public class TutorialManager : MonoBehaviour
                 newDrone = Instantiate(oneHitDrone, staticDroneSpawnLocation.position, staticDroneSpawnLocation.rotation);
                 newDrone.GetComponent<BaseDroneController>().StaticDrone = true;
                 newDrone.GetComponent<ITutorial>().SetManager(this);
+                currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
                 //newDrone.GetComponent<ITutorial>().Test();
                 break;
 
             case TutorialState.ControlsDefend:
                 newDrone = Instantiate(oneHitDrone, staticDroneSpawnLocation.position, staticDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
+                currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
                 break;
 
             case TutorialState.DronesRegular:
                 newDrone = Instantiate(oneHitDrone, movingDroneSpawnLocation.position, movingDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
+                currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
                 break;
 
             case TutorialState.DronesShielded:
                 newDrone = Instantiate(twoHitsDrone, movingDroneSpawnLocation.position, movingDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
+                currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
                 break;
 
             case TutorialState.DronesExplosive:
                 newDrone = Instantiate(explosiveDrone, movingDroneSpawnLocation.position, movingDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
+                currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
                 break;
 
             default:
-                newDrone = new();
+                //droneSpawner.StartGame();
+                gameManager.StartGame();
+                currentActiveDrone = null;
                 break;
         }
-
-        currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
         yield return null;
     }
 
@@ -336,4 +387,5 @@ public class TutorialManager : MonoBehaviour
 
         yield return null;
     }
+
 }

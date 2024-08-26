@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (tutorial.OngoingTutorial)
                 {
+                    Debug.Log("Tutorial Success block");
                     tutorial.OnPlayerSuccessBlock();
                 }
             }
@@ -41,8 +42,9 @@ public class PlayerController : MonoBehaviour
 
             if (tutorial != null)
             {
-                if (tutorial.OngoingTutorial)
+                if (tutorial.OngoingTutorial && tutorial.currentState != TutorialManager.TutorialState.TestWave)
                 {
+                    Debug.Log("Tutorial unsuccess block");
                     tutorial.OnPlayerGetHit();
                 }
             }
@@ -55,7 +57,16 @@ public class PlayerController : MonoBehaviour
 
             if (health <= 0)
             {
-                GameOver();
+                if(tutorial.OngoingTutorial && tutorial.currentState == TutorialManager.TutorialState.TestWave)
+                {
+                    tutorial.OnFailureTestWave();
+                }
+
+                else
+                {
+                    Debug.Log("Player Controller Game Over");
+                    GameOver();
+                }
             }
         }
     }
