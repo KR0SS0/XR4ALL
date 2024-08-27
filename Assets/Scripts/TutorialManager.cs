@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using static GameManager;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -16,10 +17,30 @@ public class TutorialManager : MonoBehaviour
     public TutorialState currentState = TutorialState.Standby;
     private AudioSource audioSource;
     [SerializeField] private AudioClip objetive;            //Objetive
-    [SerializeField] private AudioClip controlsAttackIntro; //Controls Intro
-    [SerializeField] private AudioClip[] controlsAttack;    //Controls Attack
-    [SerializeField] private AudioClip controlsDefendIntro; //Controls Intro
-    [SerializeField] private AudioClip[] controlsDefend;    //Controls Defend
+
+    //VR controller
+    [SerializeField] private AudioClip controlsVR_AttackIntro; //Controls Attack Intro
+    [SerializeField] private AudioClip[] controlsVR_Attack;    //Controls Attack 
+    [SerializeField] private AudioClip controlsVR_DefendIntro; //Controls Defend Intro
+    [SerializeField] private AudioClip[] controlsVR_Defend;    //Controls Defend 
+
+    //Voice commands
+    [SerializeField] private AudioClip controlsVC_AttackIntro; //Controls Attack Intro
+    [SerializeField] private AudioClip[] controlsVC_Attack;    //Controls Attack
+    [SerializeField] private AudioClip controlsVC_DefendIntro; //Controls Defend Intro
+    [SerializeField] private AudioClip[] controlsVC_Defend;    //Controls Defend
+
+    //Joystick + Button
+    [SerializeField] private AudioClip controlsJB_AttackIntro; //Controls Attack Intro
+    [SerializeField] private AudioClip[] controlsJB_Attack;    //Controls Attack
+    [SerializeField] private AudioClip controlsJB_DefendIntro; //Controls Defend Intro
+    [SerializeField] private AudioClip[] controlsJB_Defend;    //Controls Defend
+
+    private AudioClip controlsAttackIntro; //Controls Attack Intro
+    private AudioClip[] controlsAttack;    //Controls Attack [3]
+    private AudioClip controlsDefendIntro; //Controls Defend Intro
+    private AudioClip[] controlsDefend;    //Controls Defend [5]
+
     [SerializeField] private AudioClip dronesIntro;         //Drones Intro
     [SerializeField] private AudioClip dronesRegularIntro;  //Regular Drone
     [SerializeField] private AudioClip[] dronesPart1;       //Regular Drone
@@ -41,12 +62,14 @@ public class TutorialManager : MonoBehaviour
     private DebugInput debugInputActions;
 
     private BaseDroneController currentActiveDrone;
+    private float sourceVolume;
 
     void Start()
     {
         transform.position = Vector3.zero;
 
         audioSource = GetComponent<AudioSource>();
+        sourceVolume = audioSource.volume;
 
         debugInputActions = new DebugInput();
         debugInputActions.Debug.DebugAction.performed += OnDebugAction;
@@ -59,6 +82,9 @@ public class TutorialManager : MonoBehaviour
         droneSpawner.SetTutorialManager(this);
 
         gameManager = FindFirstObjectByType<GameManager>();
+
+ 
+
     }
 
     private void OnDebugAction(InputAction.CallbackContext context)
@@ -73,8 +99,41 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    //Change voice lines depending on current AssistMode
+    public void SetVoicelineAssistMode()
+    {
+        AssistMode assistMode = gameManager.GetCurrentAssistMode();
+
+        switch (assistMode)
+        {
+            case AssistMode.VRController:
+                controlsAttackIntro = controlsVR_AttackIntro; 
+                controlsAttack = controlsVR_Attack;    
+                controlsDefendIntro = controlsVR_DefendIntro; 
+                controlsDefend = controlsVR_Defend;
+                break;
+
+
+            case AssistMode.VoiceCommand:
+                controlsAttackIntro = controlsVC_AttackIntro;
+                controlsAttack = controlsVC_Attack;
+                controlsDefendIntro = controlsVC_DefendIntro;
+                controlsDefend = controlsVC_Defend;
+                break;
+
+
+            case AssistMode.JoystickButton:
+                controlsAttackIntro = controlsJB_AttackIntro;
+                controlsAttack = controlsJB_Attack;
+                controlsDefendIntro = controlsJB_DefendIntro;
+                controlsDefend = controlsJB_Defend;
+                break;
+        }
+    }
+
     private void StartTutorial()
     {
+        SetVoicelineAssistMode();
         ongoingTutorial = true;
         currentState = TutorialState.Objetive;
         NextState();
@@ -84,19 +143,18 @@ public class TutorialManager : MonoBehaviour
     {
         audioSource.Stop();
         audioSource.clip = audioClip;
+        audioSource.volume = Random.Range(sourceVolume - 0.05f, sourceVolume + 0.05f);
+        audioSource.pitch = Random.Range(0.98f, 1.02f);
         audioSource.Play();
     }
 
     private void PlaySound(AudioClip audioClip, bool playNext)
     {
-
-        audioSource.Stop();
-        audioSource.clip = audioClip;
-        audioSource.Play();
+        PlaySound(audioClip);
 
         if(playNext)
         {
-            StartCoroutine(WaitAndPlay(audioClip.length));
+            StartCoroutine(WaitAndPlay(audioClip.length / audioSource.pitch));
         }
     }
 

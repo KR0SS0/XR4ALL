@@ -30,6 +30,14 @@ public class GameManager : MonoBehaviour
         GameOver
     }
 
+    // Current Input Mode
+    public enum AssistMode
+    {
+        VRController,
+        VoiceCommand,
+        JoystickButton,
+    }
+
     private static GameManager instance;
     public static GameManager Instance
     {
@@ -190,6 +198,23 @@ public class GameManager : MonoBehaviour
             VR_Lightsaber.gameObject.SetActive(false);
             Gamepad_Lightsaber.gameObject.SetActive(false);
             Joystick_Lightsaber.gameObject.SetActive(true);
+        }
+    }
+
+    public AssistMode GetCurrentAssistMode()
+    {
+        int presetIndex = (int) accessController.GetControllerPresetIndex();
+
+        switch (presetIndex)
+        {
+            case 0:
+                return AssistMode.VRController;
+            case 1:
+                return AssistMode.VoiceCommand;
+            case 2:
+                return AssistMode.JoystickButton;
+            default:
+                return AssistMode.VRController;
         }
     }
 }
