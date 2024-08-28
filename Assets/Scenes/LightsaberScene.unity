@@ -1089,6 +1089,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1632958259839346378, guid: 008b64ebcc603594587e3d008452f744, type: 3}
+      propertyPath: m_text
+      value: LightsaberVR Endless Mode
+      objectReference: {fileID: 0}
     - target: {fileID: 4451687425253815734, guid: 008b64ebcc603594587e3d008452f744, type: 3}
       propertyPath: m_Camera
       value: 
@@ -1097,14 +1101,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1037122345}
-    - target: {fileID: 5783376281333235091, guid: 008b64ebcc603594587e3d008452f744, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -110
-      objectReference: {fileID: 0}
-    - target: {fileID: 7337222805987951832, guid: 008b64ebcc603594587e3d008452f744, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7383171126056576000, guid: 008b64ebcc603594587e3d008452f744, type: 3}
       propertyPath: VR_Lightsaber
       value: 
@@ -1160,10 +1156,6 @@ PrefabInstance:
     - target: {fileID: 8357503182480953873, guid: 008b64ebcc603594587e3d008452f744, type: 3}
       propertyPath: m_Name
       value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 8501403902513452705, guid: 008b64ebcc603594587e3d008452f744, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
