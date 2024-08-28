@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static UnityEngine.CullingGroup;
 
@@ -22,12 +24,23 @@ public class GameManager : MonoBehaviour
 
     private AccessibilityController accessController;
 
+    private const int LIGHTSABER_SCENE_INDEX = 0;
+    private const int TUTORIAL_SCENE_INDEX = 1;
+
     // Enum for the game states
     public enum GameState
     {
         WaitingToStart,
         Active,
         GameOver
+    }
+
+    // Current Input Mode
+    public enum AssistMode
+    {
+        VRController,
+        VoiceCommand,
+        JoystickButton,
     }
 
     private static GameManager instance;
@@ -142,6 +155,21 @@ public class GameManager : MonoBehaviour
         GameOverController.Instance.HideGameOverScreen();
     }
 
+    private void StartTutorial()
+    {
+        SetGameState(GameState.Active);
+        FindObjectOfType<TutorialManager>().StartTutorial();
+        startGame.SetActive(false);
+        GameOverController.Instance.HideGameOverScreen();
+    }
+
+    //
+    public void RestartWave()
+    {
+        FindObjectOfType<PlayerController>().StartGame();
+        FindObjectOfType<DroneSpawner>().RestartGame();
+    }
+
     // Method to end the game
     public void EndGame()
     {
@@ -159,7 +187,17 @@ public class GameManager : MonoBehaviour
     {
         if (currentState == GameState.WaitingToStart)
         {
-            StartGame();
+            switch (SceneManager.GetActiveScene().buildIndex)
+            {
+                case LIGHTSABER_SCENE_INDEX:
+                    StartGame();
+                    break;
+
+                case TUTORIAL_SCENE_INDEX:
+                    StartTutorial();
+                    break;
+            }
+            
         }
         OnStartInputOccurred?.Invoke(this, EventArgs.Empty);
     }
@@ -183,6 +221,23 @@ public class GameManager : MonoBehaviour
             VR_Lightsaber.gameObject.SetActive(false);
             Gamepad_Lightsaber.gameObject.SetActive(false);
             Joystick_Lightsaber.gameObject.SetActive(true);
+        }
+    }
+
+    public AssistMode GetCurrentAssistMode()
+    {
+        int presetIndex = (int) accessController.GetControllerPresetIndex();
+
+        switch (presetIndex)
+        {
+            case 0:
+                return AssistMode.VRController;
+            case 1:
+                return AssistMode.VoiceCommand;
+            case 2:
+                return AssistMode.JoystickButton;
+            default:
+                return AssistMode.VRController;
         }
     }
 }

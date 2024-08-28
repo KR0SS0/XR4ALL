@@ -29,6 +29,9 @@ public class DroneSpawner : MonoBehaviour
     [SerializeField] private bool debug = false;
     [SerializeField] private Transform playerTransform;
 
+    private bool isTutorial = false;
+    private TutorialManager tutorialManager;
+
     private Color sphere1Color = Color.red;
     private Color sphere2Color = Color.yellow;
     private Color spawnAreaColor = Color.black;
@@ -74,12 +77,24 @@ public class DroneSpawner : MonoBehaviour
         
         if(gameState == GameState.NextRound)
         {
-            Debug.Log("Round finished");
-            NextRound();
+            if (isTutorial)
+            {
+                Debug.Log("Tutorial finished");
+                EndGame();
+                tutorialManager.OnSuccessTestWave();
+ 
+            }
+
+            else
+            {
+                Debug.Log("Round finished");
+                NextRound();
+            }
         }
 
         if(startGame && gameState == GameState.NoGame)
         {
+            Debug.Log("Drone Spawner Start Game");
             StartGame();
             startGame = false;
         }
@@ -104,15 +119,16 @@ public class DroneSpawner : MonoBehaviour
     {
         DeactivateTowers();
         DestroyAllDrones();
-        DestroyAllBullets();
+
     }
 
-    private void DestroyAllDrones()
+    public void DestroyAllDrones()
     {
         foreach (GameObject drone in droneList)
         {
             Destroy(drone);
         }
+        DestroyAllBullets();
         droneList.Clear();
         gameState = GameState.NoGame;
     }
@@ -236,13 +252,28 @@ public class DroneSpawner : MonoBehaviour
 
     private void SuffleList()
     {
-        // Shuffle
-        for (int i = 0; i < droneList.Count; i++)
+        if(isTutorial)
         {
-            int randomIndex = Random.Range(0, droneList.Count);
-            GameObject temp = droneList[i];
-            droneList[i] = droneList[randomIndex];
-            droneList[randomIndex] = temp;
+            //Tutorial Test Wave Shuffle
+            for (int i = 0; i < droneList.Count - 1; i++)
+            {
+                int randomIndex = Random.Range(0, droneList.Count - 1);
+                GameObject temp = droneList[i];
+                droneList[i] = droneList[randomIndex];
+                droneList[randomIndex] = temp;
+            }
+        }
+
+        else
+        {
+            // Normal Shuffle
+            for (int i = 0; i < droneList.Count; i++)
+            {
+                int randomIndex = Random.Range(0, droneList.Count);
+                GameObject temp = droneList[i];
+                droneList[i] = droneList[randomIndex];
+                droneList[randomIndex] = temp;
+            }
         }
     }
 
@@ -509,4 +540,14 @@ public class DroneSpawner : MonoBehaviour
             }
         }
     }
+
+    public void SetTutorialManager(TutorialManager value)
+    {
+        tutorialManager = value;
+        if(value != null)
+        {
+            isTutorial = true;
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,23 +31,27 @@ public class PlayerController : MonoBehaviour
             {
                 if (tutorial.OngoingTutorial)
                 {
+                    Debug.Log("Tutorial Success block");
                     tutorial.OnPlayerSuccessBlock();
                 }
             }
 
         } else
-        {
-            health--;
+        {        
             audioSource.PlayOneShot(normalHitSound);
 
             if (tutorial != null)
             {
-                if (tutorial.OngoingTutorial)
+                if (tutorial.OngoingTutorial && tutorial.currentState != TutorialManager.TutorialState.TestWave)
                 {
+                    Debug.Log("Tutorial unsuccess block");
                     tutorial.OnPlayerGetHit();
+                    return;
                 }
+                     
             }
 
+            health--;
 
             if (healthUI[health].gameObject != null)
             {
@@ -55,7 +60,18 @@ public class PlayerController : MonoBehaviour
 
             if (health <= 0)
             {
-                GameOver();
+                if(tutorial.OngoingTutorial && tutorial.currentState == TutorialManager.TutorialState.TestWave)
+                {
+                    tutorial.OnFailureTestWave();
+                }
+
+                else
+                {
+                    Debug.Log("Ongoing tutorial: " + tutorial.OngoingTutorial); 
+                    Debug.Log("Current tutorial state: " + tutorial.currentState);
+                    Debug.Log("Player Controller Game Over");
+                    GameOver();
+                }
             }
         }
     }

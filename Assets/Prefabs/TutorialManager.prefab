@@ -338,6 +338,7 @@ MonoBehaviour:
   oneHitDrone: {fileID: 952788977978250670, guid: 61dcdf59a8ee906499dd2065af384b38, type: 3}
   twoHitsDrone: {fileID: 8362807827664771108, guid: 20a36b9d3d293c04794bc5f9c5dc0984, type: 3}
   explosiveDrone: {fileID: 6941343222151162684, guid: 233884d3c6b55754dadcfd99fe6b5052, type: 3}
+  droneSpawner: {fileID: 0}
   currentState: 0
   objetive: {fileID: 8300000, guid: 0c42257ba10573348907fdb7a12788af, type: 3}
   controlsAttackIntro: {fileID: 8300000, guid: 312f4f56d7cea214995f9921655ac018, type: 3}
@@ -365,6 +366,10 @@ MonoBehaviour:
   dronesPart3:
   - {fileID: 8300000, guid: a03d789f50c96c04c93ff3fb939e07c9, type: 3}
   - {fileID: 8300000, guid: aee18c47f88f38641b31cc6ba92d2377, type: 3}
+  testWaveIntro: {fileID: 8300000, guid: 28f023ad9e14d7e438448c1b4e2aa746, type: 3}
+  testWaveClips:
+  - {fileID: 8300000, guid: 714da90a01b4fc54a9dbe2b8c0e1cb2d, type: 3}
+  - {fileID: 8300000, guid: dab689a4187ced64a927c80241d06294, type: 3}
   tutorialComplete: {fileID: 8300000, guid: 81e451e8d4d02a94682cb9a51438ddd4, type: 3}
 --- !u!82 &8341280971345932087
 AudioSource:
