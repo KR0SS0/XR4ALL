@@ -122,7 +122,7 @@ public class DroneSpawner : MonoBehaviour
 
     }
 
-    private void DestroyAllDrones()
+    public void DestroyAllDrones()
     {
         foreach (GameObject drone in droneList)
         {

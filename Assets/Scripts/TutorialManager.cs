@@ -94,7 +94,7 @@ public class TutorialManager : MonoBehaviour
             Debug.Log("Space key pressed");
             if (!ongoingTutorial)
             {
-                StartTutorial();
+                //StartTutorial();
             }
         }
     }
@@ -131,7 +131,7 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    private void StartTutorial()
+    public void StartTutorial()
     {
         SetVoicelineAssistMode();
         ongoingTutorial = true;
@@ -295,20 +295,24 @@ public class TutorialManager : MonoBehaviour
                 currentActiveDrone.ForceDestroy();
                 StartCoroutine(InstatiateDrone(controlsDefend[1].length));
                 break;
+
             case TutorialState.DronesRegular:
                 currentActiveDrone.ForceDestroy();
                 PlaySound(dronesPart1[0]);
                 StartCoroutine(InstatiateDrone(dronesPart1[0].length));
                 break;
+
             case TutorialState.DronesShielded:
                 currentActiveDrone.ForceDestroy();
                 PlaySound(dronesPart2[0]);
                 StartCoroutine(InstatiateDrone(dronesPart2[0].length));
                 break;
+
             case TutorialState.DronesExplosive:
-                PlaySound(controlsDefend[2]);
-                StartCoroutine(InstatiateDrone(controlsDefend[2].length));
+                StartCoroutine(DelayedPlaySound(controlsDefend[2], 1.0f , false));
+                StartCoroutine(InstatiateDrone(controlsDefend[2].length + 1f));
                 break;
+
             default:
                 break;
         }
@@ -334,6 +338,7 @@ public class TutorialManager : MonoBehaviour
 
     private IEnumerator DelayedPlaySound(AudioClip clip, float delay, bool playNext)
     {
+        Debug.Log("Playing: " + clip.name);
         yield return new WaitForSeconds(delay);
         PlaySound(clip, playNext);
     }
@@ -342,6 +347,7 @@ public class TutorialManager : MonoBehaviour
     public void OnFailureTestWave()
     {
         PlaySound(testWaveClips[0]);
+        droneSpawner.DestroyAllDrones();
         StartCoroutine(RestartTestWave());
     }
 
