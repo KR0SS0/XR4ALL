@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenuScene.unity
+    guid: 01daac67de0d9624fb6c1d731c46b5a6
+  - enabled: 1
     path: Assets/Scenes/LightsaberScene.unity
     guid: bc8e2126996bf5a4b845a111c8c7e043
   - enabled: 1

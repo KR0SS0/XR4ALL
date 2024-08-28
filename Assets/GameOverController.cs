@@ -48,8 +48,12 @@ public class GameOverController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        initialTimeSurvivedText = timeSurvivedText != null ? timeSurvivedText.text : "";
-        initialBestTimeSurvivedText = bestTimeSurvivedText != null ? bestTimeSurvivedText.text : "";
+        if(initialTimeSurvivedText != null && initialBestTimeSurvivedText != null)
+        {
+            initialTimeSurvivedText = timeSurvivedText != null ? timeSurvivedText.text : "";
+            initialBestTimeSurvivedText = bestTimeSurvivedText != null ? bestTimeSurvivedText.text : "";
+        }
+
         HideGameOverScreen();
     }
 
@@ -89,13 +93,18 @@ public class GameOverController : MonoBehaviour
         if (gameoverScreen != null)
         {
             gameoverScreen.SetActive(true);
-            timeSurvivedText.text = initialTimeSurvivedText + GameTimerController.Instance.GetTimerFormatText();
+            if (initialTimeSurvivedText != null && initialBestTimeSurvivedText != null)
+            {
+                timeSurvivedText.text = initialTimeSurvivedText + GameTimerController.Instance.GetTimerFormatText();
 
-            float timer = GameTimerController.Instance.GetTimer();
-            if (timer > PlayerPrefs.GetFloat("bestTimeSurvived")) {
-                PlayerPrefs.SetFloat("bestTimeSurvived", timer);
-                bestTimeSurvivedText.text = initialBestTimeSurvivedText + GameTimerController.Instance.GetTimerFormatText();
+                float timer = GameTimerController.Instance.GetTimer();
+                if (timer > PlayerPrefs.GetFloat("bestTimeSurvived"))
+                {
+                    PlayerPrefs.SetFloat("bestTimeSurvived", timer);
+                    bestTimeSurvivedText.text = initialBestTimeSurvivedText + GameTimerController.Instance.GetTimerFormatText();
+                }
             }
+
         }
     }
 

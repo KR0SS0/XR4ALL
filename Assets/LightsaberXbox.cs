@@ -32,6 +32,7 @@ public class LightsaberXbox : LightsaberController
     private void OnAnyInput()
     {
         QueueAttack();
+        QueueAttack();
     }
 
     void Update()
@@ -44,6 +45,11 @@ public class LightsaberXbox : LightsaberController
 
     private void QueueAttack()
     {
+        if(gameObject.activeSelf == false)
+        {
+            Debug.LogWarning("Tried to attack but xboxlightsaber is not enabled");
+            return;
+        }
         if (isAttacking)
         {
             attackQueue = 1; // Set to 1 since only one extra attack is needed after the first
@@ -89,26 +95,6 @@ public class LightsaberXbox : LightsaberController
     private void Attack()
     {
         BaseDroneController drone = FindNearestDrone();
-        if (drone != null)
-        {
-            float distanceToDrone = Vector3.Distance(transform.position, drone.transform.position);
-            if (distanceToDrone <= attackRange)
-            {
-                drone.HandleHit();
-                StartTriggerVibration();
-                PlayStrikeSound();
-                Debug.Log("Drone hit!");
-            } else
-            {
-                PlaySwingSound();
-                Debug.Log("Drone is out of attack range.");
-            }
-        } else
-        {
-            Debug.Log("No drones found.");
-        }
-        //HIT TWICE
-        drone = FindNearestDrone();
         if (drone != null)
         {
             float distanceToDrone = Vector3.Distance(transform.position, drone.transform.position);

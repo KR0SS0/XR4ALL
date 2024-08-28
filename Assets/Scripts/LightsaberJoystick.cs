@@ -34,7 +34,7 @@ public class LightsaberJoystick : LightsaberController
             Vector3 currentPosition = transform.position;
             float velocity = (currentPosition - previousPosition).magnitude / Time.deltaTime;
             previousPosition = currentPosition;
-            Debug.Log(velocity);
+            //Debug.Log(velocity);
 
 
 

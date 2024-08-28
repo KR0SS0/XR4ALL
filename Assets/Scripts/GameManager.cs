@@ -24,8 +24,8 @@ public class GameManager : MonoBehaviour
 
     private AccessibilityController accessController;
 
-    private const int LIGHTSABER_SCENE_INDEX = 0;
-    private const int TUTORIAL_SCENE_INDEX = 1;
+    private const int LIGHTSABER_SCENE_INDEX = 1;
+    private const int TUTORIAL_SCENE_INDEX = 2;
 
     // Enum for the game states
     public enum GameState
