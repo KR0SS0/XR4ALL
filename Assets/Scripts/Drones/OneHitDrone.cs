@@ -8,7 +8,6 @@ public class OneHitDrone : BaseDroneController
     [SerializeField] private GameObject bulletShot;
     [SerializeField] private bool forceDestroy = false;
     public static float MaxDistanceToPlayer { get => maxDistanceToPlayer; }
-    [SerializeField] private float speed;
 
     private void Awake()
     {
@@ -29,8 +28,6 @@ public class OneHitDrone : BaseDroneController
             HandleHit();
             forceDestroy = false;
         }
-
-        speed = MovementSpeed(DroneType.OneHit);
     }
 
 

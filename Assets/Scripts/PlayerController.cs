@@ -45,6 +45,8 @@ public class PlayerController : MonoBehaviour
                 if (tutorial.OngoingTutorial && tutorial.currentState != TutorialManager.TutorialState.TestWave)
                 {
                     Debug.Log("Tutorial unsuccess block");
+                    Debug.Log("Ongoing tutorial: " + tutorial.OngoingTutorial);
+                    Debug.Log("Current tutorial state: " + tutorial.currentState);
                     tutorial.OnPlayerGetHit();
                     return;
                 }
