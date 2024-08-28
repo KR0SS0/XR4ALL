@@ -260,7 +260,7 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialState.ControlsAttack:
 
-                PlaySound(controlsAttack[2], true);             
+                PlaySound(controlsAttack[2], true);
                 break;
 
             case TutorialState.ControlsDefend:
@@ -324,7 +324,7 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialState.ControlsDefend:
                 PlaySound(controlsDefend[4], true);
-                currentActiveDrone.ForceDestroy();             
+                currentActiveDrone.ForceDestroy();
                 break;
 
             case TutorialState.DronesExplosive:
@@ -382,39 +382,48 @@ public class TutorialManager : MonoBehaviour
                 newDrone.GetComponent<BaseDroneController>().StaticDrone = true;
                 newDrone.GetComponent<ITutorial>().SetManager(this);
                 currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
-                //newDrone.GetComponent<ITutorial>().Test();
+                currentActiveDrone.SetSpawner(droneSpawner);
+                droneSpawner.AddDrone(newDrone);
                 break;
 
             case TutorialState.ControlsDefend:
                 newDrone = Instantiate(oneHitDrone, staticDroneSpawnLocation.position, staticDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
                 currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
+                currentActiveDrone.SetSpawner(droneSpawner);
+                droneSpawner.AddDrone(newDrone);
                 break;
 
             case TutorialState.DronesRegular:
                 newDrone = Instantiate(oneHitDrone, movingDroneSpawnLocation.position, movingDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
                 currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
+                currentActiveDrone.SetSpawner(droneSpawner);
+                droneSpawner.AddDrone(newDrone);
                 break;
 
             case TutorialState.DronesShielded:
                 newDrone = Instantiate(twoHitsDrone, movingDroneSpawnLocation.position, movingDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
                 currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
+                currentActiveDrone.SetSpawner(droneSpawner);
+                droneSpawner.AddDrone(newDrone);
                 break;
 
             case TutorialState.DronesExplosive:
                 newDrone = Instantiate(explosiveDrone, movingDroneSpawnLocation.position, movingDroneSpawnLocation.rotation);
                 newDrone.GetComponent<ITutorial>().SetManager(this);
                 currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
+                currentActiveDrone.SetSpawner(droneSpawner);
+                droneSpawner.AddDrone(newDrone);
                 break;
 
             default:
-                //droneSpawner.StartGame();
                 gameManager.StartGame();
                 currentActiveDrone = null;
                 break;
         }
+
         yield return null;
     }
 

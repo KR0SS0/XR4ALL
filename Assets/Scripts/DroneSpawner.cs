@@ -315,6 +315,8 @@ public class DroneSpawner : MonoBehaviour
     {
         droneList.Remove(drone);
 
+        if (gameState == GameState.NoGame) return;
+
         switch (type)
         {
             case DroneType.OneHit:
@@ -550,4 +552,8 @@ public class DroneSpawner : MonoBehaviour
         }
     }
 
+    public void AddDrone(GameObject drone)
+    {
+        droneList.Add(drone);
+    }
 }

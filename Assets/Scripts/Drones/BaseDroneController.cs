@@ -300,7 +300,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
         // Force
         Vector3 forceDirection = (targetPosition - transform.position).normalized;
-        float forceMagnitude = MovementSpeed(droneType) * Time.fixedDeltaTime * 75f;
+        float forceMagnitude = MovementSpeed() * Time.fixedDeltaTime * 75f;
         Vector3 newVelocity = forceDirection * forceMagnitude;
 
         if (newVelocity.magnitude > maxMovementSpeed)
@@ -413,7 +413,13 @@ public abstract class BaseDroneController : MonoBehaviour
 
         vfx_Manager.PlayVFX(VFX_Type.Destroy);
 
-        SwitchState(0f, StateMachine.Destroy);
+        //SwitchState(0f, StateMachine.Destroy);
+
+        if (spawner != null)
+        {
+            Debug.Log(spawner.name);
+            spawner.OnDroneDestroyed(gameObject, DroneType);
+        }
 
         StartDestroyTimer(deathAnimationTime);
     }
@@ -476,12 +482,6 @@ public abstract class BaseDroneController : MonoBehaviour
 
     IEnumerator DestroyTimer(float waitTime)
     {
-        if (spawner != null)
-        {
-            Debug.Log(spawner.name);
-            spawner.OnDroneDestroyed(gameObject, DroneType);
-        }
-
         yield return new WaitForSeconds(waitTime);
 
         Destroy(gameObject);
@@ -508,7 +508,7 @@ public abstract class BaseDroneController : MonoBehaviour
         playerController.Hit();
     }
 
-    public float MovementSpeed(DroneType droneType)
+    private float MovementSpeed()
     {
         float speed = 0f;
 
