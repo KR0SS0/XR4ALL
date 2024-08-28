@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static UnityEngine.CullingGroup;
 
@@ -21,6 +23,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject Joystick_Lightsaber;
 
     private AccessibilityController accessController;
+
+    private const int LIGHTSABER_SCENE_INDEX = 0;
+    private const int TUTORIAL_SCENE_INDEX = 1;
 
     // Enum for the game states
     public enum GameState
@@ -150,6 +155,14 @@ public class GameManager : MonoBehaviour
         GameOverController.Instance.HideGameOverScreen();
     }
 
+    private void StartTutorial()
+    {
+        SetGameState(GameState.Active);
+        FindObjectOfType<TutorialManager>().StartTutorial();
+        startGame.SetActive(false);
+        GameOverController.Instance.HideGameOverScreen();
+    }
+
     //
     public void RestartWave()
     {
@@ -174,7 +187,17 @@ public class GameManager : MonoBehaviour
     {
         if (currentState == GameState.WaitingToStart)
         {
-            StartGame();
+            switch (SceneManager.GetActiveScene().buildIndex)
+            {
+                case LIGHTSABER_SCENE_INDEX:
+                    StartGame();
+                    break;
+
+                case TUTORIAL_SCENE_INDEX:
+                    StartTutorial();
+                    break;
+            }
+            
         }
         OnStartInputOccurred?.Invoke(this, EventArgs.Empty);
     }
