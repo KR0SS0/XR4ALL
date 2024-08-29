@@ -620,4 +620,13 @@ public abstract class BaseDroneController : MonoBehaviour
             return xController.DistanceToPlayer.CompareTo(yController.DistanceToPlayer);
         }
     }
+
+    public void SwitchToAttackState()
+    {
+        if (tutorialDrone)
+        {
+            staticDrone = false;
+            SwitchState(0f, StateMachine.Attacking);
+        }
+    }
 }

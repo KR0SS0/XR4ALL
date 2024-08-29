@@ -379,18 +379,20 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialState.ControlsAttack:
                 newDrone = Instantiate(oneHitDrone, staticDroneSpawnLocation.position, staticDroneSpawnLocation.rotation);
-                newDrone.GetComponent<BaseDroneController>().StaticDrone = true;
-                newDrone.GetComponent<ITutorial>().SetManager(this);
                 currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
+                currentActiveDrone.StaticDrone = true;
                 currentActiveDrone.SetSpawner(droneSpawner);
+                newDrone.GetComponent<ITutorial>().SetManager(this);
                 droneSpawner.AddDrone(newDrone);
                 break;
 
             case TutorialState.ControlsDefend:
                 newDrone = Instantiate(oneHitDrone, staticDroneSpawnLocation.position, staticDroneSpawnLocation.rotation);
-                newDrone.GetComponent<ITutorial>().SetManager(this);
                 currentActiveDrone = newDrone.GetComponent<BaseDroneController>();
+                currentActiveDrone.StaticDrone = true;
                 currentActiveDrone.SetSpawner(droneSpawner);
+                SwitchDroneState(controlsDefendIntro.length / 2f);
+                newDrone.GetComponent<ITutorial>().SetManager(this);
                 droneSpawner.AddDrone(newDrone);
                 break;
 
@@ -461,4 +463,14 @@ public class TutorialManager : MonoBehaviour
         yield return null;
     }
 
+    private void SwitchDroneState(float waitTime)
+    {
+        StartCoroutine(DroneWaitTime(waitTime));
+    }
+
+    private IEnumerator DroneWaitTime(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        currentActiveDrone.SwitchToAttackState();
+    }
 }
