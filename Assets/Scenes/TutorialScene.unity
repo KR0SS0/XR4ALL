@@ -1670,6 +1670,54 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tutorial
       objectReference: {fileID: 0}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsJB_Attack.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 4b231fc0318d48547aec936a7b9ca667, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsJB_Attack.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a0817b1db8746a47b00842f8be8802a, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsJB_Defend.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: e0a8f2d831af814418451923a9a107ec, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsJB_Defend.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: ce093a5676ca0a34998a2ca25f7f8b0b, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsJB_Defend.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 82529178dc5cfad429e525868afe896e, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsJB_Defend.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 3636a01c7eb19a444af427fcdaca1e6a, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsJB_Defend.Array.data[4]
+      value: 
+      objectReference: {fileID: 8300000, guid: ce2bd9f183ee9544c88cab4492761048, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsVC_Defend.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: b009b26159744364191a540812adb898, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsVC_Defend.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: ce093a5676ca0a34998a2ca25f7f8b0b, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsVC_Defend.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 82529178dc5cfad429e525868afe896e, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsVC_Defend.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 3636a01c7eb19a444af427fcdaca1e6a, type: 3}
+    - target: {fileID: 4010733130455234776, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
+      propertyPath: controlsVC_Defend.Array.data[4]
+      value: 
+      objectReference: {fileID: 8300000, guid: ce2bd9f183ee9544c88cab4492761048, type: 3}
     - target: {fileID: 7391015796544774877, guid: decc03566a6b52f479b615fa520b4adf, type: 3}
       propertyPath: playerTransform
       value: 
