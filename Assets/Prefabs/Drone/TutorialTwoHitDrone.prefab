@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3370568205928578315}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Destroy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 1149122342239023684}
   - component: {fileID: 4072232694927656421}
   - component: {fileID: 7820795729167322752}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Charge Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4886,7 +4886,7 @@ GameObject:
   - component: {fileID: 5784067606707899887}
   - component: {fileID: 4093048313081518832}
   - component: {fileID: 4942300415292353794}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9727,7 +9727,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6351715907140268974}
   - component: {fileID: 7594619110679533379}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9804,7 +9804,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6468150899001259087}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Aura
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9839,7 +9839,7 @@ GameObject:
   - component: {fileID: 5347048008439727217}
   - component: {fileID: 4820200161907074501}
   - component: {fileID: 5954963390729642126}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14679,7 +14679,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5001325539834386613}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14713,7 +14713,7 @@ GameObject:
   - component: {fileID: 3154457292479211631}
   - component: {fileID: 1921285913899343240}
   - component: {fileID: 7324330661590564197}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Embers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19483,7 +19483,7 @@ GameObject:
   - component: {fileID: 5124695041215901159}
   - component: {fileID: 7742926387851261051}
   - component: {fileID: 1613866802504995440}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Embers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24256,7 +24256,7 @@ GameObject:
   - component: {fileID: 8031267915247732125}
   - component: {fileID: 7217239513283708127}
   - component: {fileID: 130989751830485622}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SM_CYBER_Drone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24396,7 +24396,7 @@ GameObject:
   - component: {fileID: 7074682064541844058}
   - component: {fileID: 7696501406047935941}
   - component: {fileID: 5798442275399345664}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Rings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29248,7 +29248,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1840087824258411663}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ChargeAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29284,7 +29284,7 @@ GameObject:
   - component: {fileID: 6053970701193169417}
   - component: {fileID: 280529958216490825}
   - component: {fileID: 5231846566760654371}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SphereShield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29369,7 +29369,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -29386,7 +29386,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7058061443872823321}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Charge Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29420,7 +29420,7 @@ GameObject:
   - component: {fileID: 7895079268844798520}
   - component: {fileID: 2034579674115035743}
   - component: {fileID: 8937264454691507537}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29541,7 +29541,7 @@ GameObject:
   - component: {fileID: 4631657767325398806}
   - component: {fileID: 4332846169126318488}
   - component: {fileID: 2215550989373886564}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: TutorialTwoHitDrone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29909,7 +29909,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
@@ -29928,7 +29928,7 @@ GameObject:
   - component: {fileID: 2452305923278039740}
   - component: {fileID: 3405359452619132748}
   - component: {fileID: 6426881761706055801}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Random Curves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34770,7 +34770,7 @@ GameObject:
   - component: {fileID: 4345147132612187052}
   - component: {fileID: 8328779460676668865}
   - component: {fileID: 8802389944937322142}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Flakes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39623,7 +39623,7 @@ GameObject:
   - component: {fileID: 1622806870739690041}
   - component: {fileID: 5345500995430603498}
   - component: {fileID: 6298423237692985134}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Random Curves - Black
   m_TagString: Untagged
   m_Icon: {fileID: 0}

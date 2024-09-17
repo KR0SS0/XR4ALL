@@ -63,6 +63,8 @@ public class DroneSpawner : MonoBehaviour
 
     public float SpawnAngle { get => spawnAngle; set => spawnAngle = value; }
 
+    private Coroutine coroutine;
+
     private void Start()
     {
         playerLocation = GameObject.FindGameObjectWithTag("Player").transform;
@@ -106,13 +108,21 @@ public class DroneSpawner : MonoBehaviour
         currentRound = 1;
         SpawnDrones(0f);
         ActivateTowers();
-        StartCoroutine(SetPriority());
+        if (coroutine == null)
+        {
+            coroutine = StartCoroutine(SetPriority());
+        }
     }
 
     private void NextRound()
     {
         currentRound++;
         SpawnDrones(waitRoundTime);
+
+        if(coroutine == null)
+        {
+            coroutine = StartCoroutine(SetPriority());
+        }
     }
 
     public void EndGame()
@@ -340,6 +350,11 @@ public class DroneSpawner : MonoBehaviour
 
         if (AreAllDronesKilled())
         {
+            if(coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
+
             gameState = GameState.NextRound;
         }
     }

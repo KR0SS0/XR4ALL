@@ -59,7 +59,7 @@ public class BeamShot : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogWarning("Failed to call Hit on PlayerController: " + e.Message);
+            Debug.LogError("Failed to call Hit on PlayerController: " + e.Message);
         }
     }
 }

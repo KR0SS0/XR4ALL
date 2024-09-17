@@ -597,8 +597,11 @@ public abstract class BaseDroneController : MonoBehaviour
         if (currentPriorityLevel == newLevel) return;
 
         currentPriorityLevel = newLevel;
-        soundManager.SwitchLevel(currentPriorityLevel, newLevel);
 
+        if(soundManager != null)
+        {
+            soundManager.SwitchLevel(currentPriorityLevel, newLevel);
+        }
     }
 
     public class DistanceToPlayerComparer : IComparer<GameObject>
