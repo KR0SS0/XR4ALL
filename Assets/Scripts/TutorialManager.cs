@@ -64,6 +64,8 @@ public class TutorialManager : MonoBehaviour
     private BaseDroneController currentActiveDrone;
     private float sourceVolume;
 
+    private Coroutine instatiateDroneCoroutine;
+
     void Start()
     {
         transform.position = Vector3.zero;
@@ -189,12 +191,12 @@ public class TutorialManager : MonoBehaviour
 
             case TutorialState.ControlsAttack:
                 PlaySound(controlsAttackIntro);
-                StartCoroutine(InstatiateDrone(controlsAttackIntro.length / 3f));
+                StartDroneCoroutine(controlsAttackIntro.length / 3f);
                 break;
 
             case TutorialState.ControlsDefend:
                 PlaySound(controlsDefendIntro);
-                StartCoroutine(InstatiateDrone(controlsDefendIntro.length / 2f));
+                StartDroneCoroutine(controlsDefendIntro.length / 2f);
                 break;
 
             case TutorialState.Drones:
@@ -204,28 +206,40 @@ public class TutorialManager : MonoBehaviour
 
             case TutorialState.DronesRegular:
                 PlaySound(dronesRegularIntro);
-                StartCoroutine(InstatiateDrone(dronesRegularIntro.length));
+                StartDroneCoroutine(dronesRegularIntro.length);
                 break;
 
             case TutorialState.DronesShielded:
                 PlaySound(dronesShieldedIntro);
-                StartCoroutine(InstatiateDrone(dronesShieldedIntro.length));
+                StartDroneCoroutine(dronesShieldedIntro.length);
                 break;
 
             case TutorialState.DronesExplosive:
                 PlaySound(dronesExplosiveIntro);
-                StartCoroutine(InstatiateDrone(dronesExplosiveIntro.length));
+                StartDroneCoroutine(dronesExplosiveIntro.length);
                 break;
 
             case TutorialState.TestWave:
                 PlaySound(testWaveIntro);
-                StartCoroutine(InstatiateDrone(testWaveIntro.length));
+                StartDroneCoroutine(testWaveIntro.length);
                 break;
 
             case TutorialState.Completed:
                 PlaySound(tutorialComplete);
                 StartCoroutine(EndTutorial());
                 break;
+        }
+    }
+
+    private void StartDroneCoroutine(float waitTime)
+    {
+        if (instatiateDroneCoroutine == null)
+        {
+            instatiateDroneCoroutine = StartCoroutine(InstatiateDrone(waitTime));
+        }
+
+        else {
+            Debug.Log("Tried to re-start coroutine");
         }
     }
 
@@ -265,7 +279,7 @@ public class TutorialManager : MonoBehaviour
 
             case TutorialState.ControlsDefend:
                 PlaySound(controlsDefend[3]);
-                StartCoroutine(InstatiateDrone(controlsDefend[3].length));
+                StartDroneCoroutine(controlsDefend[3].length);
                 break;
 
             case TutorialState.DronesRegular:
@@ -278,7 +292,7 @@ public class TutorialManager : MonoBehaviour
 
             case TutorialState.DronesExplosive:
                 PlaySound(dronesPart3[0]);
-                StartCoroutine(InstatiateDrone(dronesPart3[0].length));
+                StartDroneCoroutine(dronesPart3[0].length);
                 break;
 
             default: 
@@ -293,24 +307,24 @@ public class TutorialManager : MonoBehaviour
             case TutorialState.ControlsDefend:
                 PlaySound(controlsDefend[1]);
                 currentActiveDrone.ForceDestroy();
-                StartCoroutine(InstatiateDrone(controlsDefend[1].length));
+                StartDroneCoroutine(controlsDefend[1].length);
                 break;
 
             case TutorialState.DronesRegular:
                 currentActiveDrone.ForceDestroy();
                 PlaySound(dronesPart1[0]);
-                StartCoroutine(InstatiateDrone(dronesPart1[0].length));
+                StartDroneCoroutine(dronesPart1[0].length);
                 break;
 
             case TutorialState.DronesShielded:
                 currentActiveDrone.ForceDestroy();
                 PlaySound(dronesPart2[0]);
-                StartCoroutine(InstatiateDrone(dronesPart2[0].length));
+                StartDroneCoroutine(dronesPart2[0].length);
                 break;
 
             case TutorialState.DronesExplosive:
                 StartCoroutine(DelayedPlaySound(controlsDefend[2], 1.0f , false));
-                StartCoroutine(InstatiateDrone(controlsDefend[2].length + 1f));
+                StartDroneCoroutine(controlsDefend[2].length + 1f);
                 break;
 
             default:
@@ -425,7 +439,7 @@ public class TutorialManager : MonoBehaviour
                 currentActiveDrone = null;
                 break;
         }
-
+        instatiateDroneCoroutine = null;
         yield return null;
     }
 
