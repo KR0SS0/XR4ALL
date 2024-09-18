@@ -62,18 +62,22 @@ public class PlayerController : MonoBehaviour
 
             if (health <= 0)
             {
-                if(tutorial.OngoingTutorial && tutorial.currentState == TutorialManager.TutorialState.TestWave)
+                if(tutorial != null)
                 {
-                    tutorial.OnFailureTestWave();
+                    if (tutorial.OngoingTutorial && tutorial.currentState == TutorialManager.TutorialState.TestWave)
+                    {
+                        tutorial.OnFailureTestWave();
+                    }
+
+                    else
+                    {
+                        Debug.Log("Ongoing tutorial: " + tutorial.OngoingTutorial);
+                        Debug.Log("Current tutorial state: " + tutorial.currentState);
+                        Debug.Log("Player Controller Game Over");
+                    }
                 }
 
-                else
-                {
-                    Debug.Log("Ongoing tutorial: " + tutorial.OngoingTutorial); 
-                    Debug.Log("Current tutorial state: " + tutorial.currentState);
-                    Debug.Log("Player Controller Game Over");
-                    GameOver();
-                }
+                GameOver();
             }
         }
     }

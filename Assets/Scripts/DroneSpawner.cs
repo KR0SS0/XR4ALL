@@ -503,7 +503,7 @@ public class DroneSpawner : MonoBehaviour
             {
                 GameObject drone = list[i];
                 drone.GetComponent<BaseDroneController>().SwitchLevel(PriorityLevel.high);
-                Debug.Log("high priority set");
+                //Debug.Log("high priority set");
             }
 
             if(highPriority < list.Count)
@@ -512,7 +512,7 @@ public class DroneSpawner : MonoBehaviour
                 {
                     GameObject drone = list[i];
                     drone.GetComponent<BaseDroneController>().SwitchLevel(PriorityLevel.medium);
-                    Debug.Log("medium priority set");
+                    //Debug.Log("medium priority set");
                 }
             }
 
@@ -522,7 +522,7 @@ public class DroneSpawner : MonoBehaviour
                 {
                     GameObject drone = list[i];
                     drone.GetComponent<BaseDroneController>().SwitchLevel(PriorityLevel.low);
-                    Debug.Log("low priority set");
+                    //Debug.Log("low priority set");
                 }
             }
         }

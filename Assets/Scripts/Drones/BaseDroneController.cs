@@ -35,7 +35,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private float movementSpeed = 3f;
     private float maxMovementSpeed = 4f;
     private float maxAmplitude = 25f;
-    private float minAmplitude = 5f;
+    private float minAmplitude = 0.5f;
     private float frequency = 1f;
     private float distanceToPlayer = float.MaxValue;
     protected static float maxDistanceToPlayer = 1.8f;
@@ -74,7 +74,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
         else
         {
-            Debug.Log("Normal Drone On Start");
+            //Debug.Log("Normal Drone On Start");
             SwitchState(spawnAnimationTime, StateMachine.Idle);
         }
 
@@ -127,8 +127,18 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void AddImpulse(Vector3 swingDirection, float swingSpeed)
     {
-        //Calculate the impulse force
-        Vector3 impulseForce = swingDirection * (swingSpeed * impulseMultiplier);
+        Vector3 droneDirection = (transform.position - playerTransform.position).normalized;
+
+        float blendFactor = 0.75f; // 0 (only swing) and 1 (only drone)
+        Vector3 impulseDirection = Vector3.Lerp(swingDirection, droneDirection, blendFactor).normalized;
+
+        Debug.Log("Impulse Direction:" + impulseDirection);
+
+        float maxImpulse = 2.0f;
+        float impulseForceMagnitude = Mathf.Clamp(swingSpeed * impulseMultiplier, 0, maxImpulse);
+
+        Debug.Log("Current Force: " + impulseForceMagnitude);
+        Vector3 impulseForce = impulseForceMagnitude * impulseDirection;
 
         //Apply the impulse
         rb.AddForce(impulseForce, ForceMode.Impulse);
@@ -318,7 +328,7 @@ public abstract class BaseDroneController : MonoBehaviour
         }
         */
 
-        if (distanceToPlayer <= maxDistanceToPlayer)
+        if (distanceToPlayer < maxDistanceToPlayer)
         {
             SwitchState(0f, StateMachine.Attacking);
         }
@@ -417,7 +427,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
         if (spawner != null)
         {
-            Debug.Log(spawner.name);
+            //Debug.Log(spawner.name);
             spawner.OnDroneDestroyed(gameObject, DroneType);
         }
 
@@ -489,6 +499,7 @@ public abstract class BaseDroneController : MonoBehaviour
 
     protected void SwitchState(float time, StateMachine newState)
     {
+        if (newState == this.newState) return;
         StartCoroutine(SwitchStateTimer(time, newState));
     }
 
@@ -548,7 +559,7 @@ public abstract class BaseDroneController : MonoBehaviour
     private Vector3 GetRandomPointAroundPlayer()
     {
         //degrees
-        float sectorAngle = spawner == null ? 70f : spawner.SpawnAngle;
+        float sectorAngle = spawner == null ? 50f : spawner.SpawnAngle / 2;
         float halfSectorAngle = sectorAngle / 2f;
 
         //inner and outer radius
