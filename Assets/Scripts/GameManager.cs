@@ -151,7 +151,9 @@ public class GameManager : MonoBehaviour
         SetGameState(GameState.Active);
         FindObjectOfType<PlayerController>().StartGame();
         FindObjectOfType<DroneSpawner>().StartGame();
-        startGame.SetActive(false);
+        if(startGame) {
+            startGame.SetActive(false);
+        }
         GameOverController.Instance.HideGameOverScreen();
     }
 
@@ -159,7 +161,9 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.Active);
         FindObjectOfType<TutorialManager>().StartTutorial();
-        startGame.SetActive(false);
+        if(startGame) {
+            startGame.SetActive(false);
+        }
         GameOverController.Instance.HideGameOverScreen();
     }
 

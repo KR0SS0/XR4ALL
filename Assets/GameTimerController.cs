@@ -37,7 +37,7 @@ public class GameTimerController : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject.transform.parent);
+            //DontDestroyOnLoad(gameObject.transform.parent);
         } else if (instance != this)
         {
             Destroy(gameObject);
