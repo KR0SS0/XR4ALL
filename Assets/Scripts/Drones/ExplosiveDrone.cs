@@ -10,6 +10,7 @@ public class ExplosiveDrone : BaseDroneController
 
     public float ChargeExplosionDuration { get => chargeExplosionDuration;}
     public static float MaxDistanceToPlayer = 1f;
+    private bool isHit = false;
 
     private void Awake()
     {
@@ -35,11 +36,14 @@ public class ExplosiveDrone : BaseDroneController
 
     public override void HandleHit()
     {
-        hp--;
-        SwitchState(0f, StateMachine.Destroy);
-        Debug.Log("Explosion by being attacked");
-        HitPlayer();
-
+        if(!isHit)
+        {
+            hp--;
+            SwitchState(0f, StateMachine.Destroy);
+            Debug.Log("Explosion by being attacked");
+            HitPlayer();
+            isHit = true;
+        }
     }
 
 

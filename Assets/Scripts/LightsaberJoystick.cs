@@ -61,11 +61,11 @@ public class LightsaberJoystick : LightsaberController
                         {
                             PlaySwingSound();
                         }
-                        Debug.Log("Drone is out of attack range.");
+                        //Debug.Log("Drone is out of attack range.");
                     }
                 } else
                 {
-                    Debug.Log("No drones found.");
+                    //Debug.Log("No drones found.");
                 }
             }
         }

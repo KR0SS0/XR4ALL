@@ -1,5 +1,6 @@
 
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -60,6 +61,8 @@ public class TutorialManager : MonoBehaviour
 
     private bool ongoingTutorial = false;
     private DebugInput debugInputActions;
+    private float waitTime = 0.5f;
+    private float waitingTime;
 
     private BaseDroneController currentActiveDrone;
     private float sourceVolume;
@@ -85,8 +88,13 @@ public class TutorialManager : MonoBehaviour
 
         gameManager = FindFirstObjectByType<GameManager>();
 
- 
+        waitingTime = 0f;
 
+    }
+
+    private void FixedUpdate()
+    {
+        waitingTime += Time.deltaTime;
     }
 
     private void OnDebugAction(InputAction.CallbackContext context)
@@ -180,55 +188,62 @@ public class TutorialManager : MonoBehaviour
 
     private void NextState()
     {
-        switch (currentState)
+        if(waitingTime > waitTime)
         {
-            case TutorialState.Standby:
-                break;
 
-            case TutorialState.Objetive:
-                PlaySound(objetive, true);
-                break;
+            Debug.Log("Next State Called");
+            switch (currentState)
+            {
+                case TutorialState.Standby:
+                    break;
 
-            case TutorialState.ControlsAttack:
-                PlaySound(controlsAttackIntro);
-                StartDroneCoroutine(controlsAttackIntro.length / 3f);
-                break;
+                case TutorialState.Objetive:
+                    PlaySound(objetive, true);
+                    break;
 
-            case TutorialState.ControlsDefend:
-                PlaySound(controlsDefendIntro);
-                StartDroneCoroutine(controlsDefendIntro.length / 2f);
-                break;
+                case TutorialState.ControlsAttack:
+                    PlaySound(controlsAttackIntro);
+                    StartDroneCoroutine(controlsAttackIntro.length / 3f);
+                    break;
 
-            case TutorialState.Drones:
-                PlaySound(dronesIntro, true);
-                StartCoroutine(ShowAndHideDrones(dronesIntro.length));
-                break;
+                case TutorialState.ControlsDefend:
+                    PlaySound(controlsDefendIntro);
+                    StartDroneCoroutine(controlsDefendIntro.length / 2f);
+                    break;
 
-            case TutorialState.DronesRegular:
-                PlaySound(dronesRegularIntro);
-                StartDroneCoroutine(dronesRegularIntro.length);
-                break;
+                case TutorialState.Drones:
+                    PlaySound(dronesIntro, true);
+                    StartCoroutine(ShowAndHideDrones(dronesIntro.length));
+                    break;
 
-            case TutorialState.DronesShielded:
-                PlaySound(dronesShieldedIntro);
-                StartDroneCoroutine(dronesShieldedIntro.length);
-                break;
+                case TutorialState.DronesRegular:
+                    PlaySound(dronesRegularIntro);
+                    StartDroneCoroutine(dronesRegularIntro.length);
+                    break;
 
-            case TutorialState.DronesExplosive:
-                PlaySound(dronesExplosiveIntro);
-                StartDroneCoroutine(dronesExplosiveIntro.length);
-                break;
+                case TutorialState.DronesShielded:
+                    PlaySound(dronesShieldedIntro);
+                    StartDroneCoroutine(dronesShieldedIntro.length);
+                    break;
 
-            case TutorialState.TestWave:
-                PlaySound(testWaveIntro);
-                StartDroneCoroutine(testWaveIntro.length);
-                break;
+                case TutorialState.DronesExplosive:
+                    PlaySound(dronesExplosiveIntro);
+                    StartDroneCoroutine(dronesExplosiveIntro.length);
+                    break;
 
-            case TutorialState.Completed:
-                PlaySound(tutorialComplete);
-                StartCoroutine(EndTutorial());
-                break;
+                case TutorialState.TestWave:
+                    PlaySound(testWaveIntro);
+                    StartDroneCoroutine(testWaveIntro.length);
+                    break;
+
+                case TutorialState.Completed:
+                    PlaySound(tutorialComplete);
+                    StartCoroutine(EndTutorial());
+                    break;
+            }
         }
+
+        waitTime = 0;
     }
 
     private void StartDroneCoroutine(float waitTime)
