@@ -15,6 +15,7 @@ public class TwoHitDrone : BaseDroneController
     [SerializeField] private bool forceDestroy = false;
     public static float MaxDistanceToPlayer { get => maxDistanceToPlayer; }
     protected bool destroy = false;
+    private bool isHit = false;
 
     private void Awake()
     {
@@ -53,9 +54,13 @@ public class TwoHitDrone : BaseDroneController
 
             if(hp <= 0)
             {
-                timerStarted = true;
-                SwitchState(0f, StateMachine.Destroy);
-                destroy = true;
+                if (!isHit)
+                {
+                    timerStarted = true;
+                    SwitchState(0f, StateMachine.Destroy);
+                    destroy = true;
+                    isHit = true;
+                }
             }
 
             else

@@ -8,6 +8,7 @@ public class OneHitDrone : BaseDroneController
     [SerializeField] private GameObject bulletShot;
     [SerializeField] private bool forceDestroy = false;
     public static float MaxDistanceToPlayer { get => maxDistanceToPlayer; }
+    private bool isHit = false;
 
     private void Awake()
     {
@@ -33,7 +34,11 @@ public class OneHitDrone : BaseDroneController
 
     public override void HandleHit()
     {
-        hp--;
-        SwitchState(0f, StateMachine.Destroy);
+        if (!isHit)
+        {
+            hp--;
+            SwitchState(0f, StateMachine.Destroy);
+            isHit = true;
+        }
     }
 }
