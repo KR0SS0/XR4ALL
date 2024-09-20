@@ -65,6 +65,7 @@ public class TutorialManager : MonoBehaviour
     private float sourceVolume;
 
     private Coroutine instatiateDroneCoroutine;
+    private Coroutine nextCoroutine;
 
     void Start()
     {
@@ -138,7 +139,10 @@ public class TutorialManager : MonoBehaviour
         SetVoicelineAssistMode();
         ongoingTutorial = true;
         currentState = TutorialState.Objetive;
-        NextState();
+        if(nextCoroutine == null)
+        {
+            nextCoroutine = StartCoroutine(WaitNextState());
+        }
     }
 
     private void PlaySound(AudioClip audioClip)
@@ -173,13 +177,18 @@ public class TutorialManager : MonoBehaviour
     private IEnumerator WaitAndPlay(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        currentState++;
-        NextState();
+        if(nextCoroutine == null)
+        {
+            currentState++;
+            nextCoroutine = StartCoroutine(WaitNextState());
+        }
+
         yield return null;
     }
 
-    private void NextState()
+    private IEnumerator WaitNextState()
     {
+        Debug.Log("Hello");
         switch (currentState)
         {
             case TutorialState.Standby:
@@ -229,6 +238,8 @@ public class TutorialManager : MonoBehaviour
                 StartCoroutine(EndTutorial());
                 break;
         }
+        yield return new WaitForSeconds(3);
+        nextCoroutine = null;
     }
 
     private void StartDroneCoroutine(float waitTime)
