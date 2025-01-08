@@ -26,7 +26,7 @@ public class OneHitDrone : BaseDroneController
     {
         if (forceDestroy)
         {
-            HandleHit();
+            SwitchState(0f, StateMachine.Destroy);
             forceDestroy = false;
         }
     }
