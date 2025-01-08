@@ -83,9 +83,7 @@ public abstract class BaseDroneController : MonoBehaviour
         soundManager = GetComponent<SoundManager>();
         vfx_Manager = GetComponentInChildren<VFX_Manager>();
 
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        playerTransform = playerObject.transform;
-        playerController = playerObject.transform.root.GetComponent<PlayerController>();
+        SetPlayer();
 
         float[] timers = new float[4] { spawnAnimationTime, deathAnimationTime, chargeAttackAnimationTime, stunnedAnimationTime };
         vfx_Manager.SetTimers(timers);
@@ -95,6 +93,13 @@ public abstract class BaseDroneController : MonoBehaviour
         yOffset = Random.Range(-0.25f, 0.15f);
         //Debug.Log("offset: " + yOffset);
 
+    }
+
+    private void SetPlayer()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        playerTransform = playerObject.transform;
+        playerController = playerObject.transform.root.GetComponent<PlayerController>();
     }
 
     private void FixedUpdate()
@@ -280,6 +285,11 @@ public abstract class BaseDroneController : MonoBehaviour
 
     private void OnEnterMoving()
     {
+        if(playerController == null || playerTransform == null) 
+        {
+            SetPlayer();
+        }
+
         // Set a random start direction offset in the XZ plane
         float randomAngle = Random.Range(-30f, 30f);
         startDirectionOffset = new Vector3(Mathf.Cos(randomAngle), 0f, Mathf.Sin(randomAngle));

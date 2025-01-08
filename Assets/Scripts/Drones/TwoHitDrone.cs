@@ -41,7 +41,7 @@ public class TwoHitDrone : BaseDroneController
     {
         if (forceDestroy)
         {
-            HandleHit();
+            SwitchState(0f, StateMachine.Destroy);
             forceDestroy = false;
         }
     }
