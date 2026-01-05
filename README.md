@@ -1,5 +1,8 @@
-This project, XR4ALL, served as the primary research prototype for the study:
+## XR4ALL
 
-"Sensors in Inclusive Virtual Reality Games for People with Intellectual Disability" By Daniel Tapia Huechao, Linus Ekberg, and Thomas Westin (Stockholm University)
+The XR4ALL project is the primary research prototype developed for the academic study titled Sensors in Inclusive Virtual Reality Games for People with Intellectual Disability authored by Daniel Tapia Huechao, Linus Ekberg, and Thomas Westin.
 
-The game was developed to investigate how different sensor-based input methods—such as physical movement patterns, joystick mapping, and non-speech voice control—affect the gaming experience and accessibility for individuals with intellectual disabilities (ID).
+This software investigates the impact of various sensor based input methods on the gaming experience for individuals with intellectual disabilities.
+
+## 📁 Result
+Read about our research and its result in the [Docs folder](./Docs).
